@@ -1,4 +1,3 @@
-
 const auth = firebase.auth()
 
 const signInBtn = document.getElementById('googleSignIn')

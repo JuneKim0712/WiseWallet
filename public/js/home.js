@@ -6,10 +6,7 @@ const projectionChart = document.getElementById('projectedBalance');
 const balanceSummary = document.getElementById('balanceSummary');
 const uid = 12;
 
-
-//button assignmnet
-document.getElementById("signOutBtn").onclick = () => auth.signOut().then(window.location.href = '/index.html')
-
+let projectChart, balanceChart;
 
 const test = async () => {
   ref.addExpense(100, 2, uid)
@@ -28,10 +25,13 @@ const test = async () => {
 }
 
 const plotProjection = (chart, data, period) => {
-  new Chart(chart, {
+  if (projectChart) {
+    projectChart.destroy()
+  }
+  return new Chart(chart, {
     type: 'line',
     data: {
-      labels: Array.from({ length: period }, (_, index) => index + 1),
+      labels: Array.from({ length: period }, (_, index) => index),
       datasets: [{
         label: 'Balance',
         data: data,
@@ -58,20 +58,24 @@ const plotProjection = (chart, data, period) => {
         y: {
           title: { display: true, text: 'Balance ($)', font: { size: 14 } }
         }
-      }
+      },
+      devicePixelRatio: 3
     }
   });
 }
 
 const plotBalance = (chart, data) => {
-  new Chart(chart, {
+  if (balanceChart) {
+    balanceChart.destroy()
+  }
+  return new Chart(chart, {
     type: 'line',
     data: {
-      labels: data.map(item => new Date(item.x.seconds * 1000)
+      labels: data.map(item => new Date(item.date.seconds * 1000)
         .toISOString().split('T')[0]),
       datasets: [{
         label: 'Balance',
-        data: data.map(entry => entry.y),
+        data: data.map(entry => entry.amount),
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         fill: true,
@@ -84,7 +88,7 @@ const plotBalance = (chart, data) => {
         title: {
           display: true,
           text: 'Balance Over Time',
-          font: { size: 18 }
+          font: { size: 18 },
         }
       },
       scales: {
@@ -95,14 +99,113 @@ const plotBalance = (chart, data) => {
         y: {
           title: { display: true, text: 'Balance ($)', font: { size: 14 } }
         }
-      }
+      },
+      devicePixelRatio: 3
     }
   });
 }
 
+const handleFilterChange = (event) => {
+  const selectedValue = event.target.value;
+  let filteredTransactions;
+
+  const now = new Date();
+  const startDate = new Date();
+  const endDate = new Date();
+
+  switch (selectedValue) {
+    case "all":
+      filteredTransactions = transactions;
+      break;
+
+    case "week":
+      startDate.setUTCDate(now.getUTCDate() - 7);
+      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+      break;
+
+    case "month":
+      startDate.setMonth(now.getMonth() - 1);
+      startDate.setDate(now.getDate());
+      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+      break;
+
+    case "year":
+      startDate.setFullYear(now.getFullYear() - 1)
+      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+      break;
+
+    default:
+      filteredTransactions = transactions;
+      break;
+  }
+
+  listTransactions(filteredTransactions);
+};
+
+const handleHistoryChange = (event) => {
+  const selectedValue = event.target.value;
+  let filteredTransactions;
+
+  const now = new Date();
+  const startDate = new Date();
+  const endDate = new Date();
+
+  switch (selectedValue) {
+    case "all":
+      filteredTransactions = transactions;
+      break;
+
+    case "week":
+      startDate.setUTCDate(now.getUTCDate() - 7);
+      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+      break;
+
+    case "month":
+      startDate.setMonth(now.getMonth() - 1);
+      startDate.setDate(now.getDate());
+      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+      break;
+
+    case "year":
+      startDate.setFullYear(now.getFullYear() - 1)
+      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+      break;
+
+    default:
+      filteredTransactions = transactions;
+      break;
+  }
+  const summary = process.genBalanceOverTime(filteredTransactions)
+  balanceChart = plotBalance(balanceSummary, summary);
+};
+
+const handleProjectedChange = (event) => {
+  const selectedValue = event.target.value;
+  let period;
+  let projectedBalanceData;
+
+  switch (selectedValue) {
+    case "month":
+      projectedBalanceData = process.genProjectedBalance(income, expense, 0, 2)
+      period = 2
+      break;
+
+    case "year":
+      projectedBalanceData = process.genProjectedBalance(income, expense, 0, 13)
+      period = 13
+      break;
+
+    default:
+      projectedBalanceData = process.genProjectedBalance(income, expense, 0, 61);
+      period = 61
+      break;
+  }
+  projectChart = plotProjection(projectionChart, projectedBalanceData, period);
+};
+
 const listTransactions = (transactions) => {
   const tableBody = document.querySelector("#transactionTable tbody");
-  tableBody.innerHTML = ""; 
+  tableBody.innerHTML = "";
 
   transactions.forEach(transaction => {
     const row = document.createElement("tr");
@@ -124,7 +227,7 @@ const listTransactions = (transactions) => {
 
 const listIncome = (income) => {
   const tableBody = document.querySelector("#incomeTable tbody");
-  tableBody.innerHTML = ""; 
+  tableBody.innerHTML = "";
 
   income.forEach(data => {
     const row = document.createElement("tr");
@@ -145,7 +248,7 @@ const listIncome = (income) => {
 
 const listExpense = (expense) => {
   const tableBody = document.querySelector("#expenseTable tbody");
-  tableBody.innerHTML = ""; 
+  tableBody.innerHTML = "";
 
   expense.forEach(data => {
     const row = document.createElement("tr");
@@ -164,18 +267,25 @@ const listExpense = (expense) => {
   });
 };
 
+const initialize = () => {
+  listTransactions(transactions);
+  listIncome(income)
+  listExpense(expense)
+  document.getElementById("selectRangeHistory").addEventListener("change", handleHistoryChange);
+  document.getElementById("selectRangeProjected").addEventListener("change", handleProjectedChange);
+  document.getElementById("filterSelect").addEventListener("change", handleFilterChange);
+  document.getElementById("signOutBtn").onclick = () => auth.signOut().then(window.location.href = '/index.html')
+}
 
 
 let expense = await ref.access(uid, 'expense')
 let income = process.sortIncome(await ref.access(uid, 'income'))
 let transactions = process.sortTransactions(await ref.access(uid, 'transaction'))
 
-const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 120)
+const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 60)
 const balanceOverTimeData = process.genBalanceOverTime(transactions);
 
-plotProjection(projectionChart, projectedBalanceData, 120)
-plotBalance(balanceSummary, balanceOverTimeData);
+projectChart = plotProjection(projectionChart, projectedBalanceData, 60)
+balanceChart = plotBalance(balanceSummary, balanceOverTimeData);
 
-listTransactions(process.filterTransactions(transactions, new Date('2024-9-1'), new Date('2024-9-10')));
-listIncome(income)
-listExpense(expense)
+initialize()

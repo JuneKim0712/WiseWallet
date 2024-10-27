@@ -11,29 +11,45 @@
   <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
   <script defer src="/__/firebase/init.js?useEmulator=true"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module" defer src="home.js"></script>
-  <script type="module" defer src="db.js"></script>
-  <script type="module" defer src="preprocess.js"></script>
+  <script type="module" defer src="js/home.js"></script>
+  <script type="module" defer src="js/db.js"></script>
+  <script type="module" defer src="js/preprocess.js"></script>
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/nav.css">
   <!--  -->
 </head>
-<style>
-  table {
-    display: inline-block;
-    margin-right: 20px;
-    vertical-align: top;
-  }
-</style>
 
 <body>
   <button id="signOutBtn">
     Sign Out
   </button>
+  <br>
+  <select id="selectRangeHistory">
+    <option value="all">All Transactions</option>
+    <option value="week">Last Week</option>
+    <option value="month">Last Month</option>
+    <option value="year">Last Year</option>
+  </select>
+  <br>
   <div>
     <canvas id="balanceSummary"></canvas>
   </div>
+  <select id="selectRangeProjected">
+    <option value="10year">10 Year</option>
+    <option value="year">Year</option>
+    <option value="month">Month</option>
+  </select>
+  <br>
   <div>
     <canvas id="projectedBalance"></canvas>
   </div>
+  <select id="filterSelect">
+    <option value="all">All Transactions</option>
+    <option value="week">Last Week</option>
+    <option value="month">Last Month</option>
+    <option value="year">Last Year</option>
+  </select>
+  <br>
   <table id="transactionTable" border="1" cellpadding="8" cellspacing="0">
     <thead>
       <tr>

@@ -28,7 +28,7 @@ export const genBalanceOverTime = (transactions) => {
 
         if (transaction.date !== currentDate) {
             if (currentDate !== null) {
-                result.push({ x: currentDate, y: balance });
+                result.push({ date: currentDate, amount: balance });
             }
             currentDate = transaction.date;
             dailyTotal = 0;
@@ -38,7 +38,7 @@ export const genBalanceOverTime = (transactions) => {
 
         if (i === transactions.length - 1 || transactions[i + 1].date !== currentDate) {
             balance += dailyTotal;
-            result.push({ x: currentDate, y: balance });
+            result.push({ date: currentDate, amount: balance });
         }
     }
 
@@ -47,7 +47,7 @@ export const genBalanceOverTime = (transactions) => {
 
 
 export const genProjectedBalance = (income, expense, balance, period) => {
-    let projection = [];
+    let projection = [0];
     let incomeCounters = Array(income.length).fill(0);
     let expenseCounters = Array(expense.length).fill(0);
     for (let i = 0; i < period; i++) {
