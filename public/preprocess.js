@@ -25,7 +25,7 @@ export const genBalanceOverTime = (transactions) => {
 
     for (let i = 0; i < transactions.length; i++) {
         const transaction = transactions[i];
-        
+
         if (transaction.date !== currentDate) {
             if (currentDate !== null) {
                 result.push({ x: currentDate, y: balance });
@@ -33,15 +33,15 @@ export const genBalanceOverTime = (transactions) => {
             currentDate = transaction.date;
             dailyTotal = 0;
         }
-        
+
         dailyTotal += transaction.category === "income" ? transaction.amount : -transaction.amount;
-        
+
         if (i === transactions.length - 1 || transactions[i + 1].date !== currentDate) {
             balance += dailyTotal;
             result.push({ x: currentDate, y: balance });
         }
     }
-    
+
     return result;
 }
 
@@ -54,13 +54,13 @@ export const genProjectedBalance = (income, expense, balance, period) => {
         let netIncome = 0;
 
         for (let j = 0; j < income.length; j++) {
-            if (i%income[j].period == 0) {
+            if (i % income[j].period == 0) {
                 netIncome += income[j].amount
             }
         }
 
         for (let k = 0; k < expense.length; k++) {
-            if (i%expense[k].period == 0) {
+            if (i % expense[k].period == 0) {
                 netIncome -= expense[k].amount
             }
         }
@@ -71,3 +71,19 @@ export const genProjectedBalance = (income, expense, balance, period) => {
     return projection;
 }
 
+export const filterTransactions = (transactions, startDate, endDate) => {
+    return transactions.filter(transaction => {
+        const transactionDate = new Date(transaction.date.seconds * 1000);
+        return transactionDate >= startDate && transactionDate <= endDate;
+    });
+}
+
+export const sortTransactions = (transactions) => {
+    const sortedTransactions = transactions.sort((a, b) => a.date.seconds - b.date.seconds);
+    return sortedTransactions
+};
+
+export const sortIncome = (income) => {
+    const sortedTransactions = income.sort((a, b) => a.amount - b.amount);
+    return sortedTransactions
+}

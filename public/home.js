@@ -1,4 +1,4 @@
-import * as util from "./preprocess.js"
+import * as process from "./preprocess.js"
 import * as ref from "./db.js"
 const db = firebase.firestore()
 const auth = firebase.auth()
@@ -102,7 +102,7 @@ const plotBalance = (chart, data) => {
 
 const listTransactions = (transactions) => {
   const tableBody = document.querySelector("#transactionTable tbody");
-  tableBody.innerHTML = "";  // Clear existing rows
+  tableBody.innerHTML = ""; 
 
   transactions.forEach(transaction => {
     const row = document.createElement("tr");
@@ -115,7 +115,49 @@ const listTransactions = (transactions) => {
     const amountCell = document.createElement("td");
 
     amountCell.textContent = transaction.amount;
-    amountCell.style.color = transaction.category === "income" ? "blue" : "red";
+    amountCell.style.color = transaction.category === "income" ? "red" : "blue";
+    row.appendChild(amountCell);
+
+    tableBody.appendChild(row);
+  });
+};
+
+const listIncome = (income) => {
+  const tableBody = document.querySelector("#incomeTable tbody");
+  tableBody.innerHTML = ""; 
+
+  income.forEach(data => {
+    const row = document.createElement("tr");
+    const dateCell = document.createElement("td");
+
+    dateCell.textContent = data.period;
+    row.appendChild(dateCell);
+
+    const amountCell = document.createElement("td");
+
+    amountCell.textContent = data.amount;
+    amountCell.style.color = "red";
+    row.appendChild(amountCell);
+
+    tableBody.appendChild(row);
+  });
+};
+
+const listExpense = (expense) => {
+  const tableBody = document.querySelector("#expenseTable tbody");
+  tableBody.innerHTML = ""; 
+
+  expense.forEach(data => {
+    const row = document.createElement("tr");
+    const dateCell = document.createElement("td");
+
+    dateCell.textContent = data.period;
+    row.appendChild(dateCell);
+
+    const amountCell = document.createElement("td");
+
+    amountCell.textContent = data.amount;
+    amountCell.style.color = "blue";
     row.appendChild(amountCell);
 
     tableBody.appendChild(row);
@@ -123,19 +165,17 @@ const listTransactions = (transactions) => {
 };
 
 
-const sortTransactions = (transactions) => {
-  const sortedTransactions = transactions.sort((a, b) => a.date.seconds - b.date.seconds);
-  return sortedTransactions
-};
 
 let expense = await ref.access(uid, 'expense')
-let income = await ref.access(uid, 'income')
-let transactions = sortTransactions(await ref.access(uid, 'transaction'))
+let income = process.sortIncome(await ref.access(uid, 'income'))
+let transactions = process.sortTransactions(await ref.access(uid, 'transaction'))
 
-const projectedBalanceData = util.genProjectedBalance(income, expense, 0, 120)
-const balanceOverTimeData = util.genBalanceOverTime(transactions);
+const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 120)
+const balanceOverTimeData = process.genBalanceOverTime(transactions);
 
 plotProjection(projectionChart, projectedBalanceData, 120)
 plotBalance(balanceSummary, balanceOverTimeData);
-listTransactions(transactions);
-test()
+
+listTransactions(process.filterTransactions(transactions, new Date('2024-9-1'), new Date('2024-9-10')));
+listIncome(income)
+listExpense(expense)
