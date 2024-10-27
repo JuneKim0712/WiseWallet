@@ -20,6 +20,7 @@
   },
   "hosting": {
     "public": "public",
+    "site": "wisewalletfinance",
     "ignore": [
       "firebase.json",
       "**/.*",

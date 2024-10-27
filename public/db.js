@@ -49,7 +49,7 @@ export const updateExpense = (amount, period, docId, uid) => {
     })
 }
 
-export const updateIncome = (amount, period,  docId, uid) => {
+export const updateIncome = (amount, period, docId, uid) => {
     db.collection('account').doc(`${uid}`).collection('income').doc(`${docId}`).set({
         amount: amount,
         period: period
