@@ -1,182 +1,69 @@
-import * as process from "./preprocess.js"
-import * as ref from "./db.js"
-const db = firebase.firestore()
-const auth = firebase.auth()
+import * as process from "./preprocess.js";
+import * as ref from "./db.js";
+import * as plot from "./plot.js"
+
+const db = firebase.firestore();
+const auth = firebase.auth();
+
 const projectionChart = document.getElementById('projectedBalance');
 const balanceSummary = document.getElementById('balanceSummary');
 const uid = 12;
 
-let projectChart, balanceChart;
-
-const test = async () => {
-  ref.addExpense(100, 2, uid)
-  ref.addIncome(50, 1, uid)
-  ref.addIncome(150, 4, uid)
-  ref.addIncome(1500, 12, uid)
-  ref.addTransaction(22, new Date(), "income", uid)
-  for (let i = 1; i < 12; i++) {
-    for (let j = 1; j < 28; j++) {
-      ref.addTransaction((i * j + 120) / 2, new Date(2024, i, j), "expense", uid)
-      if ((j + i) % 12 == 0) {
-        ref.addTransaction(i * j * 1000, new Date(2024, i, j), "income", uid)
-      }
-    }
-  }
-}
-
-const plotProjection = (chart, data, period) => {
-  if (projectChart) {
-    projectChart.destroy()
-  }
-  return new Chart(chart, {
-    type: 'line',
-    data: {
-      labels: Array.from({ length: period }, (_, index) => index),
-      datasets: [{
-        label: 'Balance',
-        data: data,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: true,
-        borderWidth: 2,
-        tension: 0.1
-      }]
-    },
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: 'Balance Projected Over Time',
-          font: { size: 18 }
-        }
-      },
-      scales: {
-        x: {
-          type: 'category',
-          title: { display: true, text: 'Month passed', font: { size: 14 } }
-        },
-        y: {
-          title: { display: true, text: 'Balance ($)', font: { size: 14 } }
-        }
-      },
-      devicePixelRatio: 3
-    }
-  });
-}
-
-const plotBalance = (chart, data) => {
-  if (balanceChart) {
-    balanceChart.destroy()
-  }
-  return new Chart(chart, {
-    type: 'line',
-    data: {
-      labels: data.map(item => new Date(item.date.seconds * 1000)
-        .toISOString().split('T')[0]),
-      datasets: [{
-        label: 'Balance',
-        data: data.map(entry => entry.amount),
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: true,
-        borderWidth: 2,
-        tension: 0.1
-      }]
-    },
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: 'Balance Over Time',
-          font: { size: 18 },
-        }
-      },
-      scales: {
-        x: {
-          type: 'category',
-          title: { display: true, text: 'Date', font: { size: 14 } }
-        },
-        y: {
-          title: { display: true, text: 'Balance ($)', font: { size: 14 } }
-        }
-      },
-      devicePixelRatio: 3
-    }
-  });
-}
+let income, expense, transactions;
 
 const handleFilterChange = (event) => {
-  const selectedValue = event.target.value;
-  let filteredTransactions;
-
   const now = new Date();
-  const startDate = new Date();
+  let startDate = new Date();
   const endDate = new Date();
+  const selectedValue = event.target.value;
 
   switch (selectedValue) {
-    case "all":
-      filteredTransactions = transactions;
-      break;
-
     case "week":
       startDate.setUTCDate(now.getUTCDate() - 7);
-      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
       break;
-
     case "month":
       startDate.setMonth(now.getMonth() - 1);
-      startDate.setDate(now.getDate());
-      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
       break;
-
     case "year":
-      startDate.setFullYear(now.getFullYear() - 1)
-      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+      startDate.setFullYear(now.getFullYear() - 1);
       break;
-
     default:
-      filteredTransactions = transactions;
-      break;
+      listTransactions(transactions);
+      return;
   }
 
+  const filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
   listTransactions(filteredTransactions);
 };
 
 const handleHistoryChange = (event) => {
   const selectedValue = event.target.value;
   let filteredTransactions;
-
   const now = new Date();
   const startDate = new Date();
-  const endDate = new Date();
+  const endDate = now;
 
   switch (selectedValue) {
-    case "all":
-      filteredTransactions = transactions;
-      break;
-
     case "week":
       startDate.setUTCDate(now.getUTCDate() - 7);
-      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
       break;
-
     case "month":
       startDate.setMonth(now.getMonth() - 1);
-      startDate.setDate(now.getDate());
-      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
       break;
-
     case "year":
-      startDate.setFullYear(now.getFullYear() - 1)
-      filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+      startDate.setFullYear(now.getFullYear() - 1);
       break;
-
     default:
       filteredTransactions = transactions;
       break;
   }
-  const summary = process.genBalanceOverTime(filteredTransactions)
-  balanceChart = plotBalance(balanceSummary, summary);
+
+  if (selectedValue !== "all") {
+    filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+  }
+
+  const balanceOverTimeData = process.genBalanceOverTime(filteredTransactions);
+  plot.plotBalance(chart2, balanceOverTimeData);
 };
 
 const handleProjectedChange = (event) => {
@@ -186,21 +73,17 @@ const handleProjectedChange = (event) => {
 
   switch (selectedValue) {
     case "month":
-      projectedBalanceData = process.genProjectedBalance(income, expense, 0, 2)
-      period = 2
+      period = 2;
       break;
-
     case "year":
-      projectedBalanceData = process.genProjectedBalance(income, expense, 0, 13)
-      period = 13
+      period = 13;
       break;
-
     default:
-      projectedBalanceData = process.genProjectedBalance(income, expense, 0, 61);
-      period = 61
-      break;
+      period = 61;
   }
-  projectChart = plotProjection(projectionChart, projectedBalanceData, period);
+
+  projectedBalanceData = process.genProjectedBalance(income, expense, 0, period);
+  plot.plotProjection(chart1, projectedBalanceData, period);
 };
 
 const listTransactions = (transactions) => {
@@ -209,83 +92,112 @@ const listTransactions = (transactions) => {
 
   transactions.forEach(transaction => {
     const row = document.createElement("tr");
-    const dateCell = document.createElement("td");
-
-    dateCell.textContent = new Date(transaction.date.seconds * 1000)
-      .toISOString().split('T')[0];
-    row.appendChild(dateCell);
-
-    const amountCell = document.createElement("td");
-
-    amountCell.textContent = transaction.amount;
-    amountCell.style.color = transaction.category === "income" ? "red" : "blue";
-    row.appendChild(amountCell);
-
+    row.innerHTML = `
+      <td>${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
+      <td style="color: ${transaction.category === "income" ? "red" : "blue"}">${transaction.amount}</td>`;
     tableBody.appendChild(row);
   });
 };
 
-const listIncome = (income) => {
-  const tableBody = document.querySelector("#incomeTable tbody");
+const listItems = (items, tableId, color) => {
+  const tableBody = document.querySelector(`#${tableId} tbody`);
   tableBody.innerHTML = "";
 
-  income.forEach(data => {
+  items.forEach(data => {
     const row = document.createElement("tr");
-    const dateCell = document.createElement("td");
-
-    dateCell.textContent = data.period;
-    row.appendChild(dateCell);
-
-    const amountCell = document.createElement("td");
-
-    amountCell.textContent = data.amount;
-    amountCell.style.color = "red";
-    row.appendChild(amountCell);
-
+    row.innerHTML = `<td>${data.period}</td><td style="color: ${color}">${data.amount}</td>`;
     tableBody.appendChild(row);
   });
 };
 
-const listExpense = (expense) => {
-  const tableBody = document.querySelector("#expenseTable tbody");
-  tableBody.innerHTML = "";
+const initialize = async () => {
+  try {
+    income = process.sortIncome(await ref.access(uid, 'income'));
+    expense = await ref.access(uid, 'expense');
+    transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
 
-  expense.forEach(data => {
-    const row = document.createElement("tr");
-    const dateCell = document.createElement("td");
+    listTransactions(transactions);
+    listItems(income, 'incomeTable', 'red');
+    listItems(expense, 'expenseTable', 'blue');
 
-    dateCell.textContent = data.period;
-    row.appendChild(dateCell);
-
-    const amountCell = document.createElement("td");
-
-    amountCell.textContent = data.amount;
-    amountCell.style.color = "blue";
-    row.appendChild(amountCell);
-
-    tableBody.appendChild(row);
-  });
+    document.getElementById("selectRangeHistory").addEventListener("change", handleHistoryChange);
+    document.getElementById("selectRangeProjected").addEventListener("change", handleProjectedChange);
+    document.getElementById("filterSelect").addEventListener("change", handleFilterChange);
+    document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
+  } catch (error) {
+    console.error("Error initializing data:", error);
+  }
 };
 
-const initialize = () => {
-  listTransactions(transactions);
-  listIncome(income)
-  listExpense(expense)
-  document.getElementById("selectRangeHistory").addEventListener("change", handleHistoryChange);
-  document.getElementById("selectRangeProjected").addEventListener("change", handleProjectedChange);
-  document.getElementById("filterSelect").addEventListener("change", handleFilterChange);
-  document.getElementById("signOutBtn").onclick = () => auth.signOut().then(window.location.href = '/index.html')
-}
+const chart1 = new Chart(projectionChart, {
+  type: 'line',
+  data: {},
+  options: {
+    plugins: {
+      title: {
+        display: true,
+        text: 'Balance Projected Over Time',
+        font: { size: 18 }
+      }
+    },
+    scales: {
+      x: {
+        type: 'category',
+        title: { display: true, text: 'Month passed', font: { size: 14 } }
+      },
+      y: {
+        title: { display: true, text: 'Balance ($)', font: { size: 14 } }
+      }
+    },
+    devicePixelRatio: 2
+  }
+});
 
+const chart2 = new Chart(balanceSummary, {
+  type: 'line',
+  data: {},
+  options: {
+    plugins: {
+      title: {
+        display: true,
+        text: 'Balance Over Time',
+        font: { size: 18 }
+      }
+    },
+    scales: {
+      x: {
+        type: 'category',
+        title: { display: true, text: 'Date', font: { size: 14 } }
+      },
+      y: {
+        title: { display: true, text: 'Balance ($)', font: { size: 14 } }
+      }
+    },
+    devicePixelRatio: 2
+  }
+});
 
-let expense = await ref.access(uid, 'expense')
-let income = process.sortIncome(await ref.access(uid, 'income'))
-let transactions = process.sortTransactions(await ref.access(uid, 'transaction'))
+const test = async () => {
+  await ref.addExpense(100, 2, uid);
+  await ref.addIncome(50, 1, uid);
+  await ref.addIncome(150, 4, uid);
+  await ref.addIncome(1500, 12, uid);
+  await ref.addTransaction(22, new Date(), "income", uid);
 
-const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 60)
-const balanceOverTimeData = process.genBalanceOverTime(transactions);
+  for (let i = 1; i < 12; i++) {
+    for (let j = 1; j < 28; j++) {
+      await ref.addTransaction((i * j + 120) / 2, new Date(2024, i, j), "expense", uid);
+      if ((j + i) % 12 === 0) {
+        await ref.addTransaction(i * j * 1000, new Date(2024, i, j), "income", uid);
+      }
+    }
+  }
+};
 
-projectChart = plotProjection(projectionChart, projectedBalanceData, 60)
-balanceChart = plotBalance(balanceSummary, balanceOverTimeData);
+initialize().then(() => {
+  const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 60);
+  const balanceOverTimeData = process.genBalanceOverTime(transactions);
 
-initialize()
+  plot.plotProjection(chart1, projectedBalanceData, 60);
+  plot.plotBalance(chart2, balanceOverTimeData);
+});
