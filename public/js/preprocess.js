@@ -3,7 +3,7 @@ export const genSummary = (range, transaction) => {
     let income = 0
     let expense = 0
     for (let i = 0; i < transaction.length; i++) {
-        if (transaction[i].category == "income") {
+        if (transaction[i].type == "income") {
             income += transaction[i].amount
         }
         else {
@@ -34,7 +34,7 @@ export const genBalanceOverTime = (transactions) => {
             dailyTotal = 0;
         }
 
-        dailyTotal += transaction.category === "income" ? transaction.amount : -transaction.amount;
+        dailyTotal += transaction.type === "income" ? transaction.amount : -transaction.amount;
 
         if (i === transactions.length - 1 || transactions[i + 1].date !== currentDate) {
             balance += dailyTotal;
@@ -87,3 +87,39 @@ export const sortIncome = (income) => {
     const sortedTransactions = income.sort((a, b) => a.amount - b.amount);
     return sortedTransactions
 }
+
+export const searchTransactions = (transactions, searchValue) => {
+    // Convert search value to lowercase for case-insensitive matching
+    searchValue = searchValue.toLowerCase();
+
+    return transactions.filter(transaction => {
+        const dateStr = new Date(transaction.date.seconds * 1000).toISOString().split('T')[0];
+        return (
+            transaction.category.toLowerCase().includes(searchValue) ||
+            String(transaction.amount).includes(searchValue) ||
+            dateStr.includes(searchValue)
+        );
+    });
+};
+
+export const applyFilterTransactions = (transactions, selectedRange) => {
+    const now = new Date();
+    let startDate = new Date();
+    const endDate = now;
+
+    switch (selectedRange) {
+        case "week":
+            startDate.setUTCDate(now.getUTCDate() - 7);
+            break;
+        case "month":
+            startDate.setMonth(now.getMonth() - 1);
+            break;
+        case "year":
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+        default:
+            return transactions;
+    }
+
+    return filterTransactions(transactions, startDate, endDate);
+};

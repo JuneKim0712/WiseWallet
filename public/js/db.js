@@ -12,46 +12,52 @@ export const access = (uid, collec) => {
 };
 
 
-export const addExpense = (amount, period, uid) => {
+export const addExpense = (amount, category, period, uid) => {
     db.collection('account').doc(`${uid}`).collection('expense').add({
         amount: amount,
+        category: category,
         period: period
     })
 }
 
-export const addIncome = (amount, period, uid) => {
+export const addIncome = (amount, category, period, uid) => {
     db.collection('account').doc(`${uid}`).collection('income').add({
         amount: amount,
+        category: category,
         period: period
     })
 }
 
-export const addTransaction = (amount, date, category, uid) => {
+export const addTransaction = (amount, category, date, type, uid) => {
     db.collection('account').doc(`${uid}`).collection('transaction').add({
         amount: amount,
+        category: category,
         date: date,
-        category: category
+        type: type
     })
 }
 
-export const updateTransaction = (amount, date, category, docId, uid) => {
+export const updateTransaction = (amount, category, date, type, docId, uid) => {
     db.collection('account').doc(`${uid}`).collection('transaction').doc(`${docId}`).set({
         amount: amount,
+        category: category,
         date: date,
-        category: category
+        type: type
     })
 }
 
-export const updateExpense = (amount, period, docId, uid) => {
+export const updateExpense = (amount, category, period, docId, uid) => {
     db.collection('account').doc(`${uid}`).collection('expense').doc(`${docId}`).set({
         amount: amount,
+        category: category,
         period: period
     })
 }
 
-export const updateIncome = (amount, period, docId, uid) => {
+export const updateIncome = (amount, category, period, docId, uid) => {
     db.collection('account').doc(`${uid}`).collection('income').doc(`${docId}`).set({
         amount: amount,
+        category: category,
         period: period
     })
 }
