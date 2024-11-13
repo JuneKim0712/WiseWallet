@@ -4,10 +4,18 @@ import * as plot from "./plot.js"
 
 const db = firebase.firestore();
 const auth = firebase.auth();
+let uid;
 
 const projectionChart = document.getElementById('projectedBalance');
 const balanceSummary = document.getElementById('balanceSummary');
-const uid = 12;
+
+
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    uid = user.uid;
+  } else {
+  }
+});
 
 const incomeCategories = [
   "Salary",
@@ -35,7 +43,6 @@ const expenseCategories = [
   "Miscellaneous"
 ];
 
-// Transaction categories (combining income and expense categories)
 const transactionCategories = [
   "Salary",
   "Freelance/Contract Work",
@@ -61,16 +68,6 @@ const transactionCategories = [
 
 
 let income, expense, transactions;
-
-const applyFilters = () => {
-  const searchValue = document.getElementById("searchInput").value;
-  const selectedRange = document.getElementById("filterSelect").value;
-
-  let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
-  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue);
-
-  listTransactions(filteredTransactions);
-};
 
 const handleHistoryChange = async (event) => {
   let transaction = transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
@@ -124,11 +121,16 @@ const handleProjectedChange = async (event) => {
   plot.plotProjection(projectCharts, projectedBalanceData, period);
 };
 
-const listTransactions = (transactions) => {
+const listTransactions = () => {
   const tableBody = document.querySelector("#transactionTable tbody");
+  const searchValue = document.getElementById("searchInput").value;
+  const selectedRange = document.getElementById("filterSelect").value;
   tableBody.innerHTML = "";
 
-  transactions.forEach(transaction => {
+  let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
+  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue);
+
+  filteredTransactions.forEach(transaction => {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
@@ -151,26 +153,18 @@ const listItems = (items, tableId, color) => {
   });
 };
 
-const sortOrder = {
-  date: true,
-  amount: true,
-  category: true
-};
-
 const sortTransactions = (transactions, key, order) => {
   return transactions.sort((a, b) => {
     let aValue, bValue;
 
     if (key === "date") {
-      // Sorting by date
       aValue = a.date.seconds;
       bValue = b.date.seconds;
     } else if (key === "amount") {
-      // Sorting by amount (income/expenses)
       aValue = a.type === "income" ? a.amount : -a.amount;
       bValue = b.type === "income" ? b.amount : -b.amount;
     } else if (key === "category") {
-      aValue = a.category.toLowerCase(); 
+      aValue = a.category.toLowerCase();
       bValue = b.category.toLowerCase();
       return order ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
     }
@@ -207,6 +201,7 @@ const addSortingHandlers = () => {
       header.innerHTML = `${key.charAt(0).toUpperCase() + key.slice(1)} ${indicator}`;
 
       const sortedTransactions = sortTransactions(transactions, key, newSortDirection === 'asc');
+
       listTransactions(sortedTransactions);
     });
   });
@@ -215,20 +210,23 @@ const addSortingHandlers = () => {
 const initialize = async () => {
   try {
     income = process.sortIncome(await ref.access(uid, 'income'));
-    expense = await ref.access(uid, 'expense');
+    income = process.sortIncome(await ref.access(uid, 'income'));
+    expense = process.sortIncome(await ref.access(uid, 'expense')).reverse();
     transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+    transactions = sortTransactions(transactions, "date", true)
 
     listTransactions(transactions);
     listItems(income, 'incomeTable', 'red');
     listItems(expense, 'expenseTable', 'blue');
 
-    document.getElementById("searchInput").addEventListener("input", applyFilters);
+    document.getElementById("searchInput").addEventListener("input", listTransactions);
     document.getElementById("selectRangeHistory").addEventListener("change", handleHistoryChange);
     document.getElementById("selectRangeProjected").addEventListener("change", handleProjectedChange);
-    document.getElementById("filterSelect").addEventListener("change", applyFilters);
+    document.getElementById("filterSelect").addEventListener("change", listTransactions);
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
+    //test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
@@ -282,8 +280,16 @@ const balanceCharts = new Chart(balanceSummary, {
   }
 });
 
+initialize().then(() => {
+  const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 60);
+  const balanceOverTimeData = process.genBalanceOverTime(transactions);
+
+  plot.plotProjection(projectCharts, projectedBalanceData, 60);
+  plot.plotBalance(balanceCharts, balanceOverTimeData);
+});
+
 const test = async () => {
-  
+
   await ref.addExpense(100, expenseCategories[0], 2, uid);
   await ref.addIncome(50, incomeCategories[1], 1, uid);
   await ref.addIncome(150, incomeCategories[2], 4, uid);
@@ -292,18 +298,10 @@ const test = async () => {
 
   for (let i = 1; i < 12; i++) {
     for (let j = 1; j < 28; j++) {
-      await ref.addTransaction((i * j + 120) / 2, transactionCategories[i%5], new Date(2024, i, j), "expense", uid);
+      await ref.addTransaction((i * j + 120) / 2, transactionCategories[i % 5], new Date(2024, i, j), "expense", uid);
       if ((j + i) % 12 === 0) {
-        await ref.addTransaction(i * j * 1000, transactionCategories[i%3], new Date(2024, i, j),"income", uid);
+        await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2024, i, j), "income", uid);
       }
     }
   }
 };
-
-initialize().then(() => {
-  const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 60);
-  const balanceOverTimeData = process.genBalanceOverTime(transactions);
-
-  plot.plotProjection(projectCharts, projectedBalanceData, 60);
-  plot.plotBalance(balanceCharts, balanceOverTimeData);
-});
