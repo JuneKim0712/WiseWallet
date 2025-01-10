@@ -6,7 +6,6 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 let uid;
 
-const projectionChart = document.getElementById('projectedBalance');
 const balanceSummary = document.getElementById('balanceSummary');
 
 
@@ -100,26 +99,6 @@ const handleHistoryChange = async (event) => {
   plot.plotBalance(balanceCharts, balanceOverTimeData);
 };
 
-const handleProjectedChange = async (event) => {
-  let transactions = process.sortTransactions(await ref.access(uid, 'transaction'))
-  const selectedValue = event.target.value;
-  let period;
-  let projectedBalanceData;
-
-  switch (selectedValue) {
-    case "month":
-      period = 2;
-      break;
-    case "year":
-      period = 13;
-      break;
-    default:
-      period = 61;
-  }
-
-  projectedBalanceData = process.genProjectedBalance(income, expense, 0, period);
-  plot.plotProjection(projectCharts, projectedBalanceData, period);
-};
 
 const listTransactions = () => {
   const tableBody = document.querySelector("#transactionTable tbody");
@@ -262,40 +241,16 @@ const initialize = async () => {
 
     document.getElementById("searchInput").addEventListener("input", listTransactions);
     document.getElementById("selectRangeHistory").addEventListener("change", handleHistoryChange);
-    document.getElementById("selectRangeProjected").addEventListener("change", handleProjectedChange);
     document.getElementById("filterSelect").addEventListener("change", listTransactions);
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
-    //test()
+    test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
 };
 
-const projectCharts = new Chart(projectionChart, {
-  type: 'line',
-  data: {},
-  options: {
-    plugins: {
-      title: {
-        display: true,
-        text: 'Balance Projected Over Time',
-        font: { size: 18 }
-      }
-    },
-    scales: {
-      x: {
-        type: 'category',
-        title: { display: true, text: 'Month passed', font: { size: 14 } }
-      },
-      y: {
-        title: { display: true, text: 'Balance ($)', font: { size: 14 } }
-      }
-    },
-    devicePixelRatio: 2
-  }
-});
 
 const donutChartCanvas = document.getElementById('transactionDonutChart');
 const donutChart = new Chart(donutChartCanvas, {
@@ -341,11 +296,9 @@ const balanceCharts = new Chart(balanceSummary, {
 });
 
 initialize().then(() => {
-  const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 60);
   const balanceOverTimeData = process.genBalanceOverTime(transactions);
 
   plot.plotDonut(donutChart, transactions);
-  plot.plotProjection(projectCharts, projectedBalanceData, 60);
   plot.plotBalance(balanceCharts, balanceOverTimeData);
 });
 
