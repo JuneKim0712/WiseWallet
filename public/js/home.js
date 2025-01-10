@@ -45,7 +45,7 @@ const expenseCategories = [
 
 const transactionCategories = [
   "Salary",
-  "Freelance/Contract Work",
+  "Freelance/Contract",
   "Investments",
   "Gifts",
   "Rental Income",
@@ -130,13 +130,32 @@ const listTransactions = () => {
   let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
   filteredTransactions = process.searchTransactions(filteredTransactions, searchValue);
 
-  filteredTransactions.forEach(transaction => {
+  filteredTransactions.forEach((transaction, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
       <td style="color: ${transaction.type === "income" ? "red" : "blue"}">${transaction.amount}</td>
-      <td>${transaction.category}</td>`;
+      <td>${transaction.category}</td>
+      <td>
+      <button class="edit-btn">edit</button>
+      <button class="delete-btn" data-id="${transaction.id}">Delete</button>
+      </td>
+    `;
     tableBody.appendChild(row);
+  });
+
+  // Add event listeners to delete buttons
+  document.querySelectorAll(".delete-btn").forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      const transactionId = event.target.dataset.id;
+      try {
+        await ref.deleteDoc("transaction", transactionId, uid);
+        transactions = transactions.filter((t) => t.id !== transactionId);  
+        listTransactions();
+      } catch (error) {
+        console.error("Error deleting transaction:", error);
+      }
+    });
   });
 };
 
@@ -144,14 +163,36 @@ const listItems = (items, tableId, color) => {
   const tableBody = document.querySelector(`#${tableId} tbody`);
   tableBody.innerHTML = "";
 
-  items.forEach(data => {
+  items.forEach((data, index) => {
     const row = document.createElement("tr");
-    row.innerHTML = `<td>${data.period}</td>
-    <td style="color: ${color}">${data.amount}</td>
-    <td>${data.category}</td>`;
+    row.innerHTML = `
+      <td>${data.period}</td>
+      <td style="color: ${color}">${data.amount}</td>
+      <td>${data.category}</td>
+      <td>
+      <button class=class="edit-btn2" data-id="${data.id}" data-table="${tableId}">edit</button>
+      <button class="delete-btn2" data-id="${data.id}" data-table="${tableId}">Delete</button></td>
+    `;
     tableBody.appendChild(row);
   });
+
+  document.querySelectorAll(".delete-btn2").forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      const itemId = event.target.dataset.id;
+      const tableType = event.target.dataset.table;
+
+      try {
+        const collection = tableType === "incomeTable" ? "income" : "expense";
+        await ref.deleteDoc(collection, itemId, uid);
+        const updatedItems = items.filter((item) => item.id !== itemId); 
+        listItems(updatedItems, tableId, color); 
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
+    });
+  });
 };
+
 
 const sortTransactions = (transactions, key, order) => {
   return transactions.sort((a, b) => {
