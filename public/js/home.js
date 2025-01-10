@@ -297,6 +297,25 @@ const projectCharts = new Chart(projectionChart, {
   }
 });
 
+const donutChartCanvas = document.getElementById('transactionDonutChart');
+const donutChart = new Chart(donutChartCanvas, {
+    type: 'doughnut',
+    data: {},
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Transaction Categories',
+                font: { size: 18 }
+            },
+            legend: {
+                position: 'right'
+            }
+        }
+    }
+});
+
+
 const balanceCharts = new Chart(balanceSummary, {
   type: 'line',
   data: {},
@@ -325,6 +344,7 @@ initialize().then(() => {
   const projectedBalanceData = process.genProjectedBalance(income, expense, 0, 60);
   const balanceOverTimeData = process.genBalanceOverTime(transactions);
 
+  plot.plotDonut(donutChart, transactions);
   plot.plotProjection(projectCharts, projectedBalanceData, 60);
   plot.plotBalance(balanceCharts, balanceOverTimeData);
 });
