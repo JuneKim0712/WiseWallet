@@ -47,28 +47,45 @@ export const plotDonut = (chart, data) => {
         }]
     };
 
-    chart.options.plugins.tooltip.callbacks = {
-        label: function (context) {
-            const amount = context.raw;
-            const percentage = ((amount / totalAmount) * 100).toFixed(2);
-            return `$${amount.toFixed(2)} (${percentage}%)`;
+    // Customizing Tooltip Font
+    chart.options.plugins.tooltip = {
+        callbacks: {
+            label: function (context) {
+                const amount = context.raw;
+                const percentage = ((amount / totalAmount) * 100).toFixed(2);
+                return `$${amount.toFixed(2)} (${percentage}%)`;
+            }
         }
     };
 
-    chart.options.plugins.legend.labels.generateLabels = function (chart) {
-        return chart.data.labels.map((label, index) => {
-            const amount = chart.data.datasets[0].data[index];
-            const percentage = ((amount / totalAmount) * 100).toFixed(2);
-            return {
-                text: `${label}: $${amount.toFixed(2)} (${percentage}%)`,
-                fillStyle: chart.data.datasets[0].backgroundColor[index],
-                strokeStyle: chart.data.datasets[0].backgroundColor[index],
-                hidden: chart.getDatasetMeta(0).data[index].hidden,
-                index: index
-            };
-        });
+    // Customizing Legend Font
+    chart.options.plugins.legend = {
+        position: 'right',       // Position the legend to the right
+        align: 'start',    
+        labels: {
+            font: {
+                size: 18,         // Font size for legend
+                family: 'Monserrat',  // Font family for legend
+                weight: 'normal', // Font weight for legend
+                color: '#444444'  // Font color for legend
+            }
+        },
+    };
+
+    // Customizing Doughnut (Arc) Label Font (using `chartjs-plugin-datalabels`)
+    chart.options.plugins.datalabels = {
+        color: '#fff',   // Font color for the labels inside the donut
+        font: {
+            size: 20,     // Font size for labels inside the donut
+            weight: 'bold', // Font weight for labels inside the donut
+            family: 'Arial' // Font family for labels inside the donut
+        },
+        formatter: (value) => {
+            return `$${value.toFixed(2)}`;  // Format the label text inside the donut
+        }
     };
 
     chart.update();
 };
+
 

@@ -260,7 +260,6 @@ const donutChart = new Chart(donutChartCanvas, {
         plugins: {
             title: {
                 display: true,
-                text: 'Transaction Categories',
                 font: { size: 18 }
             },
             legend: {
