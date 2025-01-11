@@ -67,7 +67,7 @@ export const plotDonut = (chart, data) => {
                 size: 18,         // Font size for legend
                 family: 'Monserrat',  // Font family for legend
                 weight: 'normal', // Font weight for legend
-                color: '#444444'  // Font color for legend
+                color: '#000000'  // Font color for legend
             }
         },
     };

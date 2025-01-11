@@ -24,7 +24,7 @@ body {
 .container {
   display: flex;
   align-items: center; /* Vertically center the items */
-  justify-content: center; /* Align items to the left */
+  justify-content: center; /* Horizontally center the items */
   gap: 20px; /* Space between the donut chart and the input */
 }
 
@@ -35,9 +35,15 @@ body {
   margin-top: 4em;
 }
 
-#searchInput {
-  flex: 0 1 auto; /* Allows the input to take as much width as needed */
-  width: 200px;   /* Set the width for the input */
+#searchDiv {
+  width: 400px; 
+  align-items: center;
+  justify-content: center;  /* Set the width for the input */
+}
+
+.center-block {
+  margin: auto;
+  display: block;
 }
 
 /* june made this, maybe delete */
