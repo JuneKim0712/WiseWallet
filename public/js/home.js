@@ -211,7 +211,7 @@ const initialize = async () => {
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
-    test()
+    //test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
@@ -221,18 +221,7 @@ const initialize = async () => {
 const donutChartCanvas = document.getElementById('transactionDonutChart');
 const donutChart = new Chart(donutChartCanvas, {
     type: 'doughnut',
-    data: {},
-    options: {
-        plugins: {
-            title: {
-                display: true,
-                font: { size: 18 }
-            },
-            legend: {
-                position: 'right'
-            }
-        }
-    }
+    data: {}
 });
 
 
