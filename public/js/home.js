@@ -7,6 +7,7 @@ const auth = firebase.auth();
 let uid;
 
 const balanceSummary = document.getElementById('balanceSummary');
+const barSummary = document.getElementById("barSummary")
 
 
 firebase.auth().onAuthStateChanged((user) => {
@@ -212,11 +213,15 @@ const initialize = async () => {
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
-    test()
+    //test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
 };
+
+
+
+
 
 const balanceCharts = new Chart(balanceSummary, {
   type: 'line',
@@ -242,9 +247,17 @@ const balanceCharts = new Chart(balanceSummary, {
   }
 });
 
+const barCharts = new Chart(barSummary, {
+  type: 'bar',
+  data: {},
+  options: {
+  }
+});
+
 initialize().then(() => {
   const balanceOverTimeData = process.genBalanceOverTime(transactions);
   plot.plotBalance(balanceCharts, balanceOverTimeData);
+  plot.plot(barCharts, transactions);
 });
 
 const test = async () => {

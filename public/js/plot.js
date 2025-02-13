@@ -79,96 +79,63 @@ export const plotBalance = (chart, data) => {
 
 
 export const plot = (chart, data) => {
-    // Group by category and calculate total amounts
-    const categories = [...new Set(data.map(item => item.category))];
-    const categoryData = categories.map(category => ({
-        category,
-        amount: data
-            .filter(item => item.category === category)
-            .reduce((sum, item) => sum + item.amount, 0),
-    }));
+    // Aggregate data by category
+    const categoryData = [...new Set(data.map(item => item.category))]
+        .map(category => ({
+            category,
+            amount: data.filter(item => item.category === category)
+                .reduce((sum, item) => sum + item.amount, 0)
+        }))
+        .sort((a, b) => b.amount - a.amount);
 
-    // Sort data by amount in descending order
-    categoryData.sort((a, b) => b.amount - a.amount);
-
-    const sortedCategories = categoryData.map(item => item.category);
-    const sortedAmounts = categoryData.map(item => item.amount);
-    const totalAmount = sortedAmounts.reduce((sum, amount) => sum + amount, 0);
-
-    // Modern gradient colors (based on sorted order)
-    const gradientColors = sortedCategories.map((_, index) =>
-        `hsl(${index * 40}, 70%, 55%)`
-    );
+    const labels = categoryData.map(item => item.category);
+    const amounts = categoryData.map(item => item.amount);
+    const totalAmount = amounts.reduce((sum, amount) => sum + amount, 0);
+    const colors = labels.map((_, i) => `hsl(${i * 40}, 70%, 55%)`);
 
     chart.data = {
-        labels: sortedCategories,
+        labels,
         datasets: [{
-            data: sortedAmounts,
-            backgroundColor: gradientColors,
-            hoverOffset: 8, // Larger hover effect
-            borderWidth: 1.5, // Remove borders for a clean look
+            data: amounts,
+            backgroundColor: colors,
+            borderRadius: 5, // Round edges of bars
+            borderWidth: 0,
         }]
     };
 
-    // Customizing Tooltip to show category, amount, and percentage
-    chart.options.plugins.tooltip = {
-        callbacks: {
-            label: function (context) {
-                const category = context.label;
-                const amount = context.raw;
-                const percentage = ((amount / totalAmount) * 100).toFixed(1);
-                return `${category}: $${amount.toFixed(2)} (${percentage}%)`;
+    chart.options = {
+        interaction: {
+            mode: 'nearest',
+            intersect: false // Ensures tooltips appear even when not directly over a point
+        },
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        aspectRatio: 2, // Make it take half the space of the canvas
+        scales: {
+            x: {
+                stacked: true,
+                ticks: { color: '#000000' },
+                grid: { display: false }
+            },
+            y: {
+                position: 'right',
+                stacked: true,
+                ticks: { color: '#000000' },
+                grid: { display: false }
             }
         },
-        backgroundColor: '#000',
-        titleFont: { size: 14, family: 'Arial' },
-        bodyFont: { size: 12, family: 'Arial' },
-        borderWidth: 1,
-        borderColor: '#ddd',
-    };
-
-    // Customizing Legend to display percentages and set legend text color to white
-    chart.options.plugins.legend = {
-        position: 'right',
-        align: 'start',
-        labels: {
-            generateLabels: function (chart) {
-                const data = chart.data;
-                const total = data.datasets[0].data.reduce((sum, val) => sum + val, 0);
-                return data.labels.map((label, i) => {
-                    const value = data.datasets[0].data[i];
-                    const percentage = ((value / total) * 100).toFixed(1);
-                    return {
-                        text: `${label}: ${percentage}%`,
-                        fillStyle: data.datasets[0].backgroundColor[i],
-                        strokeStyle: data.datasets[0].backgroundColor[i],
-                        hidden: !chart.isDatasetVisible(0),
-                    };
-                });
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: ({ raw }) => `$${raw.toFixed(2)} (${((raw / totalAmount) * 100).toFixed(1)}%)`
+                },
+                backgroundColor: '#000',
+                titleFont: { size: 14, family: 'Arial' },
+                bodyFont: { size: 12, family: 'Arial' },
             },
-            font: {
-                size: 14,
-                family: 'Arial',
-                weight: 'normal',
-            },
-            padding: 0,
-        },
-        labels: {
-            color: '#ebebeb',  // Make the legend text white
-        },
-    };
-
-    // Modern Doughnut Chart Styling
-    chart.options.cutout = '0%'; // Increase cutout for a modern ring look
-    chart.options.plugins.title = {
-        display: true,
-        text: '',
-        font: {
-            size: 20,
-            weight: 'bold',
-            family: 'Arial',
-        },
-        color: '#ffffff',  // Set the title color to white (if displayed)
+            legend: { display: false }
+        }
     };
 
     chart.update();
