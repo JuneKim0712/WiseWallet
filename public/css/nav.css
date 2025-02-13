@@ -1,5 +1,5 @@
 #navigationBar {
-    background-color: #0f2426; /* Dark background for the navbar */
+    background-color: whitesmoke; /* Dark background for the navbar */
     width: 100%; /* Full width */
     position: fixed; /* Fix the navbar at the top */
     top: 0;
@@ -12,7 +12,6 @@
 }
 
 #navigationBar a {
-    color: white; /* Text color */
     text-decoration: none; /* Remove underline */
     font-size: 24px;
     padding: 10px 15px;

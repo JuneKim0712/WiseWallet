@@ -211,7 +211,7 @@ const initialize = async () => {
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
-    //test()
+    test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
