@@ -11,6 +11,7 @@
   <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
   <script defer src="/__/firebase/init.js?useEmulator=true"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <script type="module" defer src="js/home.js"></script>
   <script type="module" defer src="js/db.js"></script>
   <script type="module" defer src="js/preprocess.js"></script>
@@ -19,7 +20,8 @@
   <!-- font import -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
   <!--  -->
 </head>
 
@@ -30,21 +32,18 @@
     <a href="">Home</a>
     <a href="">Finances</a>
     <a href="transactions.html">Transactions</a>
-    <a href="">Summary</a> 
+    <a href="">Summary</a>
     <button id="signOutBtn"><a href="">Sign Out</a></button> <!-- Change these later maybe add dark mode-->
   </nav>
-
-  <div class="container">
-
-    <!-- Donut Chart -->
-    <div id="donutChart">
-    <canvas id="transactionDonutChart"></canvas>
-    </div>
-
-    <!-- Search Bar -->
-     <div id="searchDiv">
-      <input id="searchInput" class="center-block" placeholder="Search..." type="text">
-     </div>
+<br>
+<br>
+<br>
+<br>
+<div class="chart-container">
+  <div class="bar" id="chart"></div>
+</div>
+  <div id="searchDiv">
+    <input id="searchInput" class="center-block" placeholder="Search..." type="text">
   </div>
 
   <br>
@@ -69,7 +68,7 @@
 
   <br>
   <br>
-  
+
   <br>
   <br>
   <table id="transactionTable" border="1" cellpadding="8" cellspacing="0">
@@ -78,6 +77,7 @@
         <th align="left">Date</th>
         <th align="left">Amount</th>
         <th align="left">Category</th>
+        <th align="left">Action</th>
       </tr>
     </thead>
     <tbody>
