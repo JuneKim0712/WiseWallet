@@ -214,7 +214,7 @@ const initialize = async () => {
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
-    test()
+    //test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
@@ -258,7 +258,6 @@ const barCharts = new Chart(barSummary, {
 initialize().then(() => {
   const balanceOverTimeData = process.genBalanceOverTime(transactions);
   plot.plotBalance(balanceCharts, balanceOverTimeData);
-  plot.plot(barCharts, transactions);
 });
 
 const test = async () => {

@@ -20,69 +20,129 @@
   <!-- font import -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
 </head>
 
-  <body class="bg-grey-300">
-    <!-- Navigation Bar -->
-    <nav class="appearance-none h-16 fixed flex items-center justify-center relative text-sm sm:text-base bg-neutral-100 border-2 mt-3" id="navigationBar">
-      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" href="">Home</a>
-      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" href="">Finances</a>
-      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" href="transactions.html">Transactions</a>
-      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" href="">Summary</a> 
-      <button class="text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" id="signOutBtn"><a href="">Sign Out</a></button>
-    </nav>
-
-
-    <br class="mt-14">
-
-    <div class="w-1/2 flex items-start space-x-4">
-      <canvas class="flex-1" id="barSummary"></canvas>
-      <select class="p-3 border-1 border-black text-lg" id="filterSelect">
-        <option value="all">All Transactions</option>
-        <option value="year">Last Year</option>
-        <option value="month">Last Month</option>
-        <option value="week">Last Week</option>
-      </select>
-      <input id="searchInput" class="bg-transparent border-0 border-b-2 pl-3 pr-50 py-3 text-lg" placeholder="Search..." type="text">
+<body class="bg-grey-300">
+  <!-- Navigation Bar -->
+  <nav
+    class="appearance-none h-16 fixed flex items-center justify-center relative text-sm sm:text-base bg-neutral-100 border-2 mt-3"
+    id="navigationBar">
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="">Home</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="">Finances</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="transactions.html">Transactions</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="">Summary</a>
+    <button class="text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      id="signOutBtn"><a href="">Sign Out</a></button>
+  </nav>
+  <h1 class="font-bold text-4xl px-4 pt-2">Overview</h1>
+<div>
+  <div id="here" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 w-1/2 mr-auto">
+    <!-- Balance Card -->
+    <div class="rounded-xl shadow-md overflow-hidden">
+      <!-- Top Section -->
+      <div class="bg-purple-400 p-4">
+        <div class="text-white font-semibold text-lg flex items-center">
+          <span class="mr-2">💰</span> Balance
+        </div>
+      </div>
+      <!-- Bottom Section -->
+      <div class="bg-purple-100 p-6">
+        <div class="text-3xl font-bold text-gray-900">$1,655</div>
+        <div class="text-green-600 text-sm mt-1">+12% 📈</div>
+      </div>
     </div>
-    
-    
-
-    <select class="mt-14" id="selectRangeHistory">
+  
+    <!-- Income Card -->
+    <div class="rounded-xl shadow-md overflow-hidden">
+      <!-- Top Section -->
+      <div class="bg-purple-500 p-4">
+        <div class="text-white font-semibold text-lg flex items-center">
+          <span class="mr-2">📥</span> Income
+        </div>
+      </div>
+      <!-- Bottom Section -->
+      <div class="bg-purple-200 p-6">
+        <div class="text-3xl font-bold text-gray-900">$435</div>
+        <div class="text-green-600 text-sm mt-1">+4% 📈</div>
+      </div>
+    </div>
+  
+    <!-- Expenses Card -->
+    <div class="rounded-xl shadow-md overflow-hidden">
+      <!-- Top Section -->
+      <div class="bg-green-500 p-4">
+        <div class="text-white font-semibold text-lg flex items-center">
+          <span class="mr-2">📤</span> Expenses
+        </div>
+      </div>
+      <!-- Bottom Section -->
+      <div class="bg-green-200 p-6">
+        <div class="text-3xl font-bold text-gray-900">$842</div>
+        <div class="text-red-600 text-sm mt-1">-2% 📉</div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="w-1/2 flex items-start space-x-4">
+    <select class="p-3 border-1 border-black text-lg" id="filterSelect">
       <option value="all">All Transactions</option>
       <option value="year">Last Year</option>
       <option value="month">Last Month</option>
       <option value="week">Last Week</option>
     </select>
-    <br>
+    <input id="searchInput" class="bg-transparent border-0 border-b-2 pl-3 pr-50 py-3 text-lg" placeholder="Search..."
+      type="text">
+  </div>
+  </div>
 
-    <div>
-      <canvas id="balanceSummary"></canvas>
-    </div>
+  
 
-    <br>
-    <br>
-
-    <br>
-    <br>
-<!-- Transaction Table -->
-<div class="overflow-x-auto">
-  <table id="transactionTable" class="w-full border-collapse border border-gray-300 shadow-lg">
-    <thead class="bg-gray-100">
-      <tr>
-        <th class="text-left px-4 py-2 border border-gray-300">Date</th>
-        <th class="text-left px-4 py-2 border border-gray-300">Amount</th>
-        <th class="text-left px-4 py-2 border border-gray-300">Category</th>
-        <th class="text-left px-4 py-2 border border-gray-300">Action</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-300 bg-gray-50 text-sm">
-      <!-- Transactions will be listed here -->
-    </tbody>
-  </table>
-</div>
+  <br class="mt-14">
 
 
-  </body>
+
+  <select class="mt-14" id="selectRangeHistory">
+    <option value="all">All Transactions</option>
+    <option value="year">Last Year</option>
+    <option value="month">Last Month</option>
+    <option value="week">Last Week</option>
+  </select>
+  <br>
+
+  <div>
+    <canvas id="balanceSummary"></canvas>
+  </div>
+
+  <br>
+  <br>
+
+  <br>
+  <br>
+  <!-- Transaction Table -->
+  <div class="overflow-x-auto">
+    <table id="transactionTable" class="w-full border-collapse border border-gray-300 shadow-lg">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="text-left px-4 py-2 border border-gray-300">Date</th>
+          <th class="text-left px-4 py-2 border border-gray-300">Amount</th>
+          <th class="text-left px-4 py-2 border border-gray-300">Category</th>
+          <th class="text-left px-4 py-2 border border-gray-300">Action</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-300 bg-gray-50 text-sm">
+        <!-- Transactions will be listed here -->
+      </tbody>
+    </table>
+  </div>
+
+
+</body>
+
 </html>
