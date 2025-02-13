@@ -1,32 +1,8 @@
-#navigationBar {
-    background-color: whitesmoke; /* Dark background for the navbar */
-    width: 100%; /* Full width */
-    position: fixed; /* Fix the navbar at the top */
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Ensure the navbar stays on top */
-    display: flex;
-    justify-content: center; /* Centers the items horizontally */
-    align-items: center;
-    height: 60px; /* Height of the navbar */
-}
-
 #navigationBar a {
-    text-decoration: none; /* Remove underline */
-    font-size: 24px;
-    padding: 10px 15px;
-    margin: 0 55px; /* Space between nav items */
     transition: background-color 0.3s ease;
     font-family: "Montserrat", serif;
-    font-optical-sizing: auto;
-    font-weight: weight;
-    font-style: normal;
 }
 
-#navigationBar a:hover {
-    background-color: #143538;
-    border-radius: 12px; /* Make the corners rounded on hover */
-}
 
 #navigationBar button {
     border: none; /* Removes default border */

@@ -218,10 +218,6 @@ const initialize = async () => {
   }
 };
 
-
-
-
-
 const balanceCharts = new Chart(balanceSummary, {
   type: 'line',
   data: {},
