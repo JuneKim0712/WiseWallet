@@ -110,6 +110,7 @@ const listTransactions = () => {
   let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
   filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 10);
 
+  // Transactions will be listed here
   filteredTransactions.forEach((transaction, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `

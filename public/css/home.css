@@ -13,12 +13,7 @@
   background-color: black;
 }
 
-.container {
-  display: flex;
-  align-items: center; /* Vertically center the items */
-  justify-content: center; /* Horizontally center the items */
-  gap: 20px; /* Space between the donut chart and the input */
-}
+
 
 /* june made this, maybe delete */
 table {

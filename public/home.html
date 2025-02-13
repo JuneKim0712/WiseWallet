@@ -25,25 +25,30 @@
 
   <body class="bg-grey-300">
     <!-- Navigation Bar -->
-    <nav class="appearance-none h-16 fixed flex object-center justify-center relative text-sm sm:text-base bg-neutral-100 border-2" id="navigationBar">
-      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300" href="">Home</a>
-      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300" href="">Finances</a>
-      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300" href="transactions.html">Transactions</a>
-      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300" href="">Summary</a> 
-      <button id="signOutBtn"><a href="">Sign Out</a></button> <!-- Change these later maybe add dark mode-->
+    <nav class="appearance-none h-16 fixed flex items-center justify-center relative text-sm sm:text-base bg-neutral-100 border-2 mt-3" id="navigationBar">
+      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" href="">Home</a>
+      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" href="">Finances</a>
+      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" href="transactions.html">Transactions</a>
+      <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" href="">Summary</a> 
+      <button class="text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center" id="signOutBtn"><a href="">Sign Out</a></button>
     </nav>
+
 
     <br class="mt-14">
 
-      <!-- Search Bar -->
-      <div id="searchDiv">
-        <input id="searchInput" class="justify-center object-center bg-transparent" placeholder="Search..." type="text">
-      </div>
-
-    <br>
-    <div class="w-2/4">
-      <canvas id="barSummary"></canvas>
+    <div class="w-1/2 flex items-start space-x-4">
+      <canvas class="flex-1" id="barSummary"></canvas>
+      <select class="p-3 border-1 border-black text-lg" id="filterSelect">
+        <option value="all">All Transactions</option>
+        <option value="year">Last Year</option>
+        <option value="month">Last Month</option>
+        <option value="week">Last Week</option>
+      </select>
+      <input id="searchInput" class="bg-transparent border-0 border-b-2 pl-3 pr-50 py-3 text-lg" placeholder="Search..." type="text">
     </div>
+    
+    
+
     <select class="mt-14" id="selectRangeHistory">
       <option value="all">All Transactions</option>
       <option value="year">Last Year</option>
@@ -56,32 +61,28 @@
       <canvas id="balanceSummary"></canvas>
     </div>
 
-    <select id="filterSelect">
-      <option value="all">All Transactions</option>
-      <option value="year">Last Year</option>
-      <option value="month">Last Month</option>
-      <option value="week">Last Week</option>
-    </select>
-
     <br>
     <br>
 
     <br>
     <br>
-    <!-- Transaction Table -->
-    <table id="transactionTable" border="1" cellpadding="8" cellspacing="0">
-      <thead>
-        <tr>
-          <th align="left">Date</th>
-          <th align="left">Amount</th>
-          <th align="left">Category</th>
-          <th align="left">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Transactions will be listed here -->
-      </tbody>
-    </table>
+<!-- Transaction Table -->
+<div class="overflow-x-auto">
+  <table id="transactionTable" class="w-full border-collapse border border-gray-300 shadow-lg">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="text-left px-4 py-2 border border-gray-300">Date</th>
+        <th class="text-left px-4 py-2 border border-gray-300">Amount</th>
+        <th class="text-left px-4 py-2 border border-gray-300">Category</th>
+        <th class="text-left px-4 py-2 border border-gray-300">Action</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-300 bg-gray-50 text-sm">
+      <!-- Transactions will be listed here -->
+    </tbody>
+  </table>
+</div>
+
 
   </body>
 </html>
