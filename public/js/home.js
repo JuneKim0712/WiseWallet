@@ -108,7 +108,7 @@ const listTransactions = () => {
   tableBody.innerHTML = "";
 
   let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
-  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue);
+  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 10);
 
   filteredTransactions.forEach((transaction, index) => {
     const row = document.createElement("tr");
@@ -213,7 +213,7 @@ const initialize = async () => {
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
-    //test()
+    test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
