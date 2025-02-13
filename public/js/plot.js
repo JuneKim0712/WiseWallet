@@ -34,13 +34,19 @@ export const plotBalance = (chart, data) => {
             pointHoverRadius: 5,  // Slightly bigger points on hover
             pointBackgroundColor: 'rgba(75, 192, 192, 1)',  // Color of points
             pointBorderColor: 'rgba(75, 192, 192, 1)',  // Border color of points
-            pointBorderWidth: 1  // Border width of points
+            pointBorderWidth: 1 , // Border width of points
         }]
     };
 
     // Customize chart options to remove grid lines
     const chartOptions = {
         responsive: true,
+
+        interaction: {
+            mode: 'nearest',
+            intersect: false // Ensures tooltips appear even when not directly over a point
+        },
+
         plugins: {
             title: {
                 display: true,
@@ -72,7 +78,7 @@ export const plotBalance = (chart, data) => {
 };
 
 
-export const plotDonut = (chart, data) => {
+export const plot = (chart, data) => {
     // Group by category and calculate total amounts
     const categories = [...new Set(data.map(item => item.category))];
     const categoryData = categories.map(category => ({

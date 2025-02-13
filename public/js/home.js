@@ -162,7 +162,8 @@ const sortTransactions = (transactions, key, order) => {
 
 
 const addSortingHandlers = () => {
-  const headers = document.querySelectorAll("#transactionTable th");
+  let headers = Array.from(document.querySelectorAll("#transactionTable th"))
+    .filter(th => th.textContent.trim() !== "Action");
   headers.forEach((header, index) => {
     const key = header.textContent.toLowerCase();
     header.dataset.sortDirection = 'asc';
@@ -218,11 +219,7 @@ const initialize = async () => {
 };
 
 
-const donutChartCanvas = document.getElementById('transactionDonutChart');
-const donutChart = new Chart(donutChartCanvas, {
-    type: 'doughnut',
-    data: {}
-});
+
 
 
 const balanceCharts = new Chart(balanceSummary, {
@@ -251,8 +248,6 @@ const balanceCharts = new Chart(balanceSummary, {
 
 initialize().then(() => {
   const balanceOverTimeData = process.genBalanceOverTime(transactions);
-
-  plot.plotDonut(donutChart, transactions);
   plot.plotBalance(balanceCharts, balanceOverTimeData);
 });
 
