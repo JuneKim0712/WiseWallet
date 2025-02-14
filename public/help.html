@@ -29,23 +29,39 @@
     rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 flex flex-col items-center min-h-screen font-[Montserrat]">
+<body class="bg-gray-100">
   
-  <header class="text-3xl font-bold text-center mt-6 mb-4 border-b-1">Wise Wallet Support</header>
+  <!-- Navigation Bar -->
+  <nav
+    class="appearance-none h-16 fixed flex items-center justify-center relative text-sm sm:text-base bg-neutral-200 "
+    id="navigationBar">
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="home.html">Home</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="">Finances</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="transactions.html">Transactions</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="help.html">Support</a>
+    <button class="text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      id="signOutBtn"><a href="">Sign Out</a></button>
+  </nav>
+
+  <header class="text-3xl font-bold text-center mt-6 mb-4">Wise Wallet Support</header>
 
   <!--- FAQ -->
-  <section class="w-full px-6">
+  <section class="w-full px-6 flex flex-col items-center font-[Montserrat]">
     <div class="bg-white p-6 rounded-lg shadow-lg w-full">
         <h1 class="text-2xl font-bold text-gray-800 mb-4">Frequently Asked Questions (FAQ)</h1>
         
-        <div class="border-l-4 border-red-500 pl-4 mb-4">
-            <p class="text-red-600 text-xl font-bold">Q.</p>
+        <div class="border-l-4 border-[#F4AB19] pl-4 mb-4">
+            <p class="text-[#F4AB19] text-xl font-bold">Q.</p>
             <p class="text-lg font-semibold text-gray-800">How do I connect my bank account to the app?</p>
             <p class="text-gray-700 mt-2"><span class="font-bold text-gray-600">A.</span> Go to Settings > Linked Accounts, select your bank, log in securely, and grant permissions to sync transactions.</p>
         </div>
 
-        <div class="border-l-4 border-red-500 pl-4">
-            <p class="text-red-600 text-xl font-bold">Q.</p>
+        <div class="border-l-4 border-[#F4AB19] pl-4">
+            <p class="text-[#F4AB19] text-xl font-bold">Q.</p>
             <p class="text-lg font-semibold text-gray-800">How can I set and track a monthly budget?</p>
             <p class="text-gray-700 mt-2"><span class="font-bold text-gray-600">A.</span> Go to Budget, tap "Create Budget", set category limits, and the app will track your spending in real time..</p>
         </div>
@@ -54,8 +70,8 @@
 
   <br class="m-3">
 
-  <!-- Contact Forum-->
-  <section class="w-full px-6">
+  <!-- Contact Forum -->
+  <section class="w-full px-6 flex flex-col items-center font-[Montserrat]">
     <div class="bg-white p-6 rounded-lg shadow-lg w-full">
       <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-center">Contact Us</h2>
       <p class="mb-8 lg:mb-16 font-light text-center sm:text-xl">Got a technical issue? Want to send feedback about a
