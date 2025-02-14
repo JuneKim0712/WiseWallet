@@ -1,24 +1,6 @@
-#selectRangeHistory {
-  width: 100%;
-  padding: 12px 40px 12px 15px; /* Space for the text and the dropdown arrow */
-  border: 2px solid #4CAF50; /* Green border */
-  border-radius: 8px; /* Rounded corners */
-  font-size: 16px;
-  background-color: #fff; /* White background */
-  color: #333; /* Dark text */
-  transition: all 0.3s ease; /* Smooth transition for hover/focus effects */
-}
-
-#selectRangeHistory:hover {
-  background-color: black;
-}
-
-
-
 /* june made this, maybe delete */
 table {
     display: inline-block;
     margin-right: 20px;
     vertical-align: top;
   }
-
