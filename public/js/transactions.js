@@ -13,6 +13,56 @@ firebase.auth().onAuthStateChanged((user) => {
 });
 
 
+const incomeCategories = [
+  "Salary",
+  "Freelance/Contract Work",
+  "Investments",
+  "Gifts",
+  "Rental Income",
+  "Business Income",
+  "Others"
+];
+
+const expenseCategories = [
+  "Housing",
+  "Utilities",
+  "Groceries",
+  "Transportation",
+  "Insurance",
+  "Healthcare",
+  "Entertainment",
+  "Education",
+  "Personal Care",
+  "Clothing",
+  "Savings & Investments",
+  "Debt Repayment",
+  "Miscellaneous"
+];
+
+const transactionCategories = [
+  "Salary",
+  "Freelance/Contract",
+  "Investments",
+  "Gifts",
+  "Rental Income",
+  "Business Income",
+  "Others",
+  "Housing",
+  "Utilities",
+  "Groceries",
+  "Transportation",
+  "Insurance",
+  "Healthcare",
+  "Entertainment",
+  "Education",
+  "Personal Care",
+  "Clothing",
+  "Savings & Investments",
+  "Debt Repayment",
+  "Miscellaneous"
+];
+
+
 let income, expense, transactions;
 
 const listTransactions = () => {
@@ -22,8 +72,9 @@ const listTransactions = () => {
   tableBody.innerHTML = "";
 
   let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
-  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue);
+  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 15);
 
+  // Transactions will be listed here
   filteredTransactions.forEach((transaction, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -38,18 +89,39 @@ const listTransactions = () => {
     tableBody.appendChild(row);
   });
 
-  // Add event listeners to delete buttons
+  const modal = document.getElementById("deleteModal");
+  const cancelBtn = document.getElementById("cancelDelete");
+  const confirmBtn = document.getElementById("confirmDelete");
+  const closeBtn = document.getElementById("closeBtn");
+  let transactionIdToDelete;
+
   document.querySelectorAll(".delete-btn").forEach((button) => {
-    button.addEventListener("click", async (event) => {
-      const transactionId = event.target.dataset.id;
+    button.addEventListener("click", (event) => {
+      transactionIdToDelete = event.target.dataset.id;
+      modal.classList.remove("hidden");
+    });
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    transactionIdToDelete = null;
+  });
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    transactionIdToDelete = null;
+  });
+
+  confirmBtn.addEventListener("click", async () => {
+    if (transactionIdToDelete) {
       try {
-        await ref.deleteDoc("transaction", transactionId, uid);
-        transactions = transactions.filter((t) => t.id !== transactionId);  
+        await ref.deleteDoc("transaction", transactionIdToDelete, uid);
+        transactions = transactions.filter((t) => t.id !== transactionIdToDelete);
         listTransactions();
       } catch (error) {
         console.error("Error deleting transaction:", error);
       }
-    });
+      modal.classList.add("hidden");
+    }
   });
 };
 
@@ -57,35 +129,63 @@ const listItems = (items, tableId, color) => {
   const tableBody = document.querySelector(`#${tableId} tbody`);
   tableBody.innerHTML = "";
 
-  items.forEach((data, index) => {
+  items.forEach((data) => {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${data.period}</td>
       <td style="color: ${color}">${data.amount}</td>
       <td>${data.category}</td>
       <td>
-      <button class=class="edit-btn2" data-id="${data.id}" data-table="${tableId}">edit</button>
-      <button class="delete-btn2" data-id="${data.id}" data-table="${tableId}">Delete</button></td>
+        <button class="edit-btn2" data-id="${data.id}" data-table="${tableId}">Edit</button>
+        <button class="delete-btn2" data-id="${data.id}" data-table="${tableId}">Delete</button>
+      </td>
     `;
     tableBody.appendChild(row);
   });
 
-  document.querySelectorAll(".delete-btn2").forEach((button) => {
-    button.addEventListener("click", async (event) => {
-      const itemId = event.target.dataset.id;
-      const tableType = event.target.dataset.table;
+  // Modal elements
+  const modal = document.getElementById("deleteModal");
+  const cancelBtn = document.getElementById("cancelDelete");
+  const confirmBtn = document.getElementById("confirmDelete");
+  const closeBtn = document.getElementById("closeBtn");
+  let itemIdToDelete, tableTypeToDelete;
 
+  // Add event listeners for delete buttons
+  document.querySelectorAll(".delete-btn2").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      itemIdToDelete = event.target.dataset.id;
+      tableTypeToDelete = event.target.dataset.table;
+      modal.classList.remove("hidden");
+    });
+  });
+
+  // Cancel and close modal
+  const closeModal = () => {
+    modal.classList.add("hidden");
+    itemIdToDelete = null;
+    tableTypeToDelete = null;
+  };
+
+  cancelBtn.addEventListener("click", closeModal);
+  closeBtn.addEventListener("click", closeModal);
+
+  // Confirm delete action
+  confirmBtn.addEventListener("click", async () => {
+    if (itemIdToDelete) {
       try {
-        const collection = tableType === "incomeTable" ? "income" : "expense";
-        await ref.deleteDoc(collection, itemId, uid);
-        const updatedItems = items.filter((item) => item.id !== itemId); 
-        listItems(updatedItems, tableId, color); 
+        const collection = tableTypeToDelete === "incomeTable" ? "income" : "expense";
+        await ref.deleteDoc(collection, itemIdToDelete, uid);
+        const updatedItems = items.filter((item) => item.id !== itemIdToDelete);
+        listItems(updatedItems, tableId, color);
       } catch (error) {
         console.error("Error deleting item:", error);
       }
-    });
+      closeModal();
+    }
   });
 };
+
+
 
 
 const sortTransactions = (transactions, key, order) => {
@@ -161,7 +261,8 @@ const initialize = async () => {
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
-      } catch (error) {
+
+  } catch (error) {
     console.error("Error initializing data:", error);
   }
 };
