@@ -30,6 +30,34 @@
 </head>
 
 <body class="bg-grey-300">
+
+  <!-- modal -->
+  <div id="deleteModal" tabindex="-1" class="hidden fixed inset-0 flex items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-lg dark:bg-gray-800">
+        <button id="closeBtn" type="button" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white cursor-pointer">
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7L1 13"/>
+            </svg>
+        </button>
+        <div class="text-center">
+            <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+            <h3 class="mb-5 text-lg font-medium text-gray-700 dark:text-gray-300">Are you sure you want to delete?</h3>
+            <div class="flex justify-center gap-3">
+                <button id="confirmDelete" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-300 dark:focus:ring-red-800 cursor-pointer">
+                    Yes, delete
+                </button>
+                <button id="cancelDelete" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
   <!-- Navigation Bar -->
   <nav
     class="appearance-none h-16 fixed flex items-center justify-center relative text-sm sm:text-base bg-neutral-100 border-2 mt-3"
@@ -53,40 +81,49 @@
     <div id="here" class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-1/2 ml-4">
       <!-- Balance Card -->
       <div class="rounded-xl shadow-md overflow-hidden">
-        <div class="bg-purple-400 p-4">
-          <div class="text-white font-semibold text-lg flex items-center">
-            <span class="mr-2">💰</span> Balance
+        <div class="bg-[#d5c7f7] p-4">
+          <div class="text-black font-semibold text-lg flex items-center">
+            <svg class="w-6 h-6 text-gray-800 dark:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8H5m12 0a1 1 0 0 1 1 1v2.6M17 8l-4-4M5 8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.6M5 8l4-4 4 4m6 4h-4a2 2 0 1 0 0 4h4a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1Z"/>
+            </svg>
+            <div>&nbsp;&nbsp;</div>
+             Balance
           </div>
         </div>
-        <div class="bg-purple-100 p-6">
+        <div class="bg-[#e3d7f9] p-8">
           <div class="text-3xl font-bold text-gray-900">$1,655</div>
-          <div class="text-green-600 text-sm mt-1">+12% 📈</div>
         </div>
       </div>
   
       <!-- Income Card -->
       <div class="rounded-xl shadow-md overflow-hidden">
-        <div class="bg-purple-500 p-4">
-          <div class="text-white font-semibold text-lg flex items-center">
-            <span class="mr-2">📥</span> Income
+        <div class="bg-[#cfd8f7] p-4">
+          <div class="text-black font-semibold text-lg flex items-center">
+            <svg class="w-6 h-6 text-gray-800 dark:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4.5V19a1 1 0 0 0 1 1h15M7 14l4-4 4 4 5-5m0 0h-3.207M20 9v3.207"/>
+            </svg>
+            <div>&nbsp;&nbsp;</div>
+             Income
           </div>
         </div>
-        <div class="bg-purple-200 p-6">
+        <div class="bg-[#e0e6f9] p-8">
           <div class="text-3xl font-bold text-gray-900">$435</div>
-          <div class="text-green-600 text-sm mt-1">+4% 📈</div>
         </div>
       </div>
   
       <!-- Expenses Card -->
       <div class="rounded-xl shadow-md overflow-hidden">
-        <div class="bg-green-500 p-4">
-          <div class="text-white font-semibold text-lg flex items-center">
-            <span class="mr-2">📤</span> Expenses
+        <div class="bg-[#bce5c5] p-4">
+          <div class="text-black font-semibold text-lg flex items-center">
+            <svg class="w-6 h-6 text-gray-800 dark:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4.5V19a1 1 0 0 0 1 1h15M7 10l4 4 4-4 5 5m0 0h-3.207M20 15v-3.207"/>
+            </svg>
+            <div>&nbsp;&nbsp;</div>
+             Expenses
           </div>
         </div>
-        <div class="bg-green-200 p-6">
+        <div class="bg-[#d9f1e0] p-8">
           <div class="text-3xl font-bold text-gray-900">$842</div>
-          <div class="text-red-600 text-sm mt-1">-2% 📉</div>
         </div>
       </div>
     </div>
@@ -103,23 +140,8 @@
     </div>
   </div>
 
-  <br class="mt-14">
-
-  <select class="mt-14" id="selectRangeHistory">
-    <option value="all">All Transactions</option>
-    <option value="year">Last Year</option>
-    <option value="month">Last Month</option>
-    <option value="week">Last Week</option>
-  </select>
-
-  <div>
-    <canvas id="balanceSummary"></canvas>
-  </div>
-
-  <br>
-
-  <!-- Transaction Table -->
-  <div class="overflow-x-auto">
+   <!-- Transaction Table -->
+   <div class="overflow-x-auto">
     <table id="transactionTable" class="w-full border-collapse border border-gray-300 shadow-lg">
       <thead class="bg-gray-100">
         <tr>
@@ -134,6 +156,21 @@
       </tbody>
     </table>
   </div>
+
+  <br class="mt-14">
+
+  <select class="mt-14" id="selectRangeHistory">
+    <option value="all">All Transactions</option>
+    <option value="year">Last Year</option>
+    <option value="month">Last Month</option>
+    <option value="week">Last Week</option>
+  </select>
+
+  <div>
+    <canvas id="balanceSummary"></canvas>
+  </div>
+
+  <br>
 
 </body>
 

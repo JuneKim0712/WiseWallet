@@ -11,11 +11,12 @@
   <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
   <script defer src="/__/firebase/init.js?useEmulator=true"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <script type="module" defer src="js/transactions.js"></script>
   <script type="module" defer src="js/db.js"></script>
   <script type="module" defer src="js/preprocess.js"></script>
-  <link rel="stylesheet" href="css/home.css">
-  <link rel="stylesheet" href="css/nav.css">
+  <link defer rel="stylesheet" href="css/home.css">
+  <link defer rel="stylesheet" href="css/nav.css">
   <!-- font import -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,12 +26,19 @@
 
 <body>
 
-  <nav id="navigationBar">
-    <a href="home.html">Home</a>
-    <a href="">Finances</a>
-    <a href="">Transactions</a>
-    <a href="">Summary</a> 
-    <button id="signOutBtn"><a href="">Sign Out</a></button> <!-- Change these later maybe add dark mode-->
+  <nav
+    class="appearance-none h-16 fixed flex items-center justify-center relative text-sm sm:text-base bg-neutral-100 border-2 mt-3"
+    id="navigationBar">
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="">Home</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="">Finances</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="transactions.html">Transactions</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      href="">Summary</a>
+    <button class="text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+      id="signOutBtn"><a href="">Sign Out</a></button>
   </nav>
   <br>
   <br>

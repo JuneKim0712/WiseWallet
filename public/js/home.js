@@ -7,7 +7,7 @@ const auth = firebase.auth();
 let uid;
 
 const balanceSummary = document.getElementById('balanceSummary');
-const barSummary = document.getElementById("barSummary")
+
 
 
 firebase.auth().onAuthStateChanged((user) => {
@@ -108,7 +108,7 @@ const listTransactions = () => {
   tableBody.innerHTML = "";
 
   let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
-  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 10);
+  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 15);
 
   // Transactions will be listed here
   filteredTransactions.forEach((transaction, index) => {
@@ -125,18 +125,39 @@ const listTransactions = () => {
     tableBody.appendChild(row);
   });
 
-  // Add event listeners to delete buttons
+  const modal = document.getElementById("deleteModal");
+  const cancelBtn = document.getElementById("cancelDelete");
+  const confirmBtn = document.getElementById("confirmDelete");
+  const closeBtn = document.getElementById("closeBtn");
+  let transactionIdToDelete;
+
   document.querySelectorAll(".delete-btn").forEach((button) => {
-    button.addEventListener("click", async (event) => {
-      const transactionId = event.target.dataset.id;
+    button.addEventListener("click", (event) => {
+      transactionIdToDelete = event.target.dataset.id;
+      modal.classList.remove("hidden");
+    });
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    transactionIdToDelete = null;
+  });
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    transactionIdToDelete = null;
+  });
+
+  confirmBtn.addEventListener("click", async () => {
+    if (transactionIdToDelete) {
       try {
-        await ref.deleteDoc("transaction", transactionId, uid);
-        transactions = transactions.filter((t) => t.id !== transactionId);  
+        await ref.deleteDoc("transaction", transactionIdToDelete, uid);
+        transactions = transactions.filter((t) => t.id !== transactionIdToDelete);
         listTransactions();
       } catch (error) {
         console.error("Error deleting transaction:", error);
       }
-    });
+      modal.classList.add("hidden");
+    }
   });
 };
 
@@ -248,12 +269,7 @@ const balanceCharts = new Chart(balanceSummary, {
   }
 });
 
-const barCharts = new Chart(barSummary, {
-  type: 'bar',
-  data: {},
-  options: {
-  }
-});
+
 
 initialize().then(() => {
   const balanceOverTimeData = process.genBalanceOverTime(transactions);
