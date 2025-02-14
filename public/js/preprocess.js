@@ -88,6 +88,11 @@ export const sortIncome = (income) => {
     return sortedTransactions
 }
 
+export const sortExpense = (expense) => {
+    const sortedTransactions = expense.sort((a, b) => a.amount - b.amount);
+    return sortedTransactions
+}
+
 export const searchTransactions = (transactions, searchValue) => {
     // Convert search value to lowercase for case-insensitive matching
     searchValue = searchValue.toLowerCase();

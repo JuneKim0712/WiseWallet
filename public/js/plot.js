@@ -25,12 +25,12 @@ export const plotBalance = (chart, data) => {
         datasets: [{
             label: 'Balance',
             data: amounts,
-            borderColor: 'rgba(75, 192, 192, 1)',  // Line color
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Area under line
+            borderColor: 'rgb(91, 184, 125)',  // Line color
+            backgroundColor: 'rgba(75, 192, 108, 0.2)',  // Area under line
             fill: true,
             borderWidth: 2,
-            tension: 0,  // Slightly higher tension for a smoother curve
-            pointRadius: 0,  // Smaller individual data points
+            tension: 0.2,  // Slightly higher tension for a smoother curve
+            pointRadius: 4,  // Smaller individual data points
             pointHoverRadius: 5,  // Slightly bigger points on hover
             pointBackgroundColor: 'rgba(75, 192, 192, 1)',  // Color of points
             pointBorderColor: 'rgba(75, 192, 192, 1)',  // Border color of points
@@ -51,6 +51,7 @@ export const plotBalance = (chart, data) => {
             title: {
                 display: true,
                 text: 'Balance Over Time',  // Optional title
+                color: 'rgba(0, 0, 0)',
                 font: { size: 18 }
             },
             legend: {
@@ -59,13 +60,14 @@ export const plotBalance = (chart, data) => {
         },
         scales: {
             x: {
+                display: true,
                 grid: {
                     display: false  // Remove grid lines from the x-axis
                 }
             },
             y: {
                 grid: {
-                    display: true  // Remove grid lines from the y-axis
+                    display: false  // Remove grid lines from the y-axis
                 }
             }
         }

@@ -5,11 +5,9 @@ import * as plot from "./plot.js"
 const db = firebase.firestore();
 const auth = firebase.auth();
 let uid;
-let filterValue="all";
+let filterValue = "all";
 
 const balanceSummary = document.getElementById('balanceSummary');
-
-
 
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
@@ -68,10 +66,15 @@ const transactionCategories = [
 ];
 
 
-let income, expense, transactions;
+let transactions;
+
+// Pagination variables for Transaction Table
+let transactionCurrentPage = 1;
+const transactionItemsPerPage = 6; // You can adjust this value
+
 
 const handleHistoryChange = async (event) => {
-  let transaction = transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+  transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
   const selectedValue = event.target.value;
   let filteredTransactions;
   const now = new Date();
@@ -97,77 +100,113 @@ const handleHistoryChange = async (event) => {
     filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
   }
 
-  const balanceOverTimeData = process.genBalanceOverTime(filteredTransactions);
-  plot.plotBalance(balanceCharts, balanceOverTimeData);
+  const balanceOverTimeData = process.genBalanceOverTime(filteredTransactions, selectedValue);
+  let monthlyBalanceData = balanceOverTimeData; // Initialize with original data
+
+  if (selectedValue === "all" || selectedValue === "year") {
+    const monthlyBalances = {};
+    balanceOverTimeData.forEach(item => {
+      const date = new Date(item.date.seconds * 1000);
+      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      monthlyBalances[monthYear] = item; // Overwrite with the latest entry in the month
+    });
+    monthlyBalanceData = Object.values(monthlyBalances);
+
+    if (selectedValue === "year") {
+      const currentDate = new Date();
+      const startOfYear = new Date(currentDate);
+      startOfYear.setFullYear(currentDate.getFullYear() - 1);
+      startOfYear.setMonth(currentDate.getMonth());
+      startOfYear.setDate(1); // Start of the current month a year ago
+
+      const filteredMonthlyData = monthlyBalanceData.filter(item => {
+        const itemDate = new Date(item.date.seconds * 1000);
+        return itemDate >= startOfYear && itemDate <= currentDate;
+      });
+      monthlyBalanceData = filteredMonthlyData;
+    }
+  }
+
+  plot.plotBalance(balanceCharts, monthlyBalanceData);
+  transactionCurrentPage = 1; // Reset pagination on filter change
+  listTransactions(filteredTransactions, transactionCurrentPage); // List transactions with pagination
 };
 
 
-const listTransactions = () => {
+const listTransactions = (currentTransactionData, page) => { // Added page parameter
   const tableBody = document.querySelector("#transactionTable tbody");
   const searchValue = document.getElementById("searchInput").value;
   tableBody.innerHTML = "";
 
-  let filteredTransactions = process.applyFilterTransactions(transactions, filterValue);
-  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 15);
+  let filteredTransactions = process.applyFilterTransactions(currentTransactionData, filterValue);
+  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue);
+
+  // Pagination logic
+  const startIndex = (page - 1) * transactionItemsPerPage;
+  const endIndex = startIndex + transactionItemsPerPage;
+  const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
+  const totalTransactions = filteredTransactions.length; // Total items for pagination
 
   // Transactions will be listed here
-  filteredTransactions.forEach((transaction, index) => {
+  paginatedTransactions.forEach((transaction, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td class="p-4 border border-gray-300">${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
-      <td class="p-4 border border-gray-300" style="color: ${transaction.type === 'income' ? 'green' : 'red'}">${transaction.amount}</td>
-      <td class="p-4 border border-gray-300">${transaction.category}</td>
-      <td class="p-4 border border-gray-300">
-        <button id="edit-btn" class="cursor-pointer mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-</svg>
-</button>
-        <button id="delete-btn" data-id="${transaction.id}" class="cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-</svg>
-</button>
-      </td>
-    `;
+            <td class="p-4 border border-gray-300">${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
+            <td class="p-4 border border-gray-300" style="color: ${transaction.type === 'income' ? 'green' : 'red'}">${transaction.amount}</td>
+            <td class="p-4 border border-gray-300 border-r-0">${transaction.category}</td>
+            <td class="p-4 border border-gray-300 border-l-0">
+            <button id="edit-btn" class="cursor-pointer mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
+            </button>
+            <button data-id="${transaction.id}" class="delete-btn cursor-pointer"><svg data-id="${transaction.id}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+            </button>
+            </td>
+        `;
     tableBody.appendChild(row);
   });
 
-  const modal = document.getElementById("deleteModal");
-  const cancelBtn = document.getElementById("cancelDelete");
-  const confirmBtn = document.getElementById("confirmDelete");
-  const closeBtn = document.getElementById("closeBtn");
-  let transactionIdToDelete;
+  // Update pagination controls
+  updateTransactionPaginationControls(totalTransactions, page);
 
-  document.querySelectorAll("#delete-btn").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      transactionIdToDelete = event.target.dataset.id;
-      modal.classList.remove("hidden");
-    });
-  });
-
-  cancelBtn.addEventListener("click", () => {
-    modal.classList.add("hidden");
-    transactionIdToDelete = null;
-  });
-  closeBtn.addEventListener("click", () => {
-    modal.classList.add("hidden");
-    transactionIdToDelete = null;
-  });
-
-  confirmBtn.addEventListener("click", async () => {
-    if (transactionIdToDelete) {
-      try {
-        await ref.deleteDoc("transaction", transactionIdToDelete, uid);
-        transactions = transactions.filter((t) => t.id !== transactionIdToDelete);
-        listTransactions();
-      } catch (error) {
-        console.error("Error deleting transaction:", error);
-      }
-      modal.classList.add("hidden");
-    }
-  });
+  // Modal setup (moved to initialize function)
 };
 
+// New pagination control function for Transaction Table
+const updateTransactionPaginationControls = (totalItems, currentPage) => {
+  const totalPages = Math.ceil(totalItems / transactionItemsPerPage);
+  let paginationHTML = '';
 
+  if (totalPages > 1) {
+    paginationHTML += `<button id="transactionPrevPage" class="pagination-button ${currentPage === 1 ? 'disabled' : ''}" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Previous</button>`;
+    paginationHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
+    paginationHTML += `<button id="transactionNextPage" class="pagination-button ${currentPage === totalPages ? 'disabled' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+  }
+
+  const paginationDiv = document.getElementById('transactionPagination');
+  if (paginationDiv) {
+    paginationDiv.innerHTML = paginationHTML;
+
+    // Add event listeners
+    const prevButton = document.getElementById('transactionPrevPage');
+    const nextButton = document.getElementById('transactionNextPage');
+
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        if (transactionCurrentPage > 1) {
+          transactionCurrentPage--;
+          listTransactions(transactions, transactionCurrentPage);
+        }
+      });
+    }
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        if (transactionCurrentPage < totalPages) {
+          transactionCurrentPage++;
+          listTransactions(transactions, transactionCurrentPage);
+        }
+      });
+    }
+  }
+};
 
 
 const sortTransactions = (transactions, key, order) => {
@@ -195,10 +234,12 @@ const addSortingHandlers = () => {
     .filter(th => th.textContent.trim() !== "Action");
   headers.forEach((header, index) => {
     const key = header.textContent.toLowerCase();
-    header.dataset.sortDirection = 'asc';
+    // Set default sort direction to descending for Date column (index 0)
+    header.dataset.sortDirection = (index === 0) ? 'desc' : 'asc';
 
     if (index === 0) {
-      header.innerHTML = `${key.charAt(0).toUpperCase() + key.slice(1)} &uarr;`;
+      // Set initial indicator to descending for Date column
+      header.innerHTML = `${key.charAt(0).toUpperCase() + key.slice(1)} &darr;`;
     } else {
       header.innerHTML = key.charAt(0).toUpperCase() + key.slice(1);
     }
@@ -220,41 +261,112 @@ const addSortingHandlers = () => {
 
       const sortedTransactions = sortTransactions(transactions, key, newSortDirection === 'asc');
 
-      listTransactions(sortedTransactions);
+      listTransactions(sortedTransactions, transactionCurrentPage); // Keep current page after sort
     });
   });
 };
 
+const formatNumberWithCommas = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 const initialize = async () => {
   try {
-    income = process.sortIncome(await ref.access(uid, 'income'));
-    income = process.sortIncome(await ref.access(uid, 'income'));
-    expense = process.sortIncome(await ref.access(uid, 'expense')).reverse();
     transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
-    transactions = sortTransactions(transactions, "date", true)
+    transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+    transactions = sortTransactions(transactions, "date", false)
 
-    listTransactions(transactions);
+    listTransactions(transactions, transactionCurrentPage); // Initial call with page 1
 
-    document.getElementById("searchInput").addEventListener("input", listTransactions);
+    document.getElementById("searchInput").addEventListener("input", () => {
+      transactionCurrentPage = 1; // Reset pagination on search
+      listTransactions(transactions, transactionCurrentPage);
+    });
     document.getElementById("selectRangeHistory").addEventListener("change", handleHistoryChange);
     document.querySelectorAll("#filterSelect").forEach(button => {
       button.addEventListener("click", function () {
-          filterValue = this.getAttribute("data-value");
-          console.log(1);
-          listTransactions();
+        filterValue = this.getAttribute("data-value");
+        transactionCurrentPage = 1; // Reset pagination on filter
+        listTransactions(transactions, transactionCurrentPage);
       });
-  });
+    });
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
-    //test()
+
+    const balanceOverTimeData = process.genBalanceOverTime(transactions)
+    let totalIncome = 0;
+    let totalExpense = 0;
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    transactions.forEach(transaction => {
+      const transactionDate = new Date(transaction.date.seconds * 1000);
+      if (transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear) {
+        if (transaction.type === "income") {
+          totalIncome += transaction.amount;
+        } else if (transaction.type === "expense") {
+          totalExpense += transaction.amount;
+        }
+      }
+    });
+    document.getElementById("balance").innerHTML = `$${formatNumberWithCommas(balanceOverTimeData.length > 0 ? balanceOverTimeData[balanceOverTimeData.length - 1].amount : 0)}`; // Display balance, handle empty data
+    document.getElementById("income").innerHTML = `$${formatNumberWithCommas(totalIncome)}`;
+    document.getElementById("expenses").innerHTML = `$${formatNumberWithCommas(totalExpense)}`;
+    const monthlyBalances = {};
+    let monthlyBalanceData = balanceOverTimeData;
+    balanceOverTimeData.forEach(item => {
+      const date = new Date(item.date.seconds * 1000);
+      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      monthlyBalances[monthYear] = item; // Overwrite with the latest entry in the month
+    });
+    monthlyBalanceData = Object.values(monthlyBalances);
+    plot.plotBalance(balanceCharts, monthlyBalanceData);
+
+    // Modal setup (moved here to initialize)
+    const modal = document.getElementById("deleteModal");
+    const cancelBtn = document.getElementById("cancelDelete");
+    const confirmBtn = document.getElementById("confirmDelete");
+    const closeBtn = document.getElementById("closeBtn");
+    let transactionIdToDelete;
+
+    document.querySelector("#transactionTable tbody").addEventListener("click", (event) => {
+      if (event.target.closest('.delete-btn')) {
+        const deleteButton = event.target.closest('.delete-btn');
+        transactionIdToDelete = deleteButton.dataset.id;
+        modal.classList.remove("hidden");
+      }
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      modal.classList.add("hidden");
+      transactionIdToDelete = null;
+    });
+    closeBtn.addEventListener("click", () => {
+      modal.classList.add("hidden");
+      transactionIdToDelete = null;
+    });
+
+    confirmBtn.addEventListener("click", async () => {
+      if (transactionIdToDelete) {
+        try {
+          await ref.deleteDoc("transaction", transactionIdToDelete, uid);
+          transactions = transactions.filter((t) => t.id !== transactionIdToDelete);
+          listTransactions(transactions, transactionCurrentPage); // Re-list with current page
+        } catch (error) {
+          console.error("Error deleting transaction:", error);
+        }
+        modal.classList.add("hidden");
+        transactionIdToDelete = null;
+      }
+    });
+
+
   } catch (error) {
     console.error("Error initializing data:", error);
   }
 };
-
-
-
 
 
 const balanceCharts = new Chart(balanceSummary, {
@@ -282,10 +394,7 @@ const balanceCharts = new Chart(balanceSummary, {
 });
 
 
-
 initialize().then(() => {
-  const balanceOverTimeData = process.genBalanceOverTime(transactions);
-  plot.plotBalance(balanceCharts, balanceOverTimeData);
 });
 
 const test = async () => {
@@ -298,10 +407,14 @@ const test = async () => {
 
   for (let i = 1; i < 12; i++) {
     for (let j = 1; j < 28; j++) {
-      await ref.addTransaction((i * j + 120) / 2, transactionCategories[i % 5], new Date(2024, i, j), "expense", uid);
-      if ((j + i) % 12 === 0) {
-        await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2024, i, j), "income", uid);
-      }
+      await ref.addTransaction((i * j * 900) / 2, transactionCategories[i + 1 % 3], new Date(2024, i, j), "expense", uid);
+      await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2024, i, j), "income", uid);
     }
   }
-};
+}
+for (let i = 1; i < 2; i++) {
+  for (let j = 1; j < 12; j++) {
+    await ref.addTransaction((i * j * 900) / 2, transactionCategories[i + 1 % 3], new Date(2025, i, j), "expense", uid);
+    await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2025, i, j), "income", uid);
+  }
+}

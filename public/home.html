@@ -30,7 +30,7 @@
     rel="stylesheet">
 </head>
 
-<body class="bg-grey-300">
+<body id="body" class="bg-[#fffffa] font-[Montserrat]">
 
   <!-- modal -->
   <div id="deleteModal" tabindex="-1" class="z-50 hidden fixed inset-0 flex items-center justify-center bg-black/50">
@@ -43,7 +43,7 @@
         </svg>
       </button>
       <div class="text-center">
-        <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+        <svg id="svg" class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -66,34 +66,31 @@
 
   <!-- Navigation Bar -->
   <nav
-    class="appearance-none h-16 fixed flex items-center justify-center relative text-sm sm:text-base bg-neutral-100 border-2 mt-3"
+    class="p-10 appearance-none h-16 flex items-center justify-center relative text-sm sm:text-base mt-3 border-b-2 text-center font-semibold"
     id="navigationBar">
-    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
-      href="">Home</a>
-    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
-      href="">Finances</a>
-    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center" href="home.html">Home</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center" href="">Finances</a>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center"
       href="transactions.html">Transactions</a>
-    <a class="no-underline text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
-      href="">Summary</a>
-    <button class="text-xl px-4 py-2 mx-14 hover:rounded-md hover:bg-blue-300 inline-flex items-center"
-      id="signOutBtn"><a href="">Sign Out</a></button>
+    <a class="no-underline text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center"
+      href="help.html">Support</a>
+    <button class="text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center" id="signOutBtn"><a href="">Sign
+        Out</a></button>
   </nav>
 
-  <h1 class="font-bold text-4xl px-4 pt-2">Overview</h1>
+  <div class="flex flex-wrap w-full mt-6">
 
-  <div class="flex flex-col w-full mt-6 space-y-4">
+    <!-- Left Side: Cards and Graph -->
+    <div class="w-1/2 flex flex-col space-y-4">
 
-    <div class="flex justify-between items-start w-full">
-
-      <!-- Cards Container -->
-      <div id="here" class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-1/2 ml-4">
+      <!-- Cards -->
+      <div id="here" class="grid grid-cols-1 sm:grid-cols-3 gap-4 ml-4 p-6">
         <!-- Balance Card -->
         <div class="rounded-xl shadow-md overflow-hidden">
           <div class="bg-[#d5c7f7] p-4">
             <div class="text-black font-semibold text-lg flex items-center">
-              <svg class="w-6 h-6 text-gray-800 dark:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 text-gray-800 dark:text-black" xmlns="http://www.w3.org/2000/svg" width="24"
+                height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M17 8H5m12 0a1 1 0 0 1 1 1v2.6M17 8l-4-4M5 8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.6M5 8l4-4 4 4m6 4h-4a2 2 0 1 0 0 4h4a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1Z" />
               </svg>
@@ -102,7 +99,7 @@
             </div>
           </div>
           <div class="bg-[#e3d7f9] p-8">
-            <div class="text-3xl font-bold text-gray-900">$1,655</div>
+            <div id="balance" class="text-3xl font-bold text-gray-900">$1000</div>
           </div>
         </div>
 
@@ -110,8 +107,8 @@
         <div class="rounded-xl shadow-md overflow-hidden">
           <div class="bg-[#cfd8f7] p-4">
             <div class="text-black font-semibold text-lg flex items-center">
-              <svg class="w-6 h-6 text-gray-800 dark:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 text-gray-800 dark:text-black" xmlns="http://www.w3.org/2000/svg" width="24"
+                height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M4 4.5V19a1 1 0 0 0 1 1h15M7 14l4-4 4 4 5-5m0 0h-3.207M20 9v3.207" />
               </svg>
@@ -120,7 +117,7 @@
             </div>
           </div>
           <div class="bg-[#e0e6f9] p-8">
-            <div class="text-3xl font-bold text-gray-900">$435</div>
+            <div id="income" class="text-3xl font-bold text-gray-900">$1000</div>
           </div>
         </div>
 
@@ -128,8 +125,8 @@
         <div class="rounded-xl shadow-md overflow-hidden">
           <div class="bg-[#bce5c5] p-4">
             <div class="text-black font-semibold text-lg flex items-center">
-              <svg class="w-6 h-6 text-gray-800 dark:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 text-gray-800 dark:text-black" xmlns="http://www.w3.org/2000/svg" width="24"
+                height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M4 4.5V19a1 1 0 0 0 1 1h15M7 10l4 4 4-4 5 5m0 0h-3.207M20 15v-3.207" />
               </svg>
@@ -138,64 +135,77 @@
             </div>
           </div>
           <div class="bg-[#d9f1e0] p-8">
-            <div class="text-3xl font-bold text-gray-900">$842</div>
+            <div id="expenses" class="text-3xl font-bold text-gray-900">$1000</div>
           </div>
         </div>
       </div>
 
+      <!-- Graph -->
+      <div class="ml-4 p-6">
+        <select class="w-2/9 mb-4 border-2 rounded-lg text-xl h-10 text-center" id="selectRangeHistory">
+          <option value="all">All Transactions</option>
+          <option value="year">Last Year</option>
+          <option value="month">Last Month</option>
+          <option value="week">Last Week</option>
+        </select>
+        <canvas id="balanceSummary"></canvas>
+      </div>
+
     </div>
 
-    <!-- table -->
-    <div class="relative flex flex-col h-full text-gray-700 bg-white shadow-md rounded-xl p-4 w-1/2">
+    <!-- Right Side: Table -->
+    <div class="w-1/2 p-4 pr-5">
       <div class="flex items-center justify-between mb-4">
         <div>
           <h5 class="text-xl font-semibold text-blue-gray-900">Transactions</h5>
           <p class="text-gray-700">Manage and track your transactions</p>
         </div>
-        <button class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg hover:shadow-lg focus:ring focus:ring-gray-500">
-
+        <button
+          class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg hover:shadow-lg focus:ring focus:ring-gray-500">
           Add Transaction
         </button>
       </div>
-    
+
       <div class="flex gap-2 mb-4">
         <div class="flex items-center gap-1 bg-gray-200 p-1 rounded-lg">
-          <button id="filterSelect" class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white" data-value="all">All</button>
-          <button id="filterSelect" class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white" data-value="year">1 Year</button>
-          <button id="filterSelect" class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white" data-value="month">1 Month</button>
-          <button id="filterSelect" class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white" data-value="week">1 Week</button>
+          <button id="filterSelect"
+            class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white"
+            data-value="all">All</button>
+          <button id="filterSelect"
+            class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white"
+            data-value="year">1 Year</button>
+          <button id="filterSelect"
+            class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white"
+            data-value="month">1 Month</button>
+          <button id="filterSelect"
+            class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white"
+            data-value="week">1 Week</button>
         </div>
         <div class="relative flex-grow mr-0">
           <input id="searchInput" type="text" placeholder="Search" class="w-full h-10 px-3 border rounded-lg">
         </div>
       </div>
-    
+
       <div class="relative overflow-auto">
-        <table id="transactionTable" class="w-full text-left table-auto border border-gray-300 rounded-2xl overflow-hidden">
+        <table id="transactionTable"
+          class="w-full text-left table-fixed border border-gray-300 rounded-2xl overflow-hidden">
           <thead class="bg-gray-100 rounded-lg">
             <tr>
-              <th class="p-4 border border-gray-300">Date</th>
-              <th class="p-4 border border-gray-300">Amount</th>
-              <th class="p-4 border border-gray-300">Category</th>
-              <th class="p-4 border border-gray-300">Action</th>
+              <th class="p-4 cursor-pointer">Date</th>
+              <th class="p-4 cursor-pointer">Amount</th>
+              <th class="p-4 cursor-pointer">Category</th>
+              <th class="p-4 w-1/8 cursor-pointer">Action</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-300 bg-gray-50 text-sm ">
-            <!-- Transactions will be listed here -->
+          <tbody id="transactionTableBody" class="divide-y divide-gray-300 bg-gray-50 text-sm ">
           </tbody>
         </table>
       </div>
+      <div id="transactionPagination" class="pagination-controls flex justify-center items-center mt-4 space-x-4">
+      </div>
+
     </div>
-    <select class="mt-14" id="selectRangeHistory">
-      <option value="all">All Transactions</option>
-      <option value="year">Last Year</option>
-      <option value="month">Last Month</option>
-      <option value="week">Last Week</option>
-    </select>
-  
-    <div class="w-1/2">
-      <canvas id="balanceSummary"></canvas>
-    </div>
+
 
   </div>
 
