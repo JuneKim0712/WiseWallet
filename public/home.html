@@ -143,48 +143,36 @@
         </div>
       </div>
 
-      <!-- Filter & Search Container -->
-      <div class="flex items-start space-x-4 w-1/2 justify-start ml-5">
-        <select class="p-3.75 border border-black rounded-md text-lg" id="filterSelect">
-          <option value="all">All Transactions</option>
-          <option value="year">Last Year</option>
-          <option value="month">Last Month</option>
-          <option value="week">Last Week</option>
-        </select>
-      </div>
-
     </div>
 
     <!-- table -->
-    <div class="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl p-4">
+    <div class="relative flex flex-col h-full text-gray-700 bg-white shadow-md rounded-xl p-4 w-1/2">
       <div class="flex items-center justify-between mb-4">
         <div>
           <h5 class="text-xl font-semibold text-blue-gray-900">Transactions</h5>
           <p class="text-gray-700">Manage and track your transactions</p>
         </div>
-        <button class="flex items-center gap-2 bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg hover:shadow-lg focus:ring focus:ring-gray-500">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-            <path d="M19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
-          </svg>
+        <button class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg hover:shadow-lg focus:ring focus:ring-gray-500">
+
           Add Transaction
         </button>
       </div>
     
       <div class="flex gap-2 mb-4">
         <div class="flex items-center gap-1 bg-gray-200 p-1 rounded-lg">
-          <button class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white">All</button>
-          <button class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white">1 Year</button>
-          <button class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white">1 Month</button>
-          <button class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white">1 Week</button>
+          <button id="filterSelect" class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white" data-value="all">All</button>
+          <button id="filterSelect" class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white" data-value="year">1 Year</button>
+          <button id="filterSelect" class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white" data-value="month">1 Month</button>
+          <button id="filterSelect" class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white" data-value="week">1 Week</button>
         </div>
-        <div class="relative w-full md:w-72">
+        <div class="relative flex-grow mr-0">
           <input id="searchInput" type="text" placeholder="Search" class="w-full h-10 px-3 border rounded-lg">
         </div>
       </div>
     
       <div class="relative overflow-auto">
-        <table id="transactionTable" class="w-full text-left table-auto border border-gray-300 rounded-lg">
-          <thead class="bg-gray-100">
+        <table id="transactionTable" class="w-full text-left table-auto border border-gray-300 rounded-2xl overflow-hidden">
+          <thead class="bg-gray-100 rounded-lg">
             <tr>
               <th class="p-4 border border-gray-300">Date</th>
               <th class="p-4 border border-gray-300">Amount</th>
@@ -192,11 +180,21 @@
               <th class="p-4 border border-gray-300">Action</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-300 bg-gray-50 text-sm">
+          <tbody class="divide-y divide-gray-300 bg-gray-50 text-sm ">
             <!-- Transactions will be listed here -->
           </tbody>
         </table>
       </div>
+    </div>
+    <select class="mt-14" id="selectRangeHistory">
+      <option value="all">All Transactions</option>
+      <option value="year">Last Year</option>
+      <option value="month">Last Month</option>
+      <option value="week">Last Week</option>
+    </select>
+  
+    <div class="w-1/2">
+      <canvas id="balanceSummary"></canvas>
     </div>
 
   </div>
@@ -205,17 +203,6 @@
 
 
   <br class="mt-14">
-
-  <select class="mt-14" id="selectRangeHistory">
-    <option value="all">All Transactions</option>
-    <option value="year">Last Year</option>
-    <option value="month">Last Month</option>
-    <option value="week">Last Week</option>
-  </select>
-
-  <div>
-    <canvas id="balanceSummary"></canvas>
-  </div>
 
   <br>
 

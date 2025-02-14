@@ -5,6 +5,7 @@ import * as plot from "./plot.js"
 const db = firebase.firestore();
 const auth = firebase.auth();
 let uid;
+let filterValue="all";
 
 const balanceSummary = document.getElementById('balanceSummary');
 
@@ -104,10 +105,9 @@ const handleHistoryChange = async (event) => {
 const listTransactions = () => {
   const tableBody = document.querySelector("#transactionTable tbody");
   const searchValue = document.getElementById("searchInput").value;
-  const selectedRange = document.getElementById("filterSelect").value;
   tableBody.innerHTML = "";
 
-  let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
+  let filteredTransactions = process.applyFilterTransactions(transactions, filterValue);
   filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 15);
 
   // Transactions will be listed here
@@ -118,8 +118,14 @@ const listTransactions = () => {
       <td class="p-4 border border-gray-300" style="color: ${transaction.type === 'income' ? 'green' : 'red'}">${transaction.amount}</td>
       <td class="p-4 border border-gray-300">${transaction.category}</td>
       <td class="p-4 border border-gray-300">
-        <button class="edit-btn px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">Edit</button>
-        <button class="delete-btn px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600 ml-2" data-id="${transaction.id}">Delete</button>
+        <button id="edit-btn" class="cursor-pointer mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+</svg>
+</button>
+        <button id="delete-btn" data-id="${transaction.id}" class="cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+</svg>
+</button>
       </td>
     `;
     tableBody.appendChild(row);
@@ -131,7 +137,7 @@ const listTransactions = () => {
   const closeBtn = document.getElementById("closeBtn");
   let transactionIdToDelete;
 
-  document.querySelectorAll(".delete-btn").forEach((button) => {
+  document.querySelectorAll("#delete-btn").forEach((button) => {
     button.addEventListener("click", (event) => {
       transactionIdToDelete = event.target.dataset.id;
       modal.classList.remove("hidden");
@@ -231,7 +237,13 @@ const initialize = async () => {
 
     document.getElementById("searchInput").addEventListener("input", listTransactions);
     document.getElementById("selectRangeHistory").addEventListener("change", handleHistoryChange);
-    document.getElementById("filterSelect").addEventListener("change", listTransactions);
+    document.querySelectorAll("#filterSelect").forEach(button => {
+      button.addEventListener("click", function () {
+          filterValue = this.getAttribute("data-value");
+          console.log(1);
+          listTransactions();
+      });
+  });
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();
