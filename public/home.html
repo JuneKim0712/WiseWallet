@@ -151,26 +151,45 @@
           <option value="month">Last Month</option>
           <option value="week">Last Week</option>
         </select>
-        <input id="searchInput" class="bg-transparent border-b-2 border-black pl-3 pr-52 py-3 text-lg"
-          placeholder="Search..." type="text">
       </div>
 
     </div>
-    <div class="flex justify-between items-start w-full">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-1/2 ml-4">
-        <!-- empty for now to push transaction table to the right half-->
+
+    <!-- table -->
+    <div class="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl p-4">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h5 class="text-xl font-semibold text-blue-gray-900">Transactions</h5>
+          <p class="text-gray-700">Manage and track your transactions</p>
+        </div>
+        <button class="flex items-center gap-2 bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg hover:shadow-lg focus:ring focus:ring-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+            <path d="M19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
+          </svg>
+          Add Transaction
+        </button>
       </div>
-      
-      <!-- Transaction Table -->
-      <div
-        class="z-0 ml-5 relative flex flex-col w-1/2 h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-        <table id="transactionTable" class="w-full text-left table-auto min-w-max">
+    
+      <div class="flex gap-2 mb-4">
+        <div class="flex items-center gap-1 bg-gray-200 p-1 rounded-lg">
+          <button class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white">All</button>
+          <button class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white">1 Year</button>
+          <button class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white">1 Month</button>
+          <button class="py-2 px-4 text-xs font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white">1 Week</button>
+        </div>
+        <div class="relative w-full md:w-72">
+          <input id="searchInput" type="text" placeholder="Search" class="w-full h-10 px-3 border rounded-lg">
+        </div>
+      </div>
+    
+      <div class="relative overflow-auto">
+        <table id="transactionTable" class="w-full text-left table-auto border border-gray-300 rounded-lg">
           <thead class="bg-gray-100">
             <tr>
-              <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Date</th>
-              <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Amount</th>
-              <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Category</th>
-              <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
+              <th class="p-4 border border-gray-300">Date</th>
+              <th class="p-4 border border-gray-300">Amount</th>
+              <th class="p-4 border border-gray-300">Category</th>
+              <th class="p-4 border border-gray-300">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-300 bg-gray-50 text-sm">
