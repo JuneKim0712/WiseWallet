@@ -395,6 +395,7 @@ const balanceCharts = new Chart(balanceSummary, {
 
 
 initialize().then(() => {
+  //test()
 });
 
 const test = async () => {
