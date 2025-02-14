@@ -41,66 +41,62 @@
       id="signOutBtn"><a href="">Sign Out</a></button>
   </nav>
   <h1 class="font-bold text-4xl px-4 pt-2">Overview</h1>
-<div>
-  <div id="here" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 w-1/2 mr-auto">
-    <!-- Balance Card -->
-    <div class="rounded-xl shadow-md overflow-hidden">
-      <!-- Top Section -->
-      <div class="bg-purple-400 p-4">
-        <div class="text-white font-semibold text-lg flex items-center">
-          <span class="mr-2">💰</span> Balance
+
+  <div class="flex justify-between items-start w-full mt-6">
+    <!-- Cards Container -->
+    <div id="here" class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-1/2 ml-4">
+      <!-- Balance Card -->
+      <div class="rounded-xl shadow-md overflow-hidden">
+        <div class="bg-purple-400 p-4">
+          <div class="text-white font-semibold text-lg flex items-center">
+            <span class="mr-2">💰</span> Balance
+          </div>
+        </div>
+        <div class="bg-purple-100 p-6">
+          <div class="text-3xl font-bold text-gray-900">$1,655</div>
+          <div class="text-green-600 text-sm mt-1">+12% 📈</div>
         </div>
       </div>
-      <!-- Bottom Section -->
-      <div class="bg-purple-100 p-6">
-        <div class="text-3xl font-bold text-gray-900">$1,655</div>
-        <div class="text-green-600 text-sm mt-1">+12% 📈</div>
+  
+      <!-- Income Card -->
+      <div class="rounded-xl shadow-md overflow-hidden">
+        <div class="bg-purple-500 p-4">
+          <div class="text-white font-semibold text-lg flex items-center">
+            <span class="mr-2">📥</span> Income
+          </div>
+        </div>
+        <div class="bg-purple-200 p-6">
+          <div class="text-3xl font-bold text-gray-900">$435</div>
+          <div class="text-green-600 text-sm mt-1">+4% 📈</div>
+        </div>
+      </div>
+  
+      <!-- Expenses Card -->
+      <div class="rounded-xl shadow-md overflow-hidden">
+        <div class="bg-green-500 p-4">
+          <div class="text-white font-semibold text-lg flex items-center">
+            <span class="mr-2">📤</span> Expenses
+          </div>
+        </div>
+        <div class="bg-green-200 p-6">
+          <div class="text-3xl font-bold text-gray-900">$842</div>
+          <div class="text-red-600 text-sm mt-1">-2% 📉</div>
+        </div>
       </div>
     </div>
   
-    <!-- Income Card -->
-    <div class="rounded-xl shadow-md overflow-hidden">
-      <!-- Top Section -->
-      <div class="bg-purple-500 p-4">
-        <div class="text-white font-semibold text-lg flex items-center">
-          <span class="mr-2">📥</span> Income
-        </div>
-      </div>
-      <!-- Bottom Section -->
-      <div class="bg-purple-200 p-6">
-        <div class="text-3xl font-bold text-gray-900">$435</div>
-        <div class="text-green-600 text-sm mt-1">+4% 📈</div>
-      </div>
-    </div>
-  
-    <!-- Expenses Card -->
-    <div class="rounded-xl shadow-md overflow-hidden">
-      <!-- Top Section -->
-      <div class="bg-green-500 p-4">
-        <div class="text-white font-semibold text-lg flex items-center">
-          <span class="mr-2">📤</span> Expenses
-        </div>
-      </div>
-      <!-- Bottom Section -->
-      <div class="bg-green-200 p-6">
-        <div class="text-3xl font-bold text-gray-900">$842</div>
-        <div class="text-red-600 text-sm mt-1">-2% 📉</div>
-      </div>
+    <!-- Filter & Search Container -->
+    <div class="flex items-start space-x-4 w-1/2 justify-start ml-5">
+      <select class="p-3.75 border border-black rounded-md text-lg" id="filterSelect">
+        <option value="all">All Transactions</option>
+        <option value="year">Last Year</option>
+        <option value="month">Last Month</option>
+        <option value="week">Last Week</option>
+      </select>
+      <input id="searchInput" class="bg-transparent border-b-2 border-black pl-3 pr-52 py-3 text-lg" placeholder="Search..." type="text">
     </div>
   </div>
   
-  
-  <div class="w-1/2 flex items-start space-x-4">
-    <select class="p-3 border-1 border-black text-lg" id="filterSelect">
-      <option value="all">All Transactions</option>
-      <option value="year">Last Year</option>
-      <option value="month">Last Month</option>
-      <option value="week">Last Week</option>
-    </select>
-    <input id="searchInput" class="bg-transparent border-0 border-b-2 pl-3 pr-50 py-3 text-lg" placeholder="Search..."
-      type="text">
-  </div>
-  </div>
 
   
 
