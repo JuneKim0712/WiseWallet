@@ -43,26 +43,12 @@ const expenseCategories = [
 ];
 
 const transactionCategories = [
-  "Salary",
-  "Freelance/Contract",
-  "Investments",
-  "Gifts",
-  "Rental Income",
-  "Business Income",
-  "Others",
-  "Housing",
-  "Utilities",
-  "Groceries",
-  "Transportation",
-  "Insurance",
-  "Healthcare",
-  "Entertainment",
-  "Education",
-  "Personal Care",
-  "Clothing",
-  "Savings & Investments",
-  "Debt Repayment",
-  "Miscellaneous"
+  "Rent", 
+  "Insurance/bills", 
+  "utilities", "subscription", 
+  "groceries", 
+  "personal expenses", 
+  "other"
 ];
 
 
@@ -329,7 +315,36 @@ const initialize = async () => {
     const cancelBtn = document.getElementById("cancelDelete");
     const confirmBtn = document.getElementById("confirmDelete");
     const closeBtn = document.getElementById("closeBtn");
+    const addModal = document.getElementById("addTransactionModal")
     let transactionIdToDelete;
+
+    document.getElementById("addTransactionBtn").addEventListener("click", async () => {
+      addModal.classList.remove("hidden")
+    })
+    
+    document.getElementById("saveTransaction").addEventListener("click", async () => {
+      const amount = parseFloat(document.getElementById("transactionAmount").value);
+      const category = document.getElementById("transactionCategory").value;
+      const dateInput = document.getElementById("transactionDate").value;
+      const date = new Date(dateInput);
+      const type = document.getElementById("transactionType").value;
+      
+      if (!amount || !category || !date || !type) {
+        alert("Please fill out all fields.");
+        return;
+      }
+      addModal.classList.remove("hidden")
+
+      document.getElementById("addTransactionModal").classList.add("hidden");
+      console.log(1)
+
+      await ref.addTransaction(amount, category, date, type, uid);
+      listTransactions(transactions, transactionCurrentPage); // Re-list with current page
+    });
+    
+    document.getElementById("cancelTransaction").addEventListener("click", () => {
+      document.getElementById("addTransactionModal").classList.add("hidden");
+    });
 
     document.querySelector("#transactionTable tbody").addEventListener("click", (event) => {
       if (event.target.closest('.delete-btn')) {
@@ -419,3 +434,5 @@ for (let i = 1; i < 2; i++) {
     await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2025, i, j), "income", uid);
   }
 }
+
+
