@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>index.html</title>
-    <!-- DON'T TOUCH THIS -->
+
+    <!-- Firebase Imports --> 
     <script defer src="/__/firebase/11.0.1/firebase-app-compat.js"></script>
     <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
@@ -21,32 +22,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   </head>
 
-  <body class="bg-grey-800">
-    <!-- LOG IN BUTTON; DO NOT TOUCH -->
-    <button id="googleSignIn">log in</button>
-
-    <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+  <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
 
       <!-- Header / Logo -->
-      <header class="text-center font-[Montserrat]">
+      <header class="text-center font-[Montserrat] mt-6">
         <h1 class="text-3xl font-semibold">Wise Wallet</h1>
       </header>
   
       <!-- Sign-In Form Container -->
-      <main class="flex justify-center min-h-screen mt-0">
+      <main class="flex justify-center min-h-screen mt-4 font-[Montserrat]">
           <section class="bg-white p-8 rounded-lg shadow-lg w-96">
               <h2 class="text-xl font-semibold mb-4 text-center">Sign In</h2>
   
               <!-- Stay Signed In Toggle -->
-              <div class="flex justify-between items-center mb-4">
-                  <label>Stay signed in</label>
+              <div class="flex items-center mb-4">
+                  <label class="mr-2">Stay signed in</label>
                   <input type="checkbox" class="toggle-checkbox">
               </div>
   
               <!-- Social Sign-In Buttons -->
-              <button class="w-full border p-2 mb-2 rounded flex items-center justify-center">Continue with Apple</button>
-              <button class="w-full border p-2 mb-4 rounded flex items-center justify-center">Continue with Google</button>
-  
+              <button class="w-full border p-2 mb-2 rounded flex items-center justify-center bg-white text-gray-700 border-black transition-all duration-200 ease-in-out hover:scale-105 hover:border-blue-500">Continue with Apple</button>
+              <button id="googleSignIn" class="w-full border p-2 mb-4 rounded flex items-center justify-center bg-white text-gray-700 border-black transition-all duration-200 ease-in-out hover:scale-105 hover:border-blue-500" >Continue with Google</button>
+              
               <!-- Divider -->
               <p class="text-center text-gray-500 mb-4">OR</p>
   
@@ -66,7 +63,6 @@
                   <!-- Sign-In Button -->
                   <button type="submit" class="w-full bg-orange-500 text-white p-2 rounded hover:bg-orange-600 transition">Sign In</button>
               </form>
-  
 
   </body>
 </html>
