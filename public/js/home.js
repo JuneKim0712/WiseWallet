@@ -108,19 +108,24 @@ const listTransactions = () => {
   tableBody.innerHTML = "";
 
   let filteredTransactions = process.applyFilterTransactions(transactions, selectedRange);
-  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 15);
+  filteredTransactions = process.searchTransactions(filteredTransactions, searchValue).slice(0, 10);
 
   // Transactions will be listed here
   filteredTransactions.forEach((transaction, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
-      <td style="color: ${transaction.type === "income" ? "red" : "blue"}">${transaction.amount}</td>
-      <td>${transaction.category}</td>
-      <td>
-      <button class="edit-btn">edit</button>
-      <button class="delete-btn" data-id="${transaction.id}">Delete</button>
-      </td>
+      <td class="p-4 border-b border-blue-gray-50">${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
+      <td class="p-4 border-b border-blue-gray-50" style="color: ${transaction.type === "income" ? "red" : "blue"}">${transaction.amount}</td>
+      <td class="p-4 border-b border-blue-gray-50">${transaction.category}</td>
+      <td class="p-4 border-b border-blue-gray-50">
+      <button class="edit-btn px-4 py-2 text-white bg-blue-500 rounded-md transition-all duration-200 hover:bg-blue-600 focus:ring-2 focus:ring-blue-300">
+      Edit
+      </button>
+      <button class="delete-btn px-4 py-2 text-white bg-red-500 rounded-md transition-all duration-200 hover:bg-red-600 focus:ring-2 focus:ring-red-300 ml-2" data-id="${transaction.id}">
+      Delete
+      </button>
+</td>
+
     `;
     tableBody.appendChild(row);
   });
