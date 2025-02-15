@@ -43,12 +43,12 @@ const expenseCategories = [
 ];
 
 const transactionCategories = [
-  "Rent", 
-  "Insurance/bills", 
-  "utilities", "subscription", 
-  "groceries", 
-  "personal expenses", 
-  "other"
+  "Rent",
+  "Insurance/bills",
+  "Utilities", "Subscription",
+  "Groceries",
+  "Personal expenses",
+  "Other"
 ];
 
 
@@ -137,16 +137,16 @@ const listTransactions = (currentTransactionData, page) => { // Added page param
   paginatedTransactions.forEach((transaction, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
-            <td class="p-4 border border-gray-300">${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
-            <td class="p-4 border border-gray-300" style="color: ${transaction.type === 'income' ? 'green' : 'red'}">${transaction.amount}</td>
-            <td class="p-4 border border-gray-300 border-r-0">${transaction.category}</td>
-            <td class="p-4 border border-gray-300 border-l-0">
-            <button id="edit-btn" class="cursor-pointer mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
-            </button>
-            <button data-id="${transaction.id}" class="delete-btn cursor-pointer"><svg data-id="${transaction.id}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
-            </button>
-            </td>
-        `;
+                    <td class="p-4 border border-gray-300">${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
+                    <td class="p-4 border border-gray-300" style="color: ${transaction.type === 'income' ? 'green' : 'red'}">${transaction.amount}</td>
+                    <td class="p-4 border border-gray-300 border-r-0">${transaction.category}</td>
+                    <td class="p-4 border border-gray-300 border-l-0">
+                        <button class="edit-btn cursor-pointer mr-3" data-transaction-id="${transaction.id}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
+                        </button>
+                        <button data-id="${transaction.id}" class="delete-btn cursor-pointer"><svg data-id="${transaction.id}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+                        </button>
+                    </td>
+                `;
     tableBody.appendChild(row);
   });
 
@@ -214,7 +214,8 @@ const sortTransactions = (transactions, key, order) => {
   });
 };
 
-
+let sortType;
+let sortDirection;
 const addSortingHandlers = () => {
   let headers = Array.from(document.querySelectorAll("#transactionTable th"))
     .filter(th => th.textContent.trim() !== "Action");
@@ -246,6 +247,8 @@ const addSortingHandlers = () => {
       header.innerHTML = `${key.charAt(0).toUpperCase() + key.slice(1)} ${indicator}`;
 
       const sortedTransactions = sortTransactions(transactions, key, newSortDirection === 'asc');
+      sortType = key;
+      sortDirection = newSortDirection;
 
       listTransactions(sortedTransactions, transactionCurrentPage); // Keep current page after sort
     });
@@ -258,11 +261,15 @@ const formatNumberWithCommas = (number) => {
 
 const initialize = async () => {
   try {
-    transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
-    transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+    while (!uid) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    transactions = await ref.access(uid, 'transaction')
+    transactions = process.sortTransactions(transactions);
     transactions = sortTransactions(transactions, "date", false)
 
-    listTransactions(transactions, transactionCurrentPage); // Initial call with page 1
+
+    listTransactions(transactions, transactionCurrentPage);
 
     document.getElementById("searchInput").addEventListener("input", () => {
       transactionCurrentPage = 1; // Reset pagination on search
@@ -300,15 +307,7 @@ const initialize = async () => {
     document.getElementById("balance").innerHTML = `$${formatNumberWithCommas(balanceOverTimeData.length > 0 ? balanceOverTimeData[balanceOverTimeData.length - 1].amount : 0)}`; // Display balance, handle empty data
     document.getElementById("income").innerHTML = `$${formatNumberWithCommas(totalIncome)}`;
     document.getElementById("expenses").innerHTML = `$${formatNumberWithCommas(totalExpense)}`;
-    const monthlyBalances = {};
-    let monthlyBalanceData = balanceOverTimeData;
-    balanceOverTimeData.forEach(item => {
-      const date = new Date(item.date.seconds * 1000);
-      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      monthlyBalances[monthYear] = item; // Overwrite with the latest entry in the month
-    });
-    monthlyBalanceData = Object.values(monthlyBalances);
-    plot.plotBalance(balanceCharts, monthlyBalanceData);
+    plotBalanceChart();
 
     // Modal setup (moved here to initialize)
     const modal = document.getElementById("deleteModal");
@@ -317,33 +316,55 @@ const initialize = async () => {
     const closeBtn = document.getElementById("closeBtn");
     const addModal = document.getElementById("addTransactionModal")
     let transactionIdToDelete;
+    let transactionIdToEdit = null; // Variable to store transaction ID for editing
 
     document.getElementById("addTransactionBtn").addEventListener("click", async () => {
-      addModal.classList.remove("hidden")
+      addModal.classList.remove("hidden");
+      // Clear form fields when adding new transaction
+      document.getElementById("transactionAmount").value = '';
+      document.getElementById("transactionCategory").value = '';
+      document.getElementById("transactionDate").value = '';
+      document.getElementById("transactionType").value = 'income'; // default to income, or set to empty if no default is preferred
+      document.querySelector("#addTransactionModal h2").textContent = "Add New Transaction"; // Change modal title
+      document.getElementById("saveTransaction").textContent = "Save"; // Change button text
+      transactionIdToEdit = null; // Clear edit ID
     })
-    
+
     document.getElementById("saveTransaction").addEventListener("click", async () => {
       const amount = parseFloat(document.getElementById("transactionAmount").value);
       const category = document.getElementById("transactionCategory").value;
       const dateInput = document.getElementById("transactionDate").value;
       const date = new Date(dateInput);
       const type = document.getElementById("transactionType").value;
-      
+
       if (!amount || !category || !date || !type) {
         alert("Please fill out all fields.");
         return;
       }
-      addModal.classList.remove("hidden")
-
       document.getElementById("addTransactionModal").classList.add("hidden");
-      console.log(1)
 
-      await ref.addTransaction(amount, category, date, type, uid);
-      listTransactions(transactions, transactionCurrentPage); // Re-list with current page
+
+      if (transactionIdToEdit) {
+        // Update existing transaction
+        await ref.updateTransaction(amount, category, date, type, transactionIdToEdit, uid);
+      } else {
+        // Add new transaction
+        await ref.addTransaction(amount, category, date, type, uid);
+      }
+
+      transactions = await ref.access(uid, 'transaction');
+      transactions = sortTransactions(transactions, sortType, sortDirection==='asc')
+      listTransactions(transactions, transactionCurrentPage);
+
+      updateDashboardCards(); // Update dashboard cards if necessary
+      plotBalanceChart();     // Update balance chart if necessary
+
+      transactionIdToEdit = null; // Clear transactionIdToEdit after operation
     });
-    
+
     document.getElementById("cancelTransaction").addEventListener("click", () => {
       document.getElementById("addTransactionModal").classList.add("hidden");
+      transactionIdToEdit = null; // Clear edit ID when cancelling
     });
 
     document.querySelector("#transactionTable tbody").addEventListener("click", (event) => {
@@ -351,6 +372,23 @@ const initialize = async () => {
         const deleteButton = event.target.closest('.delete-btn');
         transactionIdToDelete = deleteButton.dataset.id;
         modal.classList.remove("hidden");
+      } else if (event.target.closest('.edit-btn')) {
+        const editButton = event.target.closest('.edit-btn');
+        const transactionId = editButton.dataset.transactionId;
+        transactionIdToEdit = transactionId; // Set transactionIdToEdit
+
+        const transactionToEdit = transactions.find(transaction => transaction.id === transactionId);
+        if (transactionToEdit) {
+          // Populate modal with transaction data
+          document.getElementById("transactionAmount").value = transactionToEdit.amount;
+          document.getElementById("transactionCategory").value = transactionToEdit.category;
+          document.getElementById("transactionDate").value = new Date(transactionToEdit.date.seconds * 1000).toISOString().split('T')[0];
+          document.getElementById("transactionType").value = transactionToEdit.type;
+
+          document.querySelector("#addTransactionModal h2").textContent = "Edit Transaction"; // Change modal title
+          document.getElementById("saveTransaction").textContent = "Update"; // Change button text
+          addModal.classList.remove("hidden"); // Show the modal for editing
+        }
       }
     });
 
@@ -369,6 +407,8 @@ const initialize = async () => {
           await ref.deleteDoc("transaction", transactionIdToDelete, uid);
           transactions = transactions.filter((t) => t.id !== transactionIdToDelete);
           listTransactions(transactions, transactionCurrentPage); // Re-list with current page
+          updateDashboardCards(); // Update dashboard cards if necessary
+          plotBalanceChart();     // Update balance chart if necessary
         } catch (error) {
           console.error("Error deleting transaction:", error);
         }
@@ -376,13 +416,15 @@ const initialize = async () => {
         transactionIdToDelete = null;
       }
     });
-
-
+    //test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
 };
 
+
+initialize().then(() => {
+});
 
 const balanceCharts = new Chart(balanceSummary, {
   type: 'line',
@@ -408,31 +450,61 @@ const balanceCharts = new Chart(balanceSummary, {
   }
 });
 
+const updateDashboardCards = async () => {
+  transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+  const balanceOverTimeData = process.genBalanceOverTime(transactions)
+  let totalIncome = 0;
+  let totalExpense = 0;
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
 
-initialize().then(() => {
-  //test()
-});
+  transactions.forEach(transaction => {
+    const transactionDate = new Date(transaction.date.seconds * 1000);
+    if (transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear) {
+      if (transaction.type === "income") {
+        totalIncome += transaction.amount;
+      } else if (transaction.type === "expense") {
+        totalExpense += transaction.amount;
+      }
+    }
+  });
+  document.getElementById("balance").innerHTML = `$${formatNumberWithCommas(balanceOverTimeData.length > 0 ? balanceOverTimeData[balanceOverTimeData.length - 1].amount : 0)}`; // Display balance, handle empty data
+  document.getElementById("income").innerHTML = `$${formatNumberWithCommas(totalIncome)}`;
+  document.getElementById("expenses").innerHTML = `$${formatNumberWithCommas(totalExpense)}`;
+
+}
+
+const plotBalanceChart = async () => {
+  transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+  const balanceOverTimeData = process.genBalanceOverTime(transactions)
+  const monthlyBalances = {};
+  let monthlyBalanceData = balanceOverTimeData;
+  balanceOverTimeData.forEach(item => {
+    const date = new Date(item.date.seconds * 1000);
+    const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    monthlyBalances[monthYear] = item; // Overwrite with the latest entry in the month
+  });
+  monthlyBalanceData = Object.values(monthlyBalances);
+  plot.plotBalance(balanceCharts, monthlyBalanceData);
+}
+
 
 const test = async () => {
-
-  await ref.addExpense(100, expenseCategories[0], 2, uid);
-  await ref.addIncome(50, incomeCategories[1], 1, uid);
-  await ref.addIncome(150, incomeCategories[2], 4, uid);
-  await ref.addIncome(1500, incomeCategories[3], 12, uid);
-  await ref.addTransaction(22, transactionCategories[4], new Date(), "income", uid);
+  while (!uid) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
 
   for (let i = 1; i < 12; i++) {
     for (let j = 1; j < 28; j++) {
-      await ref.addTransaction((i * j * 900) / 2, transactionCategories[i + 1 % 3], new Date(2024, i, j), "expense", uid);
+      await ref.addTransaction((i * j * 900) / 2, transactionCategories[(i + 1) % 3], new Date(2024, i, j), "expense", uid);
       await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2024, i, j), "income", uid);
     }
   }
 }
-for (let i = 1; i < 2; i++) {
-  for (let j = 1; j < 12; j++) {
-    await ref.addTransaction((i * j * 900) / 2, transactionCategories[i + 1 % 3], new Date(2025, i, j), "expense", uid);
-    await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2025, i, j), "income", uid);
-  }
-}
-
-
+//  for (let i = 1; i < 2; i++) {
+//   for (let j = 1; j < 12; j++) {
+//     await ref.addTransaction((i * j * 900) / 2, transactionCategories[i + 1 % 3], new Date(2025, i, j), "expense", uid);
+// await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2025, i, j), "income", uid);
+//    }
+//  }

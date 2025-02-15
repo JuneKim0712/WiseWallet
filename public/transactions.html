@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Finances</title>
+    <title>Transactions</title>
     <script defer src="/__/firebase/11.0.1/firebase-app-compat.js"></script>
     <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
@@ -22,23 +22,24 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+        <link rel="icon" type="image/x-icon" href="assets\favicon.svg">
     </head>
 
 <body id="body" class="bg-[#fffffa] font-[Montserrat]">
 
-    <nav class="p-10 appearance-none h-16 flex items-center justify-center relative text-sm sm:text-base mt-3 border-b-2 text-center font-semibold"
-        id="navigationBar">
-        <a class="no-underline text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center"
-            href="home.html">Home</a>
-        <a class="no-underline text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center"
-            href="">Finances</a>
-        <a class="no-underline text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center"
-            href="transactions.html">Transactions</a>
-        <a class="no-underline text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center"
-            href="help.html">Support</a>
-        <button class="text-xl px-4 py-2 mx-14 hover:bg-gray-200 inline-flex items-center"
-            id="signOutBtn"><a href="">Sign Out</a></button>
-    </nav>
+    <!-- Navigation Bar -->
+  <nav class="p-10 appearance-none h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 border-b-2 font-semibold" id="navigationBar">
+    <img src="assets/favicon.svg" class="h-15 w-15">
+    <div class="flex justify-center flex-1 space-x-14">
+        <a class="no-underline text-xl px-4 py-2 hover:bg-gray-200 inline-flex items-center" href="home.html">Home</a>
+        <a class="no-underline text-xl px-4 py-2 hover:bg-gray-200 inline-flex items-center" href="">Finances</a>
+        <a class="no-underline text-xl px-4 py-2 hover:bg-gray-200 inline-flex items-center" href="transactions.html">Transactions</a>
+        <a class="no-underline text-xl px-4 py-2 hover:bg-gray-200 inline-flex items-center" href="help.html">Support</a>
+        <button class="text-xl px-4 py-2 hover:bg-gray-200 inline-flex items-center" id="signOutBtn">
+            <a href="">Sign Out</a>
+        </button>
+    </div>
+</nav>
 
     <div id="deleteModal" tabindex="-1" class="z-50 hidden fixed inset-0 flex items-center justify-center bg-black/50">
         <div class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-lg dark:bg-gray-800">

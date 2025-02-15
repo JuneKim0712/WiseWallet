@@ -1,13 +1,21 @@
 const db = firebase.firestore()
 
 export const access = (uid, collec) => {
-    return db.collection('account').doc(`${uid}`).collection(`${collec}`).get().then((querySnapshot) => {
-        const partners = [];
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            partners.push({ id: doc.id, ...data });
-        });
-        return partners;
+    console.log(uid)
+    return new Promise((resolve, reject) => {
+        db.collection('account').doc(`${uid}`).collection(`${collec}`).get()
+            .then((querySnapshot) => {
+                const partners = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    partners.push({ id: doc.id, ...data });
+                });
+                resolve(partners); // Resolve the promise with the data
+            })
+            .catch((error) => {
+                console.error("Error accessing collection:", collec, "for user:", uid, error);
+                reject(error); // Reject the promise if there's an error
+            });
     });
 };
 
