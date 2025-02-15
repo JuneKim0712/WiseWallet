@@ -114,8 +114,6 @@ const handleHistoryChange = async (event) => {
   }
 
   plot.plotBalance(balanceCharts, monthlyBalanceData);
-  transactionCurrentPage = 1; // Reset pagination on filter change
-  listTransactions(filteredTransactions, transactionCurrentPage); // List transactions with pagination
 };
 
 
