@@ -326,7 +326,7 @@ const initialize = async () => {
       const date = new Date(dateInput);
       const type = document.getElementById("transactionType").value;
 
-      if (!amount || !category || !date || !type) {
+      if (!amount || !category || !dateInput || !type) {
         alert("Please fill out all fields.");
         return;
       }
