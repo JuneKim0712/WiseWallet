@@ -54,6 +54,45 @@
     </div>
   </nav>
 
+  <div id="addTransactionModal"
+    class="z-50 fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h2 class="text-xl font-semibold mb-4">Add New Transaction</h2>
+
+      <label class="block mb-2">Amount:</label>
+      <input type="number" id="transactionAmount" class="w-full p-2 border rounded mb-4" placeholder="Enter amount" />
+
+      <label class="block mb-2">Category:</label>
+      <select id="transactionCategory" class="w-full p-2 border rounded mb-4">
+        <option value="">Select category</option>
+        <option value="Rent">Rent</option>
+        <option value="Insurance/bills">Insurance/Bills</option>
+        <option value="Utilities">Utilities</option>
+        <option value="Subscription">Subscription</option>
+        <option value="Groceries">Groceries</option>
+        <option value="Personal_expenses">Personal Expenses</option>
+        <option value="Other">Other</option>
+
+      </select>
+
+      <label class="block mb-2">Date:</label>
+      <input type="date" id="transactionDate" class="w-full p-2 border rounded mb-4" />
+
+      <label class="block mb-2">Type:</label>
+      <select id="transactionType" class="w-full p-2 border rounded mb-4">
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+
+      <div class="flex justify-end space-x-2">
+        <button id="cancelTransaction"
+          class="px-4 py-2 bg-gray-300 rounded transition-all duration-200 hover:bg-gray-400 cursor-pointer">Cancel</button>
+        <button id="saveTransaction"
+          class="px-4 py-2 bg-blue-500 text-white rounded transition-all duration-200 hover:bg-blue-600 cursor-pointer">Save</button>
+      </div>
+    </div>
+  </div>
+
     <div id="deleteModal" tabindex="-1" class="z-50 hidden fixed inset-0 flex items-center justify-center bg-black/50">
         <div class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-lg dark:bg-gray-800">
             <button id="closeBtn" type="button"
@@ -123,7 +162,7 @@
                   <h5 class="text-xl font-semibold text-green-900">Incomes</h5>
                   <p class="text-gray-700">List of your incomes</p>
               </div>
-              <button
+              <button id="addTransactionBtn"
                   class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg hover:shadow-lg focus:ring focus:ring-gray-500">
                   Add Income
               </button>
@@ -153,7 +192,7 @@
                   <h5 class="text-xl font-semibold text-red-900">Expenses</h5>
                   <p class="text-gray-700">List of your expenses</p>
               </div>
-              <button
+              <button id="addTransactionBtnExpense"
                   class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg hover:shadow-lg focus:ring focus:ring-gray-500">
                   Add Expense
               </button>

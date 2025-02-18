@@ -115,14 +115,15 @@ const listIncome = (currentIncomeData, page) => { // Added page parameter
   const endIndex = startIndex + itemsPerPage;
   const paginatedIncome = filteredIncome.slice(startIndex, endIndex);
 
-  paginatedIncome.forEach((item) => {
+  paginatedIncome.forEach((item, index) => {
     const row = document.createElement("tr");
+
     row.innerHTML = `
             <td class="p-4 border border-gray-300">${new Date(item.date.seconds * 1000).toISOString().split('T')[0]}</td>
             <td class="p-4 border border-gray-300" style="color: green;">${item.amount}</td>
             <td class="p-4 border border-gray-300 border-r-0">${item.category}</td>
             <td class="p-4 border border-gray-300 border-l-0">
-            <button id="edit-btn" class="cursor-pointer mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
+            <button id="edit-btn" data-transaction-id="${item.id}" class="cursor-pointer mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
       </button>
                 <button class="delete-btn cursor-pointer" data-type="income" data-id="${item.id}"><svg data-id="${item.id}" data-type="income" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
                     </button>
@@ -151,14 +152,14 @@ const listExpense = (currentExpenseData, page) => { // Added page parameter
   const paginatedExpenses = filteredExpenses.slice(startIndex, endIndex);
 
 
-  paginatedExpenses.forEach((item) => {
+  paginatedExpenses.forEach((item, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
             <td class="p-4 border border-gray-300">${new Date(item.date.seconds * 1000).toISOString().split('T')[0]}</td>
             <td class="p-4 border border-gray-300" style="color: red;">${item.amount}</td>
             <td class="p-4 border border-gray-300 border-r-0">${item.category}</td>
             <td class="p-4 border border-gray-300 border-l-0">
-            <button id="edit-btn" class="cursor-pointer mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
+            <button id="edit-btn" data-transaction-id="${item.id}" class="cursor-pointer mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" /></svg>
       </button>
                 <button class="delete-btn cursor-pointer" data-type="expense" data-id="${item.id}"><svg data-id="${item.id}" data-type="expense" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
                     </button>
@@ -253,7 +254,9 @@ const setupSortableHeaders = (headers, tableId, listFunction) => { //listFunctio
 
 const initialize = async () => {
   try {
-    allTransactionsData = process.sortTransactions(await ref.access(uid, 'transaction'));
+    while (!uid) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
     allTransactionsData = process.sortTransactions(await ref.access(uid, 'transaction'));
     const { income, expense } = filterTransactionsByType(allTransactionsData);
     incomeData = income;
@@ -287,7 +290,72 @@ const initialize = async () => {
     const cancelBtn = document.getElementById("cancelDelete");
     const confirmBtn = document.getElementById("confirmDelete");
     const closeBtn = document.getElementById("closeBtn");
+    const addModal = document.getElementById("addTransactionModal")
     let itemToDelete = { id: null, type: null };
+    let transactionIdToEdit = null;
+
+
+
+    document.getElementById("addTransactionBtn").addEventListener("click", async () => {
+      addModal.classList.remove("hidden");
+      // Clear form fields when adding new transaction
+      document.getElementById("transactionAmount").value = '';
+      document.getElementById("transactionCategory").value = '';
+      document.getElementById("transactionDate").value = '';
+      document.getElementById("transactionType").value = 'income'; // default to income, or set to empty if no default is preferred
+      document.querySelector("#addTransactionModal h2").textContent = "Add New Transaction"; // Change modal title
+      document.getElementById("saveTransaction").textContent = "Save"; // Change button text
+      transactionIdToEdit = null; // Clear edit ID
+    })
+    document.getElementById("addTransactionBtnExpense").addEventListener("click", async () => {
+      addModal.classList.remove("hidden");
+      // Clear form fields when adding new transaction
+      document.getElementById("transactionAmount").value = '';
+      document.getElementById("transactionCategory").value = '';
+      document.getElementById("transactionDate").value = '';
+      document.getElementById("transactionType").value = 'expense'; // default to income, or set to empty if no default is preferred
+      document.querySelector("#addTransactionModal h2").textContent = "Add New Transaction"; // Change modal title
+      document.getElementById("saveTransaction").textContent = "Save"; // Change button text
+      transactionIdToEdit = null; // Clear edit ID
+    })
+
+    document.getElementById("saveTransaction").addEventListener("click", async () => {
+      const amount = parseFloat(document.getElementById("transactionAmount").value);
+      const category = document.getElementById("transactionCategory").value;
+      const dateInput = document.getElementById("transactionDate").value;
+      const date = new Date(dateInput);
+      const type = document.getElementById("transactionType").value;
+
+      if (!amount || !category || !date || !type) {
+        alert("Please fill out all fields.");
+        return;
+      }
+      document.getElementById("addTransactionModal").classList.add("hidden");
+
+
+      if (transactionIdToEdit) {
+        // Update existing transaction
+        await ref.updateTransaction(amount, category, date, type, transactionIdToEdit, uid);
+      } else {
+        // Add new transaction
+        await ref.addTransaction(amount, category, date, type, uid);
+      }
+
+    allTransactionsData = process.sortTransactions(await ref.access(uid, 'transaction'));
+    const { income, expense } = filterTransactionsByType(allTransactionsData);
+    incomeData = income;
+    expenseData = expense;
+
+    listIncome(incomeData, incomeCurrentPage); // Pass initial page number
+    listExpense(expenseData, expenseCurrentPage); // Pass initial page number
+
+      transactionIdToEdit = null; // Clear transactionIdToEdit after operation
+    });
+
+    document.getElementById("cancelTransaction").addEventListener("click", () => {
+      document.getElementById("addTransactionModal").classList.add("hidden");
+      transactionIdToEdit = null; // Clear edit ID when cancelling
+    });
 
 
     const handleTableClick = (event) => {
@@ -296,6 +364,22 @@ const initialize = async () => {
         itemToDelete.id = deleteButton.dataset.id;
         itemToDelete.type = deleteButton.dataset.type;
         modal.classList.remove("hidden");
+      } else if (event.target.closest('#edit-btn')) {
+        const editButton = event.target.closest('#edit-btn');
+        const transactionId = editButton.dataset.transactionId;
+        transactionIdToEdit = transactionId; // Set transactionIdToEdit
+
+        const transactionToEdit = allTransactionsData.find(transaction => transaction.id === transactionId);
+        if (transactionToEdit) {
+          // Populate modal with transaction data
+          document.getElementById("transactionAmount").value = transactionToEdit.amount;
+          document.getElementById("transactionCategory").value = transactionToEdit.category;
+          document.getElementById("transactionDate").value = new Date(transactionToEdit.date.seconds * 1000).toISOString().split('T')[0];
+          document.getElementById("transactionType").value = transactionToEdit.type;
+          document.querySelector("#addTransactionModal h2").textContent = "Edit Transaction"; // Change modal title
+          document.getElementById("saveTransaction").textContent = "Update"; // Change button text
+          addModal.classList.remove("hidden"); // Show the modal for editing
+        }
       }
     };
 
