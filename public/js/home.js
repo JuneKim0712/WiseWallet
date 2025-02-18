@@ -414,7 +414,7 @@ const initialize = async () => {
         transactionIdToDelete = null;
       }
     });
-    //test()
+    test()
   } catch (error) {
     console.error("Error initializing data:", error);
   }
