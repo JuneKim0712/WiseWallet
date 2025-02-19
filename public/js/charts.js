@@ -36,15 +36,25 @@ const updateCharts = async (startDate, endDate) => {
 
     // Update Income vs Expenses Chart
     const incomeExpenseData = {
-        labels: ['Income', 'Expenses'],
-        datasets: [{
-            data: [
-                filteredTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0),
-                filteredTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
-            ],
-            backgroundColor: ['rgb(75, 192, 192)', 'rgb(255, 99, 132)']
-        }]
+        labels: ['Income vs Expenses'],
+        datasets: [
+            {
+                label: 'Income',          
+                data: [
+                    filteredTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0)
+                ],
+                backgroundColor: 'rgb(75, 192, 192)' // Color for Income bars
+            },
+            {
+                label: 'Expenses', 
+                data: [
+                    filteredTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
+                ],
+                backgroundColor: 'rgb(255, 99, 132)' // Color for Expense bars
+            }
+        ]
     };
+    
     comparisonChart.data = incomeExpenseData;
     comparisonChart.update();
 
@@ -124,7 +134,49 @@ const initialize = async () => {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Income vs Expenses'
+                    text: 'Income vs Expenses - [Date Range]' // Dynamically update date range in title
+                },
+                legend: {
+                    display: true,
+                },
+                tooltip: { // Customize tooltips
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || ''; // Get dataset label (Income or Expenses)
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y); // Format value as currency
+                            }
+                            return label;
+                        }
+                    }
+                },
+                datalabels: { // Example of adding a data labels plugin (you might need to install it separately)
+                    display: true,
+                    color: 'black', // Adjust label color
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: function(value, context) {
+                        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value); // Format data labels as currency
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Amount ($)'
+                    },
+                    ticks: {
+                        callback: function (value, index, values) {
+                            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value); // Format Y-axis ticks as currency, no decimals
+                        }
+                    }
+                },
+                x: {
                 }
             }
         }
