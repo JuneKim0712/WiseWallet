@@ -6,16 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Home</title>
 
+  <!-- Firebase Imports --> 
   <script defer src="/__/firebase/11.0.1/firebase-app-compat.js"></script>
   <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
   <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
   <script defer src="/__/firebase/init.js?useEmulator=true"></script>
 
+  <!-- Tailwind Imports -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" defer src="js/home.js"></script>
   <script type="module" defer src="js/db.js"></script>
   <script type="module" defer src="js/preprocess.js"></script>
 
+  <!-- Font Imports  -->
   <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/nav.css">
@@ -34,6 +37,8 @@
 </script>
 
 <body id="body" class="bg-[#fffffa] font-[Montserrat] hidden">
+
+  <!-- Delete Modal -->
   <div id="deleteModal" tabindex="-1" class="z-50 hidden fixed inset-0 flex items-center justify-center bg-black/50">
     <div class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-lg dark:bg-gray-800">
       <button id="closeBtn" type="button"
@@ -64,6 +69,7 @@
     </div>
   </div>
 
+  <!-- Add Transaction Modal -->
   <div id="addTransactionModal"
     class="z-50 fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
     <div class="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -125,6 +131,7 @@
     </div>
   </nav>
 
+  <!-- Finance Cards -->
   <div class="flex flex-wrap w-full mt-6">
 
     <div class="w-1/2 flex flex-col space-y-4">
@@ -207,6 +214,7 @@
 
       </div>
 
+      <!-- Filter Button -->
       <div class="flex gap-2 mb-4">
         <div class="flex items-center gap-1 bg-gray-200 p-1 rounded-lg">
           <button id="filterSelect"
@@ -227,6 +235,7 @@
         </div>
       </div>
 
+      <!-- Transaction Table-->
       <div class="relative overflow-auto">
         <table id="transactionTable"
           class="w-full text-left table-fixed border border-gray-300 rounded-2xl overflow-hidden">

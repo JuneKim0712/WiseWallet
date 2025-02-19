@@ -1,82 +1,83 @@
- /* Typewriter effect 1 */
-  @keyframes typing {
-    0.0000%, 27.3488% { content: ""; }
-    1.1395%, 26.2093% { content: "s"; }
-    2.2791%, 25.0698% { content: "st"; }
-    3.4186%, 23.9302% { content: "stu"; }
-    4.5581%, 22.7907% { content: "stud"; }
-    5.6977%, 21.6512% { content: "stude"; }
-    6.8372%, 20.5116% { content: "studen"; }
-    7.9767%, 19.3721% { content: "student"; }
-  
-    30.7674%, 51.2791% { content: ""; }
-    31.9070%, 50.1395% { content: "b"; }
-    33.0465%, 49.0000% { content: "bu"; }
-    34.1860%, 47.8605% { content: "bud"; }
-    35.3256%, 46.7209% { content: "budg"; }
-    36.4651%, 45.5814% { content: "budge"; }
-    37.6047%, 44.4419% { content: "budget"; }
-    38.7443%, 43.3023% { content: "budgete"; }
-    39.8839%, 42.1627% { content: "budgeter"; }
-    41.0231%, 41.0235% { content: "budgeter"; }
-  
-    54.6977%, 75.2093% { content: ""; }
-    55.8372%, 74.0698% { content: "p"; }
-    56.9767%, 72.9302% { content: "pl"; }
-    58.1163%, 71.7907% { content: "pla"; }
-    59.2558%, 70.6512% { content: "plan"; }
-    60.3953%, 69.5116% { content: "plann"; }
-    61.5349%, 68.3721% { content: "planne"; }
-    62.6745%, 67.2325% { content: "planner"; }
-  
-    78.6279%, 96.8605% { content: ""; }
-    79.7674%, 95.7209% { content: "s"; }
-    80.9070%, 94.5814% { content: "sp"; }
-    82.0465%, 93.4419% { content: "spe"; }
-    83.1860%, 92.3023% { content: "spen"; }
-    84.3256%, 91.1628% { content: "spend"; }
-    85.4652%, 90.0232% { content: "spende"; }
-    86.6048%, 88.8836% { content: "spender"; }
+@keyframes typing {
+  0.0000%, 27.3488% { content: ""; }
+  1.1395%, 26.2093% { content: "s"; }
+  2.2791%, 25.0698% { content: "st"; }
+  3.4186%, 23.9302% { content: "stu"; }
+  4.5581%, 22.7907% { content: "stud"; }
+  5.6977%, 21.6512% { content: "stude"; }
+  6.8372%, 20.5116% { content: "studen"; }
+  7.9767%, 19.3721% { content: "student"; }
 
-  }
-  
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-  
-  .typewriter {
-    --caret: currentcolor;
-  }
-  
-  .typewriter::before {
-    content: "";
-    animation: typing 13.5s infinite;
-  }
-  
+  30.7674%, 51.2791% { content: ""; }
+  31.9070%, 50.1395% { content: "b"; }
+  33.0465%, 49.0000% { content: "bu"; }
+  34.1860%, 47.8605% { content: "bud"; }
+  35.3256%, 46.7209% { content: "budg"; }
+  36.4651%, 45.5814% { content: "budge"; }
+  37.6047%, 44.4419% { content: "budget"; }
+  38.7443%, 43.3023% { content: "budgete"; }
+  39.8839%, 42.1627% { content: "budgeter"; }
+  41.0231%, 41.0235% { content: "budgeter"; }
+
+  54.6977%, 75.2093% { content: ""; }
+  55.8372%, 74.0698% { content: "p"; }
+  56.9767%, 72.9302% { content: "pl"; }
+  58.1163%, 71.7907% { content: "pla"; }
+  59.2558%, 70.6512% { content: "plan"; }
+  60.3953%, 69.5116% { content: "plann"; }
+  61.5349%, 68.3721% { content: "planne"; }
+  62.6745%, 67.2325% { content: "planner"; }
+
+  78.6279%, 96.8605% { content: ""; }
+  79.7674%, 95.7209% { content: "s"; }
+  80.9070%, 94.5814% { content: "sp"; }
+  82.0465%, 93.4419% { content: "spe"; }
+  83.1860%, 92.3023% { content: "spen"; }
+  84.3256%, 91.1628% { content: "spend"; }
+  85.4652%, 90.0232% { content: "spende"; }
+  86.6048%, 88.8836% { content: "spender"; }
+}
+
+/* Blinking caret animation */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Typewriter effect container */
+.typewriter {
+  --caret: currentcolor; /* Caret color matches text */
+}
+
+/* Typing effect for dynamic text */
+.typewriter::before {
+  content: "";
+  animation: typing 13.5s infinite;
+}
+
+/* Blinking caret */
+.typewriter::after {
+  content: "";
+  border-right: 1px solid var(--caret);
+  animation: blink 0.5s linear infinite;
+}
+
+/* Reduced motion settings */
+@media (prefers-reduced-motion) {
   .typewriter::after {
-    content: "";
-    border-right: 1px solid var(--caret);
-    animation: blink 0.5s linear infinite;
-  }
-  
-  @media (prefers-reduced-motion) {
-    .typewriter::after {
       animation: none;
-    }
-    
-    @keyframes sequencePopup {
+  }
+
+  /* Alternate text sequence for reduced motion users */
+  @keyframes sequencePopup {
       0%, 100% { content: "student"; }
       25% { content: "budgeter"; }
       50% { content: "planner"; }
       75% { content: "investor"; }
-    }
-  
-    .typewriter::before {
+  }
+
+  .typewriter::before {
       content: "student";
       animation: sequencePopup 12s linear infinite;
-    }
   }
-  
-  /**/
-  
+}
