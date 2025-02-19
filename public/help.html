@@ -16,6 +16,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" defer src="js/db.js"></script>
   <script type="module" defer src="js/preprocess.js"></script>
+  <script defer src="js/help.js"></script>
 
   <!-- Tailwind Imports -->
   <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
@@ -28,10 +29,11 @@
     rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="assets\favicon.svg">
 </head>
-<script>
+<script defer>
   document.addEventListener("DOMContentLoaded", async() => {
     document.getElementById("body").classList.remove("hidden")
   })
+  
 </script>
 
 <body id="body" class="hidden bg-[#fffffa] font-[Montserrat]">
@@ -107,8 +109,9 @@
             placeholder="Leave a comment..."></textarea>
         </div>
         <button type="submit"
-          class="py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Send
-          message</button>
+  class="py-3 px-5 text-sm font-medium text-center text-black border rounded-lg bg-primary-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 hover:scale-105">
+  Send message
+</button>
       </form>
     </div>
   </section>

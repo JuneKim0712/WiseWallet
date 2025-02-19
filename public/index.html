@@ -24,8 +24,14 @@
     <link rel="icon" type="image/x-icon" href="assets\favicon.svg">
 
     </head>
-
-  <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+    <script >
+      document.addEventListener("DOMContentLoaded", async() => {
+        document.getElementById("body").classList.remove("hidden")
+      })
+      
+    </script>
+    
+  <body id="body" class="hidden bg-gray-100 flex flex-col items-center justify-center min-h-screen">
 
       <!-- Header / Logo -->
       <header class="text-center font-[Montserrat] mt-6">
