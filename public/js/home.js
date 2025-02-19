@@ -493,12 +493,12 @@ const test = async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
-    // for (let i = 1; i < 12; i++) {
-    //   for (let j = 1; j < 28; j++) {
-    //     await ref.addTransaction((i * j * 900) / 2, transactionCategories[(i + 1) % 3], new Date(2024, i, j), "expense", uid);
-    //     await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2024, i, j), "income", uid);
-    //   }
-    // }
+    for (let i = 1; i < 12; i++) {
+      for (let j = 1; j < 28; j++) {
+        await ref.addTransaction((i * j * 900) / 2, transactionCategories[(i + 1) % 3], new Date(2024, i, j), "expense", uid);
+        await ref.addTransaction(i * j * 1000, transactionCategories[i % 3], new Date(2024, i, j), "income", uid);
+      }
+    } 
   for (let i = 1; i < 2; i++) {
     for (let j = 1; j < 12; j++) {
       await ref.addTransaction((i * j * 900) / 2, transactionCategories[i + 1 % 3], new Date(2025, i, j), "expense", uid);

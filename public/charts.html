@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Financial Charts</title>
+    
+    <!-- Firebase Imports -->
+    <script defer src="/__/firebase/11.0.1/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <!-- Chart.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Tailwind -->
+    <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    
+    <!-- Custom JS -->
+    <script type="module" defer src="js/charts.js"></script>
+    <script type="module" defer src="js/db.js"></script>
+    <script type="module" defer src="js/preprocess.js"></script>
+    <script type="module" defer src="js/plot.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/nav.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.svg">
+</head>
+
+<script defer>
+    document.addEventListener("DOMContentLoaded", async() => {
+      document.getElementById("body").classList.remove("hidden")
+    })
+    
+  </script>
+  
+  <body id="body" class="hidden bg-[#fffffa] font-[Montserrat]">
+    <!-- Navigation Bar -->
+    <nav class="p-10 appearance-none h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 border-b-2 font-semibold">
+        <img src="assets/favicon.svg" class="h-15 w-15">
+        <div class="flex justify-center flex-1 space-x-14">
+            <a class="no-underline text-xl px-4 py-2 inline-flex items-center transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                href="home.html">Home</a>
+            <a class="border-b-2 border-black no-underline text-xl px-4 py-2 inline-flex items-center transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                href="charts.html">Charts</a>
+            <a class="no-underline text-xl px-4 py-2 inline-flex items-center transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                href="transactions.html">Transactions</a>
+            <a class="no-underline text-xl px-4 py-2 inline-flex items-center transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                href="help.html">Support</a>
+            <button class="no-underline text-xl px-4 py-2 inline-flex items-center transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                id="signOutBtn">
+                <a href="">Sign Out</a>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Chart Controls -->
+    <div class="p-4">
+        <div class="flex gap-4">
+            <div class="flex items-center gap-4">
+                <label for="startDate">From:</label>
+                <input type="date" id="startDate" class="p-2 border rounded-lg">
+                <label for="endDate">To:</label>
+                <input type="date" id="endDate" class="p-2 border rounded-lg">
+                <button id="applyDateRange" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                    Apply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-2 gap-6 px-6">
+        <!-- Income vs Expenses -->
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-4">Income vs Expenses</h2>
+            <canvas id="comparisonChart"></canvas>
+        </div>
+
+        <!-- Monthly Trends -->
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-4">Income & Expense Trends</h2>
+            <canvas id="trendChart"></canvas>
+        </div>
+
+        <!-- Combined Categories -->
+        <div class="bg-white rounded-lg shadow-lg col-span-2">
+            <div class="flex justify-between items-center mb-4 p-4">
+                <h2 class="text-xl font-semibold">Category Distribution</h2>
+                <select id="categoryType" class="p-2 border rounded-lg">
+                    <option value="expense">Expenses</option>
+                    <option value="income">Income</option>
+                </select>
+            </div>
+            <div class="h-10/12 p-4">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html> 
