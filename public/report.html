@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Report</title>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase Imports -->
+    <script defer src="/__/firebase/11.0.1/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <!-- Tailwind Imports -->
+    <script type="module" defer src="js/db.js"></script>
+    <script type="module" defer src="js/preprocess.js"></script>
+    <script type="module" defer src="js/report.js"></script>
+    
+
+    <!-- jsPDF Import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Font Imports  -->
+    <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/nav.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+
+    <link rel="icon" type="image/x-icon" href="assets\favicon.svg">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("body").classList.remove("hidden")
+    })
+</script>
+
+<body id="body" class="hidden">
+
+    <!-- Navigation Bar -->
+    <nav class="p-4 sm:p-6 md:p-8 lg:p-10 h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 border-b-2 font-semibold"
+        id="navigationBar">
+        <img src="assets/favicon.svg" class="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-15 lg:w-15">
+        <div class="flex justify-center flex-1 space-x-4 sm:space-x-6 md:space-x-8 lg:space-x-14">
+            <a class="border-b-2 border-black no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                href="home.html">Home</a>
+            <a class="no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                href="charts.html">Charts</a>
+            <a class="no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                href="transactions.html">Transactions</a>
+            <a class="no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                href="help.html">Support</a>
+            <button
+                class="no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
+                id="signOutBtn">
+                <a href="">Sign Out</a>
+            </button>
+        </div>
+    </nav>
+
+    <div class="mb-6 grid grid-cols-3 gap-4">
+        <div>
+            <h3>Balance</h3>
+            <p id="balanceValue" class="font-bold text-xl">$0.00</p>
+        </div>
+        <div>
+            <h3>Income</h3>
+            <p id="incomeValue" class="font-bold text-xl">$0.00</p>
+        </div>
+        <div>
+            <h3>Expenses</h3>
+            <p id="expensesValue" class="font-bold text-xl">$0.00</p>
+        </div>
+    </div>
+
+    <!-- Report Button -->
+    <div class="flex justify-between items-center mb-4">
+        <h2>Transactions</h2>
+        <button
+            class="py-2 px-4 text-sm font-medium text-center text-black rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300"
+            id="generateReportBtn">
+            Generate Report
+        </button>
+    </div>
+</body>
+
+</html>

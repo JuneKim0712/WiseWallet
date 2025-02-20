@@ -1,90 +1,71 @@
+// import jsPDF from 'jspdf'; // If using npm, uncomment this line
+// import 'jspdf-autotable'; // If using npm and autotable, uncomment this line (and ensure it's installed: npm install jspdf jspdf-autotable)
+
 import * as process from "./preprocess.js";
 import * as ref from "./db.js";
-import * as plot from "./plot.js";
 
-const auth = firebase.auth();
-let uid;
+document.getElementById('generateReportBtn').addEventListener('click', generatePDFReport);
 
-// Professional color palette
-const colorPalette = [
-    '#2E4057', // Navy Blue
-    '#7C8DA4', // Steel Blue
-    '#A9B4C2', // Light Steel Blue
-    '#B7C3D1', // Pale Blue
-    '#4B6584', // Slate Blue
-    '#5E7494', // Dark Steel Blue
-    '#8596AD', // Medium Steel Blue
-    '#99A8BC', // Gray Blue
-    '#6B7F9E', // Dusty Blue
-    '#3D5270'  // Deep Navy
-];
+async function generatePDFReport() {
 
-// Chart instances
-let comparisonChart;
-let trendChart;
-let categoryChart;
+    console.log("Generate Report button clicked! Function started."); // ADD THIS LINE
 
-// Update charts based on date range
-const updateCharts = async (startDate, endDate) => {
-    const transactions = await ref.access(uid, 'transaction');
-    let filteredTransactions = transactions;
+    // 1. Initialize jsPDF document
+    const pdfDoc = new jspdf.jsPDF(); // Access jsPDF as a global object namespace
 
-    // Apply date range filter if dates are provided
-    if (startDate && endDate) {
-        filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
+    // --- Header Section ---
+    pdfDoc.setFontSize(24);
+    pdfDoc.setFont('helvetica', 'bold');
+    pdfDoc.text("Personal Finance Report", 20, 30); // Main title
+
+    pdfDoc.setFontSize(12);
+    pdfDoc.setFont('helvetica', 'normal');
+
+
+    // --- Summary Figures Section ---
+    // --- Calculate Summary Figures
+    const uid = firebase.auth().currentUser?.uid; // Get current user's uid
+    if (!uid) {
+        console.error("Error: User not authenticated. Cannot generate report.");
+        alert("User not authenticated. Please sign in to generate a report."); // Optional user feedback
+        return; // Stop PDF generation if no uid
     }
 
-    // Update Income vs Expenses Chart
-    const incomeExpenseData = {
-        labels: ['Income vs Expenses'],
-        datasets: [
-            {
-                label: 'Income',          
-                data: [
-                    filteredTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0)
-                ],
-                backgroundColor: 'rgb(75, 192, 192)' // Color for Income bars
-            },
-            {
-                label: 'Expenses', 
-                data: [
-                    filteredTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
-                ],
-                backgroundColor: 'rgb(255, 99, 132)' // Color for Expense bars
+    const transactions = await ref.access(uid, 'transaction'); // Fetch transactions in report.js
+    const balanceOverTimeData = process.genBalanceOverTime(transactions);
+    let totalIncome = 0;
+    let totalExpense = 0;
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    transactions.forEach(transaction => {
+        const transactionDate = new Date(transaction.date.seconds * 1000);
+        if (transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear) {
+            if (transaction.type === "income") {
+                totalIncome += transaction.amount;
+            } else if (transaction.type === "expense") {
+                totalExpense += transaction.amount;
             }
-        ]
-    };
-    
-    comparisonChart.data = incomeExpenseData;
-    comparisonChart.update();
+        }
+    });
+    const balanceValue = balanceOverTimeData.length > 0 ? balanceOverTimeData[balanceOverTimeData.length - 1].amount : 0;
+    const incomeValue = totalIncome;
+    const expensesValue = totalExpense;
 
-    // Update Category Chart based on selected type
-    const categoryType = document.getElementById('categoryType').value;
-    const categoryData = {};
-    filteredTransactions
-        .filter(t => t.type === categoryType)
-        .forEach(t => {
-            categoryData[t.category] = (categoryData[t.category] || 0) + t.amount;
-        });
+    let yPosition = 70; // Starting Y position for summary section
 
-    const sortedCategories = Object.entries(categoryData)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10); // Show top 10 categories
+    pdfDoc.text(`Account Balance: $${balanceValue}`, 20, yPosition); // Use calculated balanceValue
+    yPosition += 10;
+    pdfDoc.text(`Total Income: $${incomeValue}`, 20, yPosition); // Use calculated incomeValue
+    yPosition += 10;
+    pdfDoc.text(`Total Expenses: $${expensesValue}`, 20, yPosition); // Use calculated expensesValue
 
-    const categoryChartData = {
-        labels: sortedCategories.map(([category]) => category),
-        datasets: [{
-            data: sortedCategories.map(([, amount]) => amount),
-            backgroundColor: colorPalette.slice(0, sortedCategories.length),
-            borderWidth: 1
-        }]
-    };
-    categoryChart.data = categoryChartData;
-    categoryChart.update();
 
-    // Update Trend Chart
+    // --- Balance Over Time Chart Data Preparation (from charts.js) ---
+    const chartTransactions = await ref.access(uid, 'transaction'); // Fetch transactions again if needed in report.js, or reuse if already fetched
     const monthlyData = {};
-    filteredTransactions.forEach(t => {
+    chartTransactions.forEach(t => {
         const date = new Date(t.date.seconds * 1000);
         const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
         if (!monthlyData[monthYear]) {
@@ -97,7 +78,7 @@ const updateCharts = async (startDate, endDate) => {
         }
     });
 
-    const trendData = {
+    const trendChartData = {
         labels: Object.keys(monthlyData).sort(),
         datasets: [
             {
@@ -114,147 +95,104 @@ const updateCharts = async (startDate, endDate) => {
             }
         ]
     };
-    trendChart.data = trendData;
-    trendChart.update();
-};
+    // --- End of Chart Data Preparation ---
 
-// Initialize
-const initialize = async () => {
-    // Wait for auth
-    while (!uid) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
+    // --- Generate Chart Image (using Chart.js) ---
+    const chartCanvas = document.createElement('canvas'); // Create a canvas element in memory
+    chartCanvas.width = 400;  // Set chart width (adjust as needed)
+    chartCanvas.height = 200; // Set chart height (adjust as needed)
+    const chartCtx = chartCanvas.getContext('2d');
 
-    // Initialize charts
-    comparisonChart = new Chart(document.getElementById('comparisonChart'), {
-        type: 'bar',
-        data: {},
+    const pdfTrendChart = new Chart(chartCtx, { // Create Chart.js instance, but on our in-memory canvas
+        type: 'line',
+        data: trendChartData, // Use the chart data we prepared
         options: {
-            responsive: true,
+            responsive: false, // Set responsive to false for fixed size
             plugins: {
+                legend: { display: false }, // Hide legend in PDF chart (optional)
                 title: {
                     display: true,
-                    text: 'Income vs Expenses - [Date Range]' // Dynamically update date range in title
-                },
-                legend: {
-                    display: true,
-                },
-                tooltip: { // Customize tooltips
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || ''; // Get dataset label (Income or Expenses)
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y); // Format value as currency
-                            }
-                            return label;
-                        }
-                    }
-                },
-                datalabels: { // Example of adding a data labels plugin (you might need to install it separately)
-                    display: true,
-                    color: 'black', // Adjust label color
-                    font: {
-                        weight: 'bold'
-                    },
-                    formatter: function(value, context) {
-                        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value); // Format data labels as currency
-                    }
+                    text: 'Balance Over Time' // Chart title in PDF
                 }
             },
             scales: {
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Amount ($)'
-                    },
-                    ticks: {
-                        callback: function (value, index, values) {
-                            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value); // Format Y-axis ticks as currency, no decimals
-                        }
-                    }
-                },
                 x: {
-                }
-            }
-        }
-    });
-
-    trendChart = new Chart(document.getElementById('trendChart'), {
-        type: 'line',
-        data: {},
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Monthly Trends'
-                }
-            }
-        }
-    });
-
-    categoryChart = new Chart(document.getElementById('categoryChart'), {
-        type: 'pie',
-        data: {},
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Category Distribution'
+                    title: { display: false } // Hide X-axis title in PDF (optional)
                 },
-                legend: {
-                    position: 'right',
-                    align: 'center'
+                y: {
+                    title: { display: false } // Hide Y-axis title in PDF (optional)
                 }
             }
         }
     });
 
-    // Get transactions to set initial date range
-    const transactions = await ref.access(uid, 'transaction');
-    
-    // Set date range inputs
-    const endDate = new Date();
-    const startDate = transactions.length > 0 
-        ? new Date(Math.min(...transactions.map(t => t.date.seconds * 1000)))
-        : new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate());
+    const chartImageData = chartCanvas.toDataURL('image/png'); // Get chart as PNG data URL
+    // --- End of Chart Image Generation ---
 
-    document.getElementById('startDate').valueAsDate = startDate;
-    document.getElementById('endDate').valueAsDate = endDate;
 
-    // Set up event listeners
-    document.getElementById('applyDateRange').addEventListener('click', () => {
-        const startDate = new Date(document.getElementById('startDate').value);
-        const endDate = new Date(document.getElementById('endDate').value);
-        if (startDate && endDate) {
-            updateCharts(startDate, endDate);
-        }
-    });
+    // --- Filters and Search Information Section ---
+    yPosition += 20; // Add space before filters section
+    pdfDoc.text("Report Filters:", 20, yPosition);
+    yPosition += 10;
 
-    document.getElementById('categoryType').addEventListener('change', () => {
-        const startDate = new Date(document.getElementById('startDate').value);
-        const endDate = new Date(document.getElementById('endDate').value);
-        updateCharts(startDate, endDate);
-    });
+    // Get filter and search values from your UI elements (adjust selectors as needed)
+    const selectedFilter = "All Time"; // Hardcode a filter value (e.g., "All Time")
+    const searchTerm = ""; // Hardcode an empty search term (for now)
 
-    document.getElementById('signOutBtn').onclick = () => 
-        auth.signOut().then(() => window.location.href = '/index.html');
-
-    // Initial chart update
-    updateCharts(startDate, endDate);
-};
-
-// Auth state change handler
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-        uid = user.uid;
-        initialize();
-    } else {
-        window.location.href = '/index.html';
+    pdfDoc.text(`  Date Range Filter: ${selectedFilter}`, 20, yPosition);
+    yPosition += 10;
+    if (searchTerm) {
+        pdfDoc.text(`  Search Term: "${searchTerm}"`, 20, yPosition);
+        yPosition += 10;
     }
-}); 
+
+
+    // --- Transactions Table Section ---
+    yPosition += 20; // Add space before transactions table
+
+    pdfDoc.setFontSize(14);
+    pdfDoc.setFont('helvetica', 'bold');
+    pdfDoc.text("Transactions", 20, yPosition); // Transactions section title
+    pdfDoc.setFontSize(12);
+    pdfDoc.setFont('helvetica', 'normal');
+    yPosition += 10;
+
+
+    // *** IMPORTANT: Replace this example data with your actual displayedTransactions array ***
+    const displayedTransactions = [
+        { date: '2025-02-11', amount: '11000', category: 'Insurance bills' },
+        { date: '2025-02-11', amount: '11000', category: 'Insurance bills' },
+        { date: '2025-02-11', amount: '4950', category: 'Utilities' },
+        // ... Add more example transaction objects or replace with your real data
+    ];
+
+
+    const tableColumns = ["Date", "Amount", "Category"];
+    const tableRows = transactions.map(transaction => [ // USE FETCHED TRANSACTIONS DATA HERE!
+        new Date(transaction.date.seconds * 1000).toISOString().split('T')[0], // Format date
+        transaction.amount,
+        transaction.category
+    ]);
+
+
+    pdfDoc.autoTable({ // Use jsPDF-autotable plugin for table generation
+        startY: yPosition + 10,
+        head: [tableColumns],
+        body: tableRows,
+        margin: { left: 20, right: 20 },
+    });
+
+
+    // --- Embed Chart Image in PDF ---
+    yPosition += 20; // Add space before chart
+    pdfDoc.text("Balance Over Time Chart:", 20, yPosition); // Chart section title
+    yPosition += 10;
+
+    pdfDoc.addImage(chartImageData, 'PNG', 20, yPosition, 180, 100); // Embed chart image
+    yPosition += 100; // Move yPosition down after chart (adjust based on chart height)
+    // --- End of Chart Image Embedding ---
+
+
+    // 4. Save the PDF (downloads it to the user's computer)
+    pdfDoc.save('personal_finance_report.pdf');
+}
