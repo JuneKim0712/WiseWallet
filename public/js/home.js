@@ -272,7 +272,6 @@ const formatNumberWithCommas = (number) => {
 };
 
 const initialize = async () => {
-  console.log("Initializing...");
   try {
     while (!uid) {
       await new Promise((resolve) => setTimeout(resolve, 10));
