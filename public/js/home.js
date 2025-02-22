@@ -1,6 +1,7 @@
 import * as process from "./preprocess.js";
 import * as ref from "./db.js";
 import * as plot from "./plot.js"
+import { generatePDFReport } from "./report.js";
 
 const db = firebase.firestore();
 const auth = firebase.auth();
@@ -87,33 +88,45 @@ const handleHistoryChange = async (event) => {
   }
 
   const balanceOverTimeData = process.genBalanceOverTime(filteredTransactions, selectedValue);
-  let monthlyBalanceData = balanceOverTimeData; // Initialize with original data
 
-  if (selectedValue === "all" || selectedValue === "year") {
+  if (selectedValue === "month") {
+    // For monthly view, show daily labels
+    const dailyBalanceData = balanceOverTimeData.map(item => ({
+      ...item,
+      monthLabel: new Date(item.date.seconds * 1000)
+        .toLocaleString('default', { day: '2-digit', month: 'short' })
+    }));
+    plot.plotBalance(balanceCharts, dailyBalanceData);
+  } else if (selectedValue === "all" || selectedValue === "year") {
+    // For year/all view, show monthly labels
     const monthlyBalances = {};
     balanceOverTimeData.forEach(item => {
       const date = new Date(item.date.seconds * 1000);
       const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      monthlyBalances[monthYear] = item; // Overwrite with the latest entry in the month
+      monthlyBalances[monthYear] = {
+        ...item,
+        monthLabel: date.toLocaleString('default', { month: 'short', year: '2-digit' })
+      };
     });
-    monthlyBalanceData = Object.values(monthlyBalances);
+    let monthlyBalanceData = Object.values(monthlyBalances);
 
     if (selectedValue === "year") {
       const currentDate = new Date();
       const startOfYear = new Date(currentDate);
       startOfYear.setFullYear(currentDate.getFullYear() - 1);
       startOfYear.setMonth(currentDate.getMonth());
-      startOfYear.setDate(1); // Start of the current month a year ago
+      startOfYear.setDate(1);
 
-      const filteredMonthlyData = monthlyBalanceData.filter(item => {
+      monthlyBalanceData = monthlyBalanceData.filter(item => {
         const itemDate = new Date(item.date.seconds * 1000);
         return itemDate >= startOfYear && itemDate <= currentDate;
       });
-      monthlyBalanceData = filteredMonthlyData;
     }
+    plot.plotBalance(balanceCharts, monthlyBalanceData);
+  } else {
+    // For week view, use default balance data
+    plot.plotBalance(balanceCharts, balanceOverTimeData);
   }
-
-  plot.plotBalance(balanceCharts, monthlyBalanceData);
 };
 
 
@@ -259,10 +272,12 @@ const formatNumberWithCommas = (number) => {
 };
 
 const initialize = async () => {
+  console.log("Initializing...");
   try {
     while (!uid) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
+    //test();
     transactions = await ref.access(uid, 'transaction')
     transactions = process.sortTransactions(transactions);
     transactions = sortTransactions(transactions, "date", false)
@@ -414,7 +429,10 @@ const initialize = async () => {
         transactionIdToDelete = null;
       }
     });
-    test()
+
+    // Add report generation handler
+    document.getElementById("generateReportBtn").addEventListener("click", generatePDFReport);
+
   } catch (error) {
     console.error("Error initializing data:", error);
   }
@@ -474,17 +492,30 @@ const updateDashboardCards = async () => {
 }
 
 const plotBalanceChart = async () => {
-  transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
-  const balanceOverTimeData = process.genBalanceOverTime(transactions)
-  const monthlyBalances = {};
-  let monthlyBalanceData = balanceOverTimeData;
-  balanceOverTimeData.forEach(item => {
-    const date = new Date(item.date.seconds * 1000);
-    const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    monthlyBalances[monthYear] = item; // Overwrite with the latest entry in the month
-  });
-  monthlyBalanceData = Object.values(monthlyBalances);
-  plot.plotBalance(balanceCharts, monthlyBalanceData);
+    transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+    const balanceOverTimeData = process.genBalanceOverTime(transactions);
+    
+    // Process monthly balances - get last balance of each month
+    const monthlyBalances = {};
+    balanceOverTimeData.forEach(item => {
+        const date = new Date(item.date.seconds * 1000);
+        const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        
+        // Only update if this is a later date in the same month or if month not yet recorded
+        if (!monthlyBalances[monthYear] || 
+            new Date(monthlyBalances[monthYear].date.seconds * 1000).getDate() < date.getDate()) {
+            monthlyBalances[monthYear] = {
+                ...item,
+                monthLabel: date.toLocaleString('default', { month: 'short', year: '2-digit' })
+            };
+        }
+    });
+
+    // Convert to array and sort by date
+    const monthlyBalanceData = Object.values(monthlyBalances)
+        .sort((a, b) => a.date.seconds - b.date.seconds);
+
+    plot.plotBalance(balanceCharts, monthlyBalanceData);
 }
 
 

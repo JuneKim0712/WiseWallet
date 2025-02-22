@@ -11,12 +11,16 @@
   <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
   <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
   <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
 
   <!-- Tailwind Imports -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" defer src="js/home.js"></script>
   <script type="module" defer src="js/db.js"></script>
   <script type="module" defer src="js/preprocess.js"></script>
+  <script type="module" defer src="js/report.js"></script>
+  <script type="module" defer src="js/plot.js"></script>
 
   <!-- Font Imports  -->
   <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
@@ -209,11 +213,16 @@
           <h5 class="text-xl font-semibold text-blue-gray-900">Transactions</h5>
           <p class="text-gray-700">Manage and track your transactions</p>
         </div>
-        <button id="addTransactionBtn" class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg cursor-pointer
-         transition duration-300 ease-in-out hover:bg-gray-700 hover:scale-105">
-          Add Transaction
-        </button>
-
+        <div class="flex gap-2">
+          <button id="generateReportBtn" class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg cursor-pointer
+           transition duration-300 ease-in-out hover:bg-gray-700 hover:scale-105">
+            Create Report
+          </button>
+          <button id="addTransactionBtn" class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg cursor-pointer
+           transition duration-300 ease-in-out hover:bg-gray-700 hover:scale-105">
+            Add Transaction
+          </button>
+        </div>
       </div>
 
       <!-- Filter Button -->

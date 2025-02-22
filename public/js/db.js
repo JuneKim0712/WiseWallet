@@ -1,7 +1,6 @@
 const db = firebase.firestore()
 
 export const access = (uid, collec) => {
-    console.log(uid)
     return new Promise((resolve, reject) => {
         db.collection('account').doc(`${uid}`).collection(`${collec}`).get()
             .then((querySnapshot) => {
