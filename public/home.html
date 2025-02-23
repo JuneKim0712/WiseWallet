@@ -76,41 +76,81 @@
   </div>
 
   <!-- Add Transaction Modal -->
-  <div id="addTransactionModal"
-    class="z-50 fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h2 class="text-xl font-semibold mb-4">Add New Transaction</h2>
+  <div id="addTransactionModal" 
+    class="z-50 fixed inset-0 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-white w-[600px] rounded-2xl shadow-2xl transform scale-95 transition-all duration-300">
+      <div class="p-8">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-semibold text-gray-800">Add New Transaction</h2>
+          <button id="closeTransactionModal" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-      <label class="block mb-2">Amount:</label>
-      <input type="number" id="transactionAmount" class="w-full p-2 border rounded mb-4" placeholder="Enter amount" />
+        <!-- Form Content -->
+        <div class="space-y-6">
+          <!-- Amount Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+              <input type="number" id="transactionAmount" 
+                class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
+                placeholder="Enter amount" />
+            </div>
+          </div>
 
-      <label class="block mb-2">Category:</label>
-      <select id="transactionCategory" class="w-full p-2 border rounded mb-4">
-        <option value="">Select category</option>
-        <option value="Rent">Rent</option>
-        <option value="Insurance_bills">Insurance/Bills</option>
-        <option value="Utilities">Utilities</option>
-        <option value="Subscription">Subscription</option>
-        <option value="Groceries">Groceries</option>
-        <option value="Personal_expenses">Personal Expenses</option>
-        <option value="Other">Other</option>
+          <!-- Type Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+            <select id="transactionType" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </div>
 
-      </select>
+          <!-- Category Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+            <div class="custom-select relative w-full">
+              <div class="selected-option p-3 border border-gray-300 rounded-lg cursor-pointer bg-white flex justify-between items-center hover:border-gray-400 transition-all">
+                <span id="selectedCategory" class="text-gray-700">Select category</span>
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div class="dropdown-menu hidden absolute w-full bg-white border rounded-lg shadow-lg z-50 mt-1">
+                <div class="category-options max-h-64 overflow-y-auto">
+                  <!-- Options will be populated by JavaScript -->
+                </div>
+              </div>
+              <input type="hidden" id="transactionCategory">
+            </div>
+          </div>
 
-      <label class="block mb-2">Date:</label>
-      <input type="date" id="transactionDate" class="w-full p-2 border rounded mb-4" />
+          <!-- Date Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+            <input type="date" id="transactionDate" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+          </div>
+        </div>
 
-      <label class="block mb-2">Type:</label>
-      <select id="transactionType" class="w-full p-2 border rounded mb-4">
-        <option value="income">Income</option>
-        <option value="expense">Expense</option>
-      </select>
-
-      <div class="flex justify-end space-x-2">
-        <button id="cancelTransaction"
-          class="px-4 py-2 bg-gray-300 rounded transition-all duration-200 hover:bg-gray-400 cursor-pointer">Cancel</button>
-        <button id="saveTransaction"
-          class="px-4 py-2 bg-blue-500 text-white rounded transition-all duration-200 hover:bg-blue-600 cursor-pointer">Save</button>
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-3 mt-8">
+          <button id="cancelTransaction" 
+            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200">
+            Cancel
+          </button>
+          <button id="saveTransaction" 
+            class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200">
+            Save
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -156,7 +196,7 @@
             </div>
           </div>
           <div class="bg-[#e3d7f9] p-8">
-            <div id="balance" class="text-3xl font-bold text-gray-900">$1000</div>
+            <div id="balance" class="text-3xl font-bold text-gray-900">$0</div>
           </div>
         </div>
 
@@ -173,7 +213,7 @@
             </div>
           </div>
           <div class="bg-[#e0e6f9] p-8">
-            <div id="income" class="text-3xl font-bold text-gray-900">$1000</div>
+            <div id="income" class="text-3xl font-bold text-gray-900">$0</div>
           </div>
         </div>
 
@@ -190,7 +230,7 @@
             </div>
           </div>
           <div class="bg-[#d9f1e0] p-8">
-            <div id="expenses" class="text-3xl font-bold text-gray-900">$1000</div>
+            <div id="expenses" class="text-3xl font-bold text-gray-900">$0</div>
           </div>
         </div>
       </div>
@@ -227,44 +267,57 @@
 
       <!-- Filter Button -->
       <div class="flex gap-2 mb-4">
-        <div
-          class="flex items-center gap-1 bg-gray-200 rounded-lg p-0.5 sm:p-1 md:p-1 lg:p-1 xl:p-1 2xl:p-1 flex-wrap sm:flex-nowrap sm:flex-row flex-col">
-          <button id="filterSelect"
-            class="cursor-pointer py-1 px-2 sm:py-2 sm:px-4 text-xs sm:text-sm font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white w-full"
-            data-value="all">All</button>
-          <button id="filterSelect"
-            class="whitespace-nowrap cursor-pointer py-1 px-2 sm:py-2 sm:px-4 text-xs sm:text-sm font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white w-full"
-            data-value="year">1 Year</button>
-          <button id="filterSelect"
-            class="whitespace-nowrap cursor-pointer py-1 px-2 sm:py-2 sm:px-4 text-xs sm:text-sm font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white w-full"
-            data-value="month">1 Month</button>
-          <button id="filterSelect"
-            class="whitespace-nowrap cursor-pointer py-1 px-2 sm:py-2 sm:px-4 text-xs sm:text-sm font-bold uppercase rounded-lg hover:bg-gray-300 focus:bg-white w-full"
-            data-value="week">1 Week</button>
+        <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
+          <button id="filterSelect" 
+            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+            data-value="all">
+            All time
+          </button>
+          <button id="filterSelect" 
+            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+            data-value="year">
+            Last year
+          </button>
+          <button id="filterSelect" 
+            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+            data-value="month">
+            Last month
+          </button>
+          <button id="filterSelect" 
+            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+            data-value="week">
+            Last week
+          </button>
         </div>
-        <div class="relative flex-grow mr-0">
-          <input id="searchInput" type="text" placeholder="Search"
-            class="w-full h-10 px-3 border rounded-lg text-sm sm:text-base">
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input id="searchInput" 
+            type="text" 
+            placeholder="Search transactions..." 
+            class="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
         </div>
       </div>
 
       <!-- Transaction Table-->
-      <div class="relative overflow-auto">
-        <table id="transactionTable"
-          class="w-full text-left table-fixed border border-gray-300 rounded-2xl overflow-hidden">
-          <thead class="bg-gray-100 rounded-lg">
+      <div class="relative overflow-auto rounded-xl shadow-sm border border-gray-200">
+        <table id="transactionTable" class="w-full text-left table-fixed divide-y divide-gray-200">
+          <thead class="bg-gray-50">
             <tr>
-              <th class="p-4 cursor-pointer">Date</th>
-              <th class="p-4 cursor-pointer">Amount</th>
-              <th class="p-4 cursor-pointer">Category</th>
-              <th class="p-4 w-1/8 cursor-pointer">Action</th>
+              <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Date</th>
+              <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Amount</th>
+              <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Category</th>
+              <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">Action</th>
             </tr>
           </thead>
-          <tbody id="transactionTableBody" class="divide-y divide-gray-300 bg-gray-50 text-sm ">
+          <tbody id="transactionTableBody" class="bg-white divide-y divide-gray-200 text-sm">
           </tbody>
         </table>
       </div>
-      <div id="transactionPagination" class="pagination-controls flex justify-center items-center mt-4 space-x-4">
+      <div id="transactionPagination" class="pagination-controls flex justify-center items-center mt-6 gap-4">
       </div>
 
     </div>
