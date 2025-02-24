@@ -50,46 +50,9 @@ const handleHistoryChange = async (event) => {
     filteredTransactions = process.filterTransactions(transactions, startDate, endDate);
   }
 
-  const balanceOverTimeData = process.genBalanceOverTime(filteredTransactions, selectedValue);
-
-  if (selectedValue === "month") {
-    // For monthly view, show daily labels
-    const dailyBalanceData = balanceOverTimeData.map(item => ({
-      ...item,
-      monthLabel: new Date(item.date.seconds * 1000)
-        .toLocaleString('default', { day: '2-digit', month: 'short' })
-    }));
-    plot.plotBalance(balanceCharts, dailyBalanceData);
-  } else if (selectedValue === "all" || selectedValue === "year") {
-    // For year/all view, show monthly labels
-    const monthlyBalances = {};
-    balanceOverTimeData.forEach(item => {
-      const date = new Date(item.date.seconds * 1000);
-      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      monthlyBalances[monthYear] = {
-        ...item,
-        monthLabel: date.toLocaleString('default', { month: 'short', year: '2-digit' })
-      };
-    });
-    let monthlyBalanceData = Object.values(monthlyBalances);
-
-    if (selectedValue === "year") {
-      const currentDate = new Date();
-      const startOfYear = new Date(currentDate);
-      startOfYear.setFullYear(currentDate.getFullYear() - 1);
-      startOfYear.setMonth(currentDate.getMonth());
-      startOfYear.setDate(1);
-
-      monthlyBalanceData = monthlyBalanceData.filter(item => {
-        const itemDate = new Date(item.date.seconds * 1000);
-        return itemDate >= startOfYear && itemDate <= currentDate;
-      });
-    }
-    plot.plotBalance(balanceCharts, monthlyBalanceData);
-  } else {
-    // For week view, use default balance data
-    plot.plotBalance(balanceCharts, balanceOverTimeData);
-  }
+  // Only update the transaction list, not the balance chart
+  transactionCurrentPage = 1;
+  listTransactions(filteredTransactions, transactionCurrentPage);
 };
 
 
@@ -753,8 +716,9 @@ const updateDashboardCards = async () => {
 };
 
 const plotBalanceChart = async () => {
-    transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
-    const balanceOverTimeData = process.genBalanceOverTime(transactions);
+    // Get all transactions regardless of filter
+    const allTransactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+    const balanceOverTimeData = process.genBalanceOverTime(allTransactions);
     
     // Process monthly balances - get last balance of each month
     const monthlyBalances = {};
