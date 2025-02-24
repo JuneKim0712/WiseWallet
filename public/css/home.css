@@ -1,351 +1,87 @@
-.pagination-controls button {
-  @apply px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200;
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
-}
-
-.pagination-controls button:hover:not(.disabled) {
-  @apply bg-gray-200;
-  transform: translateY(-1px);
-}
-
-.pagination-controls button:active:not(.disabled) {
-  transform: translateY(0);
-}
-
-.pagination-controls button.disabled {
-  @apply opacity-50 cursor-not-allowed;
-  background-color: #f3f4f6;
-  color: #9ca3af;
-}
-
-.pagination-controls span {
-  @apply text-sm font-medium text-gray-700;
-}
-
-/* Add hover effect for table rows */
-#transactionTableBody tr,
-#incomeTableBody tr,
-#expenseTableBody tr {
-  @apply hover:bg-gray-50 transition-colors;
-}
-
-/* Style the action buttons in tables */
-.edit-btn,
-.delete-btn {
-  @apply p-1.5 rounded-lg transition-all duration-200;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Edit button hover effect */
-.edit-btn:hover {
-  @apply text-blue-600 bg-blue-50;
-  transform: translateY(-1px);
-}
-
-.edit-btn:hover svg {
-  transform: scale(1.1);
-}
-
-/* Delete button hover effect */
-.delete-btn:hover {
-  @apply text-red-600 bg-red-50;
-  transform: translateY(-1px);
-}
-
-.delete-btn:hover svg {
-  transform: scale(1.1);
-}
-
-/* Active state for both buttons */
-.edit-btn:active,
-.delete-btn:active {
-  transform: translateY(0);
-}
-
-/* Add tooltip on hover */
+/* Keep only complex interactive elements and animations */
 .edit-btn::after,
 .delete-btn::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 8px;
-  background-color: #374151;
-  color: white;
-  border-radius: 4px;
-  font-size: 12px;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background-color: #374151;
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .edit-btn:hover::after,
 .delete-btn:hover::after {
-  opacity: 1;
-  visibility: visible;
-  bottom: -25px;
+    opacity: 1;
+    visibility: visible;
+    bottom: -25px;
 }
 
-/* Add subtle animation for sort indicators */
-th[data-sort-direction] {
-  position: relative;
-}
-
-th[data-sort-direction]::after {
-  transition: transform 0.2s ease;
-}
-
-th[data-sort-direction="asc"]::after {
-  transform: translateY(-2px);
-}
-
-th[data-sort-direction="desc"]::after {
-  transform: translateY(2px);
-}
-
-.pagination-button {
-  padding: 0.5rem 0.75rem;
-  margin: 0 0.25rem;
-  border: 1px solid #ccc;
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-
-.pagination-button:hover {
-  background-color: #f0f0f0;
-}
-
-.pagination-button.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: transparent;
-  border-color: #ccc;
-  color: #777;
-}
-
-.custom-select .dropdown-menu {
-  top: 100%;
-  margin-top: 4px;
-}
-
-.custom-select .category-options {
-  scrollbar-width: thin;
-}
-
-.custom-select .category-option {
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.custom-select .category-option:hover {
-  background-color: #f3f4f6;
-}
-
-.custom-select .category-option.selected {
-  background-color: #e5e7eb;
-}
-
-.custom-select .category-option.hidden {
-  display: none;
-}
-
-.add-category-group {
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 1;
-}
-
-.add-category-group input:focus {
-  outline: none;
-  border-color: #4f46e5;
-}
-
+/* Keep custom scrollbar styles */
 .category-options {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.category-option {
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.category-option:hover {
-  background-color: #f3f4f6;
-}
-
-.sticky {
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 10;
-}
-
-.add-new-category-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 40px;
-  height: 40px;
-}
-
-.add-new-category-btn:hover {
-  background-color: #e5e7eb;
-}
-
-/* Add these modal-specific styles */
-.backdrop-blur-sm {
-  backdrop-filter: blur(8px);
-}
-
-#addTransactionModal input:focus,
-#addTransactionModal select:focus {
-  outline: none;
-  border-color: transparent;
-}
-
-#addTransactionModal input::placeholder {
-  color: #9CA3AF;
-}
-
-#addTransactionModal .custom-select:focus-within .selected-option {
-  border-color: #3B82F6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
-
-#addTransactionModal .selected-option:hover {
-  border-color: #9CA3AF;
-}
-
-/* Smooth scrollbar for category options */
-.category-options {
-  scrollbar-width: thin;
-  scrollbar-color: #CBD5E1 transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E1 transparent;
 }
 
 .category-options::-webkit-scrollbar {
-  width: 6px;
+    width: 6px;
 }
 
 .category-options::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 
 .category-options::-webkit-scrollbar-thumb {
-  background-color: #CBD5E1;
-  border-radius: 3px;
+    background-color: #CBD5E1;
+    border-radius: 3px;
 }
 
-/* Update the filter button styles */
-#filterSelect {
-  @apply relative px-4 py-2 text-sm font-medium rounded-lg;
-  border: 1px solid transparent; /* Start with transparent border */
-  transition: color 0.2s ease, background-color 0.2s ease;
-}
-
-/* Make the active state more noticeable */
-#filterSelect.active {
-  @apply bg-white font-semibold;
-  color: #1a56db;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Hover state for non-active buttons */
-#filterSelect:not(.active):hover {
-  @apply bg-white;
-  border: 1px solid transparent;
-}
-
-/* Active/pressed state */
-#filterSelect:active {
-  @apply bg-white;
-  border: 1px solid transparent;
-}
-
-/* Add smooth transition for search input */
+/* Search input styles */
 #searchInput {
-  transition: all 0.2s ease;
+    padding: 0.75rem;
+    height: 45px;
+    padding-left: 2.75rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    outline: none;
 }
 
 #searchInput:focus {
-  transform: translateY(-1px);
+    transform: translateY(-1px);
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
-/* Add subtle animation for search icon */
+/* Search icon container */
+.absolute.inset-y-0.left-3 {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0.75rem;
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+    pointer-events: none;
+}
+
+/* Search icon */
+.search-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #6B7280;
+}
+
 #searchInput:focus + .absolute svg {
-  @apply text-blue-500;
-  transform: scale(1.1);
-  transition: all 0.2s ease;
-}
-
-/* Add these styles for the transaction page tables */
-#incomeTable,
-#expenseTable {
-  @apply w-full text-left table-fixed divide-y divide-gray-200;
-}
-
-#incomeTable thead,
-#expenseTable thead {
-  @apply bg-gray-50;
-}
-
-#incomeTable th,
-#expenseTable th {
-  @apply p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors;
-}
-
-#incomeTable tbody,
-#expenseTable tbody {
-  @apply bg-white divide-y divide-gray-200 text-sm;
-}
-
-#incomeTable tr:hover,
-#expenseTable tr:hover {
-  @apply bg-gray-50 transition-colors;
-}
-
-/* Update pagination controls for transaction page */
-#incomePagination,
-#expensePagination {
-  @apply flex justify-center items-center mt-6 gap-4;
-}
-
-#incomePagination button,
-#expensePagination button {
-  @apply px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200;
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
-}
-
-#incomePagination button:hover:not(.disabled),
-#expensePagination button:hover:not(.disabled) {
-  @apply bg-gray-200;
-  transform: translateY(-1px);
-}
-
-#incomePagination button:active:not(.disabled),
-#expensePagination button:active:not(.disabled) {
-  transform: translateY(0);
-}
-
-#incomePagination button.disabled,
-#expensePagination button.disabled {
-  @apply opacity-50 cursor-not-allowed;
-  background-color: #f3f4f6;
-  color: #9ca3af;
-}
-
-#incomePagination span,
-#expensePagination span {
-  @apply text-sm font-medium text-gray-700;
+    color: #2563eb;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
 }

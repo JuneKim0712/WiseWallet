@@ -1,29 +1,43 @@
+/**
+ * Transaction management module
+ * Handles transaction listing, filtering, sorting, and CRUD operations
+ */
+
 import * as process from "./preprocess.js";
 import * as ref from "./db.js";
 import * as plot from "./plot.js"
 
+// Initialize Firebase services
 const db = firebase.firestore();
 const auth = firebase.auth();
 let uid;
 let filterValue = "all";
 
+// Authentication state observer
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     uid = user.uid;
   } else {
-    // User is signed out
+    // Redirect unauthenticated users
+    window.location.href = '/index.html';
   }
 });
 
+// Data storage
 let allTransactionsData = [];
 let incomeData = [];
 let expenseData = [];
 
-// Pagination variables
+// Pagination configuration
 let incomeCurrentPage = 1;
 let expenseCurrentPage = 1;
-const itemsPerPage = 6; // You can adjust this value
+const itemsPerPage = 6;
 
+/**
+ * Separates transactions by type
+ * @param {Array} transactions - Array of transaction objects
+ * @returns {Object} Object containing income and expense arrays
+ */
 const filterTransactionsByType = (transactions) => {
   return {
     income: transactions.filter(transaction => transaction.type == 'income'),
@@ -31,46 +45,11 @@ const filterTransactionsByType = (transactions) => {
   };
 };
 
-
-const handleHistoryChange = async (event) => {
-  const selectedValue = event.target.value;
-  const now = new Date();
-  const startDate = new Date();
-  const endDate = now;
-
-  switch (selectedValue) {
-    case "week":
-      startDate.setUTCDate(now.getUTCDate() - 7);
-      break;
-    case "month":
-      startDate.setMonth(now.getMonth() - 1);
-      break;
-    case "year":
-      startDate.setFullYear(now.getFullYear() - 1);
-      break;
-    default:
-      // For "all" and default, no filtering by date range
-      break;
-  }
-
-  let filteredTransactions = allTransactionsData;
-
-  if (selectedValue !== "all") {
-    filteredTransactions = process.filterTransactions(allTransactionsData, startDate, endDate);
-  }
-
-  const { income, expense } = filterTransactionsByType(filteredTransactions);
-  incomeData = income;
-  expenseData = expense;
-
-  incomeCurrentPage = 1; // Reset pagination on filter change
-  expenseCurrentPage = 1; // Reset pagination on filter change
-
-  listIncome(incomeData, incomeCurrentPage);
-  listExpense(expenseData, expenseCurrentPage);
-};
-
-
+/**
+ * Updates income table with pagination
+ * @param {Array} currentIncomeData - Array of income transactions
+ * @param {number} page - Current page number
+ */
 const listIncome = (currentIncomeData, page) => {
   const tableBody = document.querySelector("#incomeTableBody");
   const searchValue = document.getElementById("searchInput").value.toLowerCase();
@@ -114,6 +93,11 @@ const listIncome = (currentIncomeData, page) => {
   updateIncomePaginationControls(filteredIncome.length, page); // Update pagination controls
 };
 
+/**
+ * Updates expense table with pagination
+ * @param {Array} currentExpenseData - Array of expense transactions
+ * @param {number} page - Current page number
+ */
 const listExpense = (currentExpenseData, page) => {
   const tableBody = document.querySelector("#expenseTableBody");
   const searchValue = document.getElementById("searchInput").value.toLowerCase();
@@ -157,6 +141,127 @@ const listExpense = (currentExpenseData, page) => {
   updateExpensePaginationControls(filteredExpenses.length, page); // Update pagination controls
 };
 
+/**
+ * Updates pagination controls for income table
+ * @param {number} totalItems - Total number of income items
+ * @param {number} currentPage - Current page number
+ */
+const updateIncomePaginationControls = (totalItems, currentPage) => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  let paginationHTML = '';
+
+  if (totalPages > 1) {
+    paginationHTML += `<button id="incomePrevPage" class="pagination-button ${currentPage === 1 ? 'disabled' : ''}" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Previous</button>`;
+    paginationHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
+    paginationHTML += `<button id="incomeNextPage" class="pagination-button ${currentPage === totalPages ? 'disabled' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+  }
+
+  const paginationDiv = document.getElementById('incomePagination');
+  if (paginationDiv) {
+    paginationDiv.innerHTML = paginationHTML;
+
+    // Add event listeners to the new buttons AFTER they are added to the DOM
+    const prevButton = document.getElementById('incomePrevPage');
+    const nextButton = document.getElementById('incomeNextPage');
+
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        if (incomeCurrentPage > 1) {
+          incomeCurrentPage--;
+          listIncome(incomeData, incomeCurrentPage);
+        }
+      });
+    }
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        if (incomeCurrentPage < totalPages) {
+          incomeCurrentPage++;
+          listIncome(incomeData, incomeCurrentPage);
+        }
+      });
+    }
+  }
+};
+
+/**
+ * Updates pagination controls for expense table
+ * @param {number} totalItems - Total number of expense items
+ * @param {number} currentPage - Current page number
+ */
+const updateExpensePaginationControls = (totalItems, currentPage) => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  let paginationHTML = '';
+
+  if (totalPages > 1) {
+    paginationHTML += `<button id="expensePrevPage" class="pagination-button ${currentPage === 1 ? 'disabled' : ''}" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Previous</button>`;
+    paginationHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
+    paginationHTML += `<button id="expenseNextPage" class="pagination-button ${currentPage === totalPages ? 'disabled' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+  }
+
+  const paginationDiv = document.getElementById('expensePagination');
+  if (paginationDiv) {
+    paginationDiv.innerHTML = paginationHTML;
+
+    // Add event listeners
+    const prevButton = document.getElementById('expensePrevPage');
+    const nextButton = document.getElementById('expenseNextPage');
+
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        if (expenseCurrentPage > 1) {
+          expenseCurrentPage--;
+          listExpense(expenseData, expenseCurrentPage);
+        }
+      });
+    }
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        if (expenseCurrentPage < totalPages) {
+          expenseCurrentPage++;
+          listExpense(expenseData, expenseCurrentPage);
+        }
+      });
+    }
+  }
+};
+
+const handleHistoryChange = async (event) => {
+  const selectedValue = event.target.value;
+  const now = new Date();
+  const startDate = new Date();
+  const endDate = now;
+
+  switch (selectedValue) {
+    case "week":
+      startDate.setUTCDate(now.getUTCDate() - 7);
+      break;
+    case "month":
+      startDate.setMonth(now.getMonth() - 1);
+      break;
+    case "year":
+      startDate.setFullYear(now.getFullYear() - 1);
+      break;
+    default:
+      // For "all" and default, no filtering by date range
+      break;
+  }
+
+  let filteredTransactions = allTransactionsData;
+
+  if (selectedValue !== "all") {
+    filteredTransactions = process.filterTransactions(allTransactionsData, startDate, endDate);
+  }
+
+  const { income, expense } = filterTransactionsByType(filteredTransactions);
+  incomeData = income;
+  expenseData = expense;
+
+  incomeCurrentPage = 1; // Reset pagination on filter change
+  expenseCurrentPage = 1; // Reset pagination on filter change
+
+  listIncome(incomeData, incomeCurrentPage);
+  listExpense(expenseData, expenseCurrentPage);
+};
 
 const sortTable = (data, tableId, key, order) => {
   const sortedData = [...data].sort((a, b) => { // Sort a copy to avoid modifying original data
@@ -178,7 +283,6 @@ const sortTable = (data, tableId, key, order) => {
 
   return sortedData; // return sorted data
 };
-
 
 const addSortingHandlers = () => {
   const incomeTableHeaders = Array.from(document.querySelectorAll("#incomeTable th"))
@@ -227,7 +331,6 @@ const setupSortableHeaders = (headers, tableId, listFunction) => { //listFunctio
 
       const sortedData = sortTable(currentData, tableId, key, newSortDirection === 'asc');
 
-
       if (tableId === "incomeTable") {
         incomeData = sortedData; // Update incomeData
       } else if (tableId === "expenseTable") {
@@ -237,7 +340,6 @@ const setupSortableHeaders = (headers, tableId, listFunction) => { //listFunctio
     });
   });
 };
-
 
 const initializeCustomDropdown = () => {
   const selectedOption = document.querySelector('.selected-option');
@@ -395,7 +497,6 @@ const initialize = async () => {
     listIncome(incomeData, incomeCurrentPage); // Pass initial page number
     listExpense(expenseData, expenseCurrentPage); // Pass initial page number
 
-
     document.getElementById("searchInput").addEventListener("input", () => {
       const { income, expense } = filterTransactionsByType(allTransactionsData);
       incomeData = income;
@@ -423,8 +524,6 @@ const initialize = async () => {
     const closeBtn = document.getElementById("closeBtn");
     let itemToDelete = { id: null, type: null };
     let transactionIdToEdit = null;
-
-
 
     document.getElementById("addTransactionBtn").addEventListener("click", async () => {
       const modal = document.getElementById("addTransactionModal");
@@ -515,7 +614,6 @@ const initialize = async () => {
       transactionIdToEdit = null;
     });
 
-
     const handleTableClick = async (event) => {
       if (event.target.closest('.delete-btn')) {
         const deleteButton = event.target.closest('.delete-btn');
@@ -552,7 +650,6 @@ const initialize = async () => {
 
     document.getElementById("incomeTableBody").addEventListener("click", handleTableClick);
     document.getElementById("expenseTableBody").addEventListener("click", handleTableClick);
-
 
     cancelBtn.addEventListener("click", () => {
       deleteModal.classList.add("hidden");
@@ -592,85 +689,8 @@ const initialize = async () => {
   }
 };
 
-
 initialize().then(() => {
 });
-
-// Pagination control functions
-const updateIncomePaginationControls = (totalItems, currentPage) => {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  let paginationHTML = '';
-
-  if (totalPages > 1) {
-    paginationHTML += `<button id="incomePrevPage" class="pagination-button ${currentPage === 1 ? 'disabled' : ''}" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Previous</button>`;
-    paginationHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
-    paginationHTML += `<button id="incomeNextPage" class="pagination-button ${currentPage === totalPages ? 'disabled' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
-  }
-
-  const paginationDiv = document.getElementById('incomePagination');
-  if (paginationDiv) {
-    paginationDiv.innerHTML = paginationHTML;
-
-    // Add event listeners to the new buttons AFTER they are added to the DOM
-    const prevButton = document.getElementById('incomePrevPage');
-    const nextButton = document.getElementById('incomeNextPage');
-
-    if (prevButton) {
-      prevButton.addEventListener('click', () => {
-        if (incomeCurrentPage > 1) {
-          incomeCurrentPage--;
-          listIncome(incomeData, incomeCurrentPage);
-        }
-      });
-    }
-    if (nextButton) {
-      nextButton.addEventListener('click', () => {
-        if (incomeCurrentPage < totalPages) {
-          incomeCurrentPage++;
-          listIncome(incomeData, incomeCurrentPage);
-        }
-      });
-    }
-  }
-};
-
-const updateExpensePaginationControls = (totalItems, currentPage) => {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  let paginationHTML = '';
-
-  if (totalPages > 1) {
-    paginationHTML += `<button id="expensePrevPage" class="pagination-button ${currentPage === 1 ? 'disabled' : ''}" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Previous</button>`;
-    paginationHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
-    paginationHTML += `<button id="expenseNextPage" class="pagination-button ${currentPage === totalPages ? 'disabled' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
-  }
-
-
-  const paginationDiv = document.getElementById('expensePagination');
-  if (paginationDiv) {
-    paginationDiv.innerHTML = paginationHTML;
-
-    // Add event listeners
-    const prevButton = document.getElementById('expensePrevPage');
-    const nextButton = document.getElementById('expenseNextPage');
-
-    if (prevButton) {
-      prevButton.addEventListener('click', () => {
-        if (expenseCurrentPage > 1) {
-          expenseCurrentPage--;
-          listExpense(expenseData, expenseCurrentPage);
-        }
-      });
-    }
-    if (nextButton) {
-      nextButton.addEventListener('click', () => {
-        if (expenseCurrentPage < totalPages) {
-          expenseCurrentPage++;
-          listExpense(expenseData, expenseCurrentPage);
-        }
-      });
-    }
-  }
-};
 
 // Add these functions to handle modal transitions
 const showModal = (modal) => {

@@ -13,7 +13,7 @@
     <script defer src="js/login.js"></script>
 
     <!-- Tailwind Imports -->
-    <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link href="/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="css/index.css">
 
     <!-- Font Imports  -->
@@ -58,15 +58,15 @@
   
               <!-- Email & Password Fields -->
               <form>
-                  <label class="block text-gray-700">Email address</label>
-                  <input type="email" class="w-full border p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300" required>
+                  <label class="form-label">Email address</label>
+                  <input class="form-input w-full border p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300" required>
   
-                  <label class="block text-gray-700">Password</label>
-                  <input type="password" class="w-full border p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300" required>
+                  <label class="form-label">Password</label>
+                  <input class="form-input w-full border p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300" required>
   
                   <!-- Forgot Password Link -->
                   <div class="text-right mb-4">
-                      <a href="#" class="text-blue-500 hover:underline">Forgot Password?</a>
+                      <a href="#" class="nav-link text-blue-500 hover:underline">Forgot Password?</a>
                   </div>
   
                   <!-- Sign-In Button -->

@@ -33,26 +33,18 @@
       <body id="body" class="bg-[#fffffa] font-[Montserrat] hidden">
 
     <!-- Navigation Bar -->
-    <nav
-    class="p-10 appearance-none h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 border-b-2 font-semibold"
-    id="navigationBar">
-    <img src="assets/favicon.svg" class="h-15 w-15">
-    <div class="flex justify-center flex-1 space-x-14">
-      <a class="border-black no-underline text-xl px-4 py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        href="home.html">Home</a>
-      <a class="no-underline text-xl px-4 py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        href="charts.html">Finances</a>
-      <a class="border-b-2 no-underline text-xl px-4 py-2 inline-flex items-center transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        href="transactions.html">Transactions</a>
-      <a class="no-underline text-xl px-4 py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        href="help.html">Support</a>
-      <button
-        class="no-underline text-xl px-4 py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        id="signOutBtn">
-        <a href="">Sign Out</a>
-      </button>
-    </div>
-  </nav>
+    <nav class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 p-10 h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 font-semibold">
+        <img src="assets/favicon.svg" class="h-15 w-15 transition-transform duration-300 hover:scale-105">
+        <div class="flex justify-center flex-1 space-x-14">
+            <a class="nav-link" href="home.html">Home</a>
+            <a class="nav-link" href="charts.html">Charts</a>
+            <a class="nav-link active" href="transactions.html">Transactions</a>
+            <a class="nav-link" href="help.html">Support</a>
+            <button class="sign-out-btn" id="signOutBtn">
+                <a href="">Sign Out</a>
+            </button>
+        </div>
+    </nav>
 
   <div id="addTransactionModal" 
     class="z-50 fixed inset-0 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
@@ -71,12 +63,12 @@
         <!-- Form Content -->
         <div class="space-y-6">
           <!-- Amount Field -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+          <div class="form-group">
+            <label class="form-label">Transaction Amount</label>
             <div class="relative">
               <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
               <input type="number" id="transactionAmount" 
-                class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
+                class="form-input w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
                 placeholder="Enter amount" />
             </div>
           </div>
@@ -192,14 +184,14 @@
                 </div>
                 <div class="relative flex-grow">
                     <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
                     </div>
                     <input id="searchInput" 
                         type="text" 
                         placeholder="Search transactions..." 
-                        class="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                        class="w-full pl-10 pr-4 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                 </div>
             </div>
         </div>
@@ -216,7 +208,7 @@
               </button>
           </div>
           <div class="relative overflow-auto rounded-xl shadow-sm border border-gray-200 mb-4">
-              <table id="incomeTable" class="w-full text-left table-fixed divide-y divide-gray-200">
+              <table class="w-full text-left table-fixed divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                       <tr>
                           <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Date</th>
@@ -229,7 +221,13 @@
                   </tbody>
               </table>
           </div>
-          <div id="incomePagination" class="pagination-controls flex justify-center items-center mt-6 gap-4">
+          <div class="flex justify-center items-center mt-6 gap-4">
+              <button class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Previous
+              </button>
+              <button id="nextIncomePage" class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Next
+              </button>
           </div>
       </div>
 
@@ -245,7 +243,7 @@
               </button>
           </div>
           <div class="relative overflow-auto rounded-xl shadow-sm border border-gray-200">
-              <table id="expenseTable" class="w-full text-left table-fixed divide-y divide-gray-200">
+              <table class="w-full text-left table-fixed divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                       <tr>
                           <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Date</th>
@@ -258,7 +256,13 @@
                   </tbody>
               </table>
           </div>
-          <div id="expensePagination" class="pagination-controls flex justify-center items-center mt-6 gap-4">
+          <div class="flex justify-center items-center mt-6 gap-4">
+              <button class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Previous
+              </button>
+              <button id="nextExpensePage" class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Next
+              </button>
           </div>
       </div>
   </div>

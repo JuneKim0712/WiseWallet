@@ -199,6 +199,10 @@ const sortTransactions = (transactions, key, order) => {
 
 let sortType;
 let sortDirection;
+/**
+ * Adds sorting functionality to transaction table headers
+ * Handles click events and updates sort indicators
+ */
 const addSortingHandlers = () => {
   let headers = Array.from(document.querySelectorAll("#transactionTable th"))
     .filter(th => th.textContent.trim() !== "Action");
@@ -238,11 +242,19 @@ const addSortingHandlers = () => {
   });
 };
 
+/**
+ * Formats a number with commas for better readability
+ * @param {number} number - The number to format
+ * @returns {string} Formatted number with commas
+ */
 const formatNumberWithCommas = (number) => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-// Update the updateCategoryOptions function
+/**
+ * Updates category options in the transaction modal based on transaction type
+ * @param {string} type - Transaction type ('income' or 'expense')
+ */
 const updateCategoryOptions = async (type) => {
   try {
     const allCategories = await ref.getAllCategories(uid);
@@ -410,6 +422,7 @@ const initialize = async () => {
     while (!uid) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
+    test()
 
     // Add event listener for transaction type change
     document.getElementById("transactionType").addEventListener("change", (e) => {
@@ -450,18 +463,13 @@ const initialize = async () => {
     const balanceOverTimeData = process.genBalanceOverTime(transactions)
     let totalIncome = 0;
     let totalExpense = 0;
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
 
+    // Calculate total income and expenses across all time
     transactions.forEach(transaction => {
-      const transactionDate = new Date(transaction.date.seconds * 1000);
-      if (transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear) {
-        if (transaction.type === "income") {
-          totalIncome += transaction.amount;
-        } else if (transaction.type === "expense") {
-          totalExpense += transaction.amount;
-        }
+      if (transaction.type === "income") {
+        totalIncome += transaction.amount;
+      } else if (transaction.type === "expense") {
+        totalExpense += transaction.amount;
       }
     });
 
@@ -629,6 +637,9 @@ const initialize = async () => {
 initialize().then(() => {
 });
 
+/**
+ * Initializes the balance chart with configuration
+ */
 const balanceCharts = new Chart(balanceSummary, {
   type: 'line',
   data: {},
@@ -653,7 +664,13 @@ const balanceCharts = new Chart(balanceSummary, {
   }
 })
 
-// Add this function for number animation
+/**
+ * Animates a number from start to end value
+ * @param {HTMLElement} element - Target element to update
+ * @param {number} start - Starting value
+ * @param {number} end - Ending value
+ * @param {number} duration - Animation duration in milliseconds
+ */
 const animateNumber = (element, start, end, duration = 1000) => {
   let startTimestamp = null;
   const step = (timestamp) => {
@@ -675,18 +692,13 @@ const updateDashboardCards = async () => {
   const balanceOverTimeData = process.genBalanceOverTime(transactions)
   let totalIncome = 0;
   let totalExpense = 0;
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
 
+  // Calculate total income and expenses across all time
   transactions.forEach(transaction => {
-    const transactionDate = new Date(transaction.date.seconds * 1000);
-    if (transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear) {
-      if (transaction.type === "income") {
-        totalIncome += transaction.amount;
-      } else if (transaction.type === "expense") {
-        totalExpense += transaction.amount;
-      }
+    if (transaction.type === "income") {
+      totalIncome += transaction.amount;
+    } else if (transaction.type === "expense") {
+      totalExpense += transaction.amount;
     }
   });
 
@@ -730,12 +742,17 @@ const plotBalanceChart = async () => {
     plot.plotBalance(balanceCharts, monthlyBalanceData);
 };
 
-
+/**
+ * Test function to generate sample transaction data
+ * Creates 2 years of realistic financial data including:
+ * - Monthly salary with variations
+ * - Regular rent payments
+ * - Seasonal utility costs
+ * - Weekly grocery expenses
+ * - Monthly subscriptions
+ * - Random personal expenses
+ */
 const test = async () => {
-  while (!uid) {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-
   const today = new Date();
   const twoYearsAgo = new Date();
   twoYearsAgo.setFullYear(today.getFullYear() - 2);
@@ -800,7 +817,10 @@ const test = async () => {
   }
 }
 
-// Add these functions to handle modal transitions
+/**
+ * Shows a modal with animation
+ * @param {HTMLElement} modal - Modal element to show
+ */
 const showModal = (modal) => {
   modal.classList.remove('opacity-0', 'pointer-events-none');
   modal.querySelector('.bg-white').classList.remove('scale-95');
@@ -808,6 +828,10 @@ const showModal = (modal) => {
   document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
 };
 
+/**
+ * Hides a modal with animation
+ * @param {HTMLElement} modal - Modal element to hide
+ */
 const hideModal = (modal) => {
   modal.classList.add('opacity-0', 'pointer-events-none');
   modal.querySelector('.bg-white').classList.remove('scale-100');
@@ -822,7 +846,11 @@ document.getElementById("addTransactionModal").addEventListener("click", (e) => 
   }
 });
 
-// Update the edit transaction handler
+/**
+ * Handles editing of an existing transaction
+ * Updates modal with transaction details and shows it
+ * @param {Object} transactionToEdit - Transaction object to edit
+ */
 const handleEdit = async (transactionToEdit) => {
   if (transactionToEdit) {
     const modal = document.getElementById("addTransactionModal");

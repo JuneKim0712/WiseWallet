@@ -156,24 +156,16 @@
   </div>
 
   <!-- Navigation Bar -->
-  <nav
-    class="p-4 sm:p-6 md:p-8 lg:p-10 h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 border-b-2 font-semibold"
-    id="navigationBar">
-    <img src="assets/favicon.svg" class="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-15 lg:w-15">
-    <div class="flex justify-center flex-1 space-x-4 sm:space-x-6 md:space-x-8 lg:space-x-14">
-      <a class="border-b-2 border-black no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        href="home.html">Home</a>
-      <a class="no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        href="charts.html">Charts</a>
-      <a class="no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        href="transactions.html">Transactions</a>
-      <a class="no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        href="help.html">Support</a>
-      <button
-        class="no-underline text-base sm:text-lg md:text-xl px-2 sm:px-4 py-1 sm:py-2 inline-flex items-center  transition duration-300 ease-in-out hover:bg-gray-200 hover:text-gray-600"
-        id="signOutBtn">
-        <a href="">Sign Out</a>
-      </button>
+  <nav class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 p-10 h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 font-semibold">
+    <img src="assets/favicon.svg" class="h-15 w-15 transition-transform duration-300 hover:scale-105">
+    <div class="flex justify-center flex-1 space-x-14">
+        <a class="nav-link active" href="home.html">Home</a>
+        <a class="nav-link" href="charts.html">Charts</a>
+        <a class="nav-link" href="transactions.html">Transactions</a>
+        <a class="nav-link" href="help.html">Support</a>
+        <button class="sign-out-btn" id="signOutBtn">
+            <a href="">Sign Out</a>
+        </button>
     </div>
   </nav>
 
@@ -226,7 +218,7 @@
                   d="M4 4.5V19a1 1 0 0 0 1 1h15M7 10l4 4 4-4 5 5m0 0h-3.207M20 15v-3.207" />
               </svg>
               <div>&nbsp;&nbsp;</div>
-              Expenses
+              Expense
             </div>
           </div>
           <div class="bg-[#d9f1e0] p-8">
@@ -291,14 +283,15 @@
         </div>
         <div class="relative flex-grow">
           <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
           </div>
+          
           <input id="searchInput" 
             type="text" 
-            placeholder="Search transactions..." 
-            class="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            placeholder=" Search transactions..." 
+            class="w-full pl-10 pr-4 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
         </div>
       </div>
 
