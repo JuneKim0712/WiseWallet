@@ -93,7 +93,7 @@ const handleHistoryChange = async (event) => {
 };
 
 
-const listTransactions = (currentTransactionData, page) => { // Added page parameter
+const listTransactions = (currentTransactionData, page) => {
   const tableBody = document.querySelector("#transactionTable tbody");
   const searchValue = document.getElementById("searchInput").value;
   tableBody.innerHTML = "";
@@ -105,12 +105,10 @@ const listTransactions = (currentTransactionData, page) => { // Added page param
   const startIndex = (page - 1) * transactionItemsPerPage;
   const endIndex = startIndex + transactionItemsPerPage;
   const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
-  const totalTransactions = filteredTransactions.length; // Total items for pagination
+  const totalTransactions = filteredTransactions.length;
 
-  // Transactions will be listed here
-  paginatedTransactions.forEach((transaction, index) => {
+  paginatedTransactions.forEach((transaction) => {
     const row = document.createElement("tr");
-    // Add color class based on transaction type
     row.className = transaction.type === 'income' ? 'text-green-600' : 'text-red-600';
     
     row.innerHTML = `
@@ -135,8 +133,6 @@ const listTransactions = (currentTransactionData, page) => { // Added page param
 
   // Update pagination controls
   updateTransactionPaginationControls(totalTransactions, page);
-
-  // Modal setup (moved to initialize function)
 };
 
 // New pagination control function for Transaction Table
@@ -145,16 +141,25 @@ const updateTransactionPaginationControls = (totalItems, currentPage) => {
   let paginationHTML = '';
 
   if (totalPages > 1) {
-    paginationHTML += `<button id="transactionPrevPage" class="pagination-button ${currentPage === 1 ? 'disabled' : ''}" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Previous</button>`;
-    paginationHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
-    paginationHTML += `<button id="transactionNextPage" class="pagination-button ${currentPage === totalPages ? 'disabled' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+    paginationHTML += `
+      <button id="transactionPrevPage" 
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" 
+        ${currentPage === 1 ? 'disabled' : ''}>
+        Previous
+      </button>
+      <span class="text-sm text-gray-700">Page ${currentPage} of ${totalPages}</span>
+      <button id="transactionNextPage" 
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" 
+        ${currentPage === totalPages ? 'disabled' : ''}>
+        Next
+      </button>
+    `;
   }
 
   const paginationDiv = document.getElementById('transactionPagination');
   if (paginationDiv) {
     paginationDiv.innerHTML = paginationHTML;
 
-    // Add event listeners
     const prevButton = document.getElementById('transactionPrevPage');
     const nextButton = document.getElementById('transactionNextPage');
 
@@ -416,20 +421,64 @@ document.getElementById("transactionType").addEventListener("change", (e) => {
   updateCategoryOptions(e.target.value);
 });
 
+// Add the setupFilterButtons function
+const setupFilterButtons = () => {
+  document.querySelectorAll("#filterSelect").forEach(button => {
+    button.addEventListener("click", function() {
+      // Remove active class and background from all buttons
+      document.querySelectorAll("#filterSelect").forEach(btn => {
+        btn.classList.remove("active", "bg-white", "shadow-sm");
+        btn.style.color = ''; // Reset text color
+      });
+      
+      // Add active styling to clicked button
+      this.classList.add("active", "bg-white", "shadow-sm");
+      this.style.color = '#1a1a1a'; // Darker text for active state
+      
+      const value = this.getAttribute("data-value");
+      handleHistoryChange({ target: { value } });
+    });
+
+    // Set initial active state for "All time" button
+    if (button.getAttribute("data-value") === "all") {
+      button.classList.add("active", "bg-white", "shadow-sm");
+      button.style.color = '#1a1a1a';
+    }
+  });
+};
+
+// Add the CSS styles for the active filter button
+const style = document.createElement('style');
+style.textContent = `
+  #filterSelect.active {
+    position: relative;
+  }
+  #filterSelect.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #2563eb;
+  }
+`;
+document.head.appendChild(style);
 
 const initialize = async () => {
   try {
     while (!uid) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
-    test()
+    //test()
 
     // Add event listener for transaction type change
     document.getElementById("transactionType").addEventListener("change", (e) => {
       updateCategoryOptions(e.target.value);
     });
 
-    // Load initial categories for income type
     await updateCategoryOptions('income');
     transactions = await ref.access(uid, 'transaction')
     transactions = process.sortTransactions(transactions);
@@ -441,21 +490,10 @@ const initialize = async () => {
       transactionCurrentPage = 1; // Reset pagination on search
       listTransactions(transactions, transactionCurrentPage);
     });
-    document.getElementById("selectRangeHistory").addEventListener("change", handleHistoryChange);
-    document.querySelectorAll("#filterSelect").forEach(button => {
-      button.addEventListener("click", function () {
-        // Remove active class from all buttons
-        document.querySelectorAll("#filterSelect").forEach(btn => {
-          btn.classList.remove("active");
-        });
-        // Add active class to clicked button
-        this.classList.add("active");
-        
-        filterValue = this.getAttribute("data-value");
-        transactionCurrentPage = 1; // Reset pagination on filter
-        listTransactions(transactions, transactionCurrentPage);
-      });
-    });
+
+    // Setup filter buttons
+    setupFilterButtons();
+
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
     addSortingHandlers();

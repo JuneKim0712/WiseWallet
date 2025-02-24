@@ -162,24 +162,24 @@
             <div class="flex gap-2 mb-4">
                 <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
                     <button id="filterSelect" 
-                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
                         data-value="all">
-                        All time
+                        <span class="relative z-10">All time</span>
                     </button>
                     <button id="filterSelect" 
-                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
                         data-value="year">
-                        Last year
+                        <span class="relative z-10">Last year</span>
                     </button>
                     <button id="filterSelect" 
-                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
                         data-value="month">
-                        Last month
+                        <span class="relative z-10">Last month</span>
                     </button>
                     <button id="filterSelect" 
-                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
                         data-value="week">
-                        Last week
+                        <span class="relative z-10">Last week</span>
                     </button>
                 </div>
                 <div class="relative flex-grow">
@@ -208,7 +208,7 @@
               </button>
           </div>
           <div class="relative overflow-auto rounded-xl shadow-sm border border-gray-200 mb-4">
-              <table class="w-full text-left table-fixed divide-y divide-gray-200">
+              <table id="incomeTable" class="w-full text-left table-fixed divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                       <tr>
                           <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Date</th>
@@ -221,13 +221,8 @@
                   </tbody>
               </table>
           </div>
-          <div class="flex justify-center items-center mt-6 gap-4">
-              <button class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                  Previous
-              </button>
-              <button id="nextIncomePage" class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                  Next
-              </button>
+          <div id="incomePagination" class="flex justify-center items-center mt-6 gap-4">
+            <!-- Pagination controls will be inserted here by JavaScript -->
           </div>
       </div>
 
@@ -243,7 +238,7 @@
               </button>
           </div>
           <div class="relative overflow-auto rounded-xl shadow-sm border border-gray-200">
-              <table class="w-full text-left table-fixed divide-y divide-gray-200">
+              <table id="expenseTable" class="w-full text-left table-fixed divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                       <tr>
                           <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Date</th>
@@ -256,13 +251,8 @@
                   </tbody>
               </table>
           </div>
-          <div class="flex justify-center items-center mt-6 gap-4">
-              <button class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                  Previous
-              </button>
-              <button id="nextExpensePage" class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                  Next
-              </button>
+          <div id="expensePagination" class="flex justify-center items-center mt-6 gap-4">
+            <!-- Pagination controls will be inserted here by JavaScript -->
           </div>
       </div>
   </div>

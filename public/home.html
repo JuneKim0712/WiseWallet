@@ -228,12 +228,30 @@
       </div>
 
       <div class="ml-4 p-6">
-        <select class="w-2/9 mb-4 border-2 rounded-lg text-xl h-10 text-center" id="selectRangeHistory">
-          <option value="all">All Transactions</option>
-          <option value="year">Last Year</option>
-          <option value="month">Last Month</option>
-          <option value="week">Last Week</option>
-        </select>
+        <div class="flex gap-2 mb-4">
+          <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
+            <button id="filterSelect" 
+              class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
+              data-value="all">
+              <span class="relative z-10">All time</span>
+            </button>
+            <button id="filterSelect" 
+              class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
+              data-value="year">
+              <span class="relative z-10">Last year</span>
+            </button>
+            <button id="filterSelect" 
+              class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
+              data-value="month">
+              <span class="relative z-10">Last month</span>
+            </button>
+            <button id="filterSelect" 
+              class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
+              data-value="week">
+              <span class="relative z-10">Last week</span>
+            </button>
+          </div>
+        </div>
         <canvas id="balanceSummary"></canvas>
       </div>
 
@@ -310,7 +328,8 @@
           </tbody>
         </table>
       </div>
-      <div id="transactionPagination" class="pagination-controls flex justify-center items-center mt-6 gap-4">
+      <div id="transactionPagination" class="flex justify-center items-center mt-6 gap-4">
+        <!-- Pagination controls will be inserted here by JavaScript -->
       </div>
 
     </div>

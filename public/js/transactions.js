@@ -151,16 +151,25 @@ const updateIncomePaginationControls = (totalItems, currentPage) => {
   let paginationHTML = '';
 
   if (totalPages > 1) {
-    paginationHTML += `<button id="incomePrevPage" class="pagination-button ${currentPage === 1 ? 'disabled' : ''}" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Previous</button>`;
-    paginationHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
-    paginationHTML += `<button id="incomeNextPage" class="pagination-button ${currentPage === totalPages ? 'disabled' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+    paginationHTML += `
+      <button id="incomePrevPage" 
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" 
+        ${currentPage === 1 ? 'disabled' : ''}>
+        Previous
+      </button>
+      <span class="text-sm text-gray-700">Page ${currentPage} of ${totalPages}</span>
+      <button id="incomeNextPage" 
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" 
+        ${currentPage === totalPages ? 'disabled' : ''}>
+        Next
+      </button>
+    `;
   }
 
   const paginationDiv = document.getElementById('incomePagination');
   if (paginationDiv) {
     paginationDiv.innerHTML = paginationHTML;
 
-    // Add event listeners to the new buttons AFTER they are added to the DOM
     const prevButton = document.getElementById('incomePrevPage');
     const nextButton = document.getElementById('incomeNextPage');
 
@@ -193,16 +202,25 @@ const updateExpensePaginationControls = (totalItems, currentPage) => {
   let paginationHTML = '';
 
   if (totalPages > 1) {
-    paginationHTML += `<button id="expensePrevPage" class="pagination-button ${currentPage === 1 ? 'disabled' : ''}" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Previous</button>`;
-    paginationHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
-    paginationHTML += `<button id="expenseNextPage" class="pagination-button ${currentPage === totalPages ? 'disabled' : ''}" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+    paginationHTML += `
+      <button id="expensePrevPage" 
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" 
+        ${currentPage === 1 ? 'disabled' : ''}>
+        Previous
+      </button>
+      <span class="text-sm text-gray-700">Page ${currentPage} of ${totalPages}</span>
+      <button id="expenseNextPage" 
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" 
+        ${currentPage === totalPages ? 'disabled' : ''}>
+        Next
+      </button>
+    `;
   }
 
   const paginationDiv = document.getElementById('expensePagination');
   if (paginationDiv) {
     paginationDiv.innerHTML = paginationHTML;
 
-    // Add event listeners
     const prevButton = document.getElementById('expensePrevPage');
     const nextButton = document.getElementById('expenseNextPage');
 
@@ -263,80 +281,90 @@ const handleHistoryChange = async (event) => {
   listExpense(expenseData, expenseCurrentPage);
 };
 
-const sortTable = (data, tableId, key, order) => {
-  const sortedData = [...data].sort((a, b) => { // Sort a copy to avoid modifying original data
+const sortTable = (data, key, order) => {
+  return [...data].sort((a, b) => {
     let aValue, bValue;
 
     if (key === "date") {
       aValue = a.date.seconds;
       bValue = b.date.seconds;
     } else if (key === "amount") {
-      aValue = a.type === "income" ? a.amount : -a.amount; // Use income/expense logic
-      bValue = b.type === "income" ? b.amount : -b.amount; // Use income/expense logic
+      aValue = parseFloat(a.amount);
+      bValue = parseFloat(b.amount);
     } else if (key === "category") {
       aValue = a.category.toLowerCase();
       bValue = b.category.toLowerCase();
-      return order ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      return order === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
     }
-    return order ? aValue - bValue : bValue - aValue;
-  });
 
-  return sortedData; // return sorted data
+    return order === 'asc' ? aValue - bValue : bValue - aValue;
+  });
 };
 
 const addSortingHandlers = () => {
-  const incomeTableHeaders = Array.from(document.querySelectorAll("#incomeTable th"))
-    .filter(th => th.textContent.trim() !== "Action");
-  setupSortableHeaders(incomeTableHeaders, "incomeTable", listIncome); // Pass listIncome
+  const incomeTableHeaders = Array.from(document.querySelectorAll("#incomeTable th"));
+  const expenseTableHeaders = Array.from(document.querySelectorAll("#expenseTable th"));
 
-  const expenseTableHeaders = Array.from(document.querySelectorAll("#expenseTable th"))
-    .filter(th => th.textContent.trim() !== "Action");
-  setupSortableHeaders(expenseTableHeaders, "expenseTable", listExpense); // Pass listExpense
+  setupSortableHeaders(incomeTableHeaders, "incomeTable", listIncome);
+  setupSortableHeaders(expenseTableHeaders, "expenseTable", listExpense);
 };
 
-const setupSortableHeaders = (headers, tableId, listFunction) => { //listFunction now as argument
+const setupSortableHeaders = (headers, tableId, listFunction) => {
   headers.forEach((header, index) => {
-    const key = header.textContent.toLowerCase();
-    header.dataset.sortDirection = 'asc';
+    const key = header.textContent.toLowerCase().trim();
+    if (key === 'action') return; // Skip the action column
 
-    if (index === 0) {
-      header.innerHTML = `${key.charAt(0).toUpperCase() + key.slice(1)} &uarr;`;
-    } else {
-      header.innerHTML = key.charAt(0).toUpperCase() + key.slice(1);
-    }
+    // Add sort direction indicator
+    header.innerHTML = `
+      <div class="flex items-center gap-1">
+        <span>${header.textContent}</span>
+        <span class="sort-indicator text-gray-400">↕</span>
+      </div>
+    `;
+    
+    header.dataset.sortDirection = 'none';
 
     header.addEventListener("click", () => {
+      // Remove active sort from other headers
       headers.forEach(h => {
         if (h !== header) {
-          h.innerHTML = h.textContent.split(' ')[0];
-          h.dataset.sortDirection = 'asc';
+          h.dataset.sortDirection = 'none';
+          const indicator = h.querySelector('.sort-indicator');
+          if (indicator) indicator.textContent = '↕';
         }
       });
 
-      const currentSortDirection = header.dataset.sortDirection;
-      const newSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-      header.dataset.sortDirection = newSortDirection;
+      // Update sort direction
+      const currentDirection = header.dataset.sortDirection;
+      const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+      header.dataset.sortDirection = newDirection;
 
-      const indicator = newSortDirection === 'asc' ? '&uarr;' : '&darr;';
-      header.innerHTML = `${key.charAt(0).toUpperCase() + key.slice(1)} ${indicator}`;
+      // Update sort indicator
+      const indicator = header.querySelector('.sort-indicator');
+      indicator.textContent = newDirection === 'asc' ? '↑' : '↓';
+      indicator.classList.remove('text-gray-400');
+      indicator.classList.add('text-gray-700');
 
-      let currentData;
+      // Sort the data
+      let dataToSort;
       if (tableId === "incomeTable") {
-        currentData = incomeData; // Use incomeData directly
-        incomeCurrentPage = 1; // Reset page on sort
-      } else if (tableId === "expenseTable") {
-        currentData = expenseData; // Use expenseData directly
-        expenseCurrentPage = 1; // Reset page on sort
+        dataToSort = incomeData;
+        incomeCurrentPage = 1;
+      } else {
+        dataToSort = expenseData;
+        expenseCurrentPage = 1;
       }
 
-      const sortedData = sortTable(currentData, tableId, key, newSortDirection === 'asc');
+      const sortedData = sortTable(dataToSort, key, newDirection);
 
+      // Update the data and display
       if (tableId === "incomeTable") {
-        incomeData = sortedData; // Update incomeData
-      } else if (tableId === "expenseTable") {
-        expenseData = sortedData; // Update expenseData
+        incomeData = sortedData;
+        listIncome(sortedData, 1);
+      } else {
+        expenseData = sortedData;
+        listExpense(sortedData, 1);
       }
-      listFunction(sortedData, 1); // Use the provided listFunction to list sorted data, reset to page 1
     });
   });
 };
@@ -484,6 +512,32 @@ const updateCategoryOptions = async (type) => {
   }
 };
 
+// Update the filter button handlers
+const setupFilterButtons = () => {
+  document.querySelectorAll("#filterSelect").forEach(button => {
+    button.addEventListener("click", function() {
+      // Remove active class and background from all buttons
+      document.querySelectorAll("#filterSelect").forEach(btn => {
+        btn.classList.remove("active", "bg-white", "shadow-sm");
+        btn.style.color = ''; // Reset text color
+      });
+      
+      // Add active styling to clicked button
+      this.classList.add("active", "bg-white", "shadow-sm");
+      this.style.color = '#1a1a1a'; // Darker text for active state
+      
+      filterValue = this.getAttribute("data-value");
+      handleHistoryChange({ target: { value: filterValue } });
+    });
+
+    // Set initial active state for "All time" button
+    if (button.getAttribute("data-value") === "all") {
+      button.classList.add("active", "bg-white", "shadow-sm");
+      button.style.color = '#1a1a1a';
+    }
+  });
+};
+
 const initialize = async () => {
   try {
     while (!uid) {
@@ -494,28 +548,26 @@ const initialize = async () => {
     incomeData = income;
     expenseData = expense;
 
-    listIncome(incomeData, incomeCurrentPage); // Pass initial page number
-    listExpense(expenseData, expenseCurrentPage); // Pass initial page number
+    listIncome(incomeData, incomeCurrentPage);
+    listExpense(expenseData, expenseCurrentPage);
 
     document.getElementById("searchInput").addEventListener("input", () => {
       const { income, expense } = filterTransactionsByType(allTransactionsData);
       incomeData = income;
       expenseData = expense;
 
-      incomeCurrentPage = 1; // Reset pagination on search
-      expenseCurrentPage = 1; // Reset pagination on search
+      incomeCurrentPage = 1;
+      expenseCurrentPage = 1;
 
       listIncome(incomeData, incomeCurrentPage);
       listExpense(expenseData, expenseCurrentPage);
     });
-    document.querySelectorAll("#filterSelect").forEach(button => {
-      button.addEventListener("click", function () {
-        filterValue = this.getAttribute("data-value");
-        handleHistoryChange({ target: { value: filterValue } });
-      });
-    });
-    document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
+    // Replace the old filter setup with the new one
+    setupFilterButtons();
+
+    // Rest of the initialize function remains unchanged
+    document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
     addSortingHandlers();
     const deleteModal = document.getElementById("deleteModal");
     const transactionModal = document.getElementById("addTransactionModal");
@@ -706,3 +758,23 @@ const hideModal = (modal) => {
   modal.querySelector('.bg-white').classList.add('scale-95');
   document.body.style.overflow = ''; // Restore scrolling
 };
+
+// Add CSS styles for the active filter button
+const style = document.createElement('style');
+style.textContent = `
+  #filterSelect.active {
+    position: relative;
+  }
+  #filterSelect.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #2563eb;
+  }
+`;
+document.head.appendChild(style);
