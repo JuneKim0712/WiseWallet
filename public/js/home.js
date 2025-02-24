@@ -472,7 +472,7 @@ const initialize = async () => {
     while (!uid) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
-    //test()
+    test()
 
     // Add event listener for transaction type change
     document.getElementById("transactionType").addEventListener("change", (e) => {
