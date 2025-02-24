@@ -227,25 +227,26 @@
         </div>
       </div>
 
+      <!-- Plot filters -->
       <div class="ml-4 p-6">
         <div class="flex gap-2 mb-4">
           <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
-            <button id="filterSelect" 
+            <button id="plotFilterSelect" 
               class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
               data-value="all">
               <span class="relative z-10">All time</span>
             </button>
-            <button id="filterSelect" 
+            <button id="plotFilterSelect" 
               class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
               data-value="year">
               <span class="relative z-10">Last year</span>
             </button>
-            <button id="filterSelect" 
+            <button id="plotFilterSelect" 
               class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
               data-value="month">
               <span class="relative z-10">Last month</span>
             </button>
-            <button id="filterSelect" 
+            <button id="plotFilterSelect" 
               class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
               data-value="week">
               <span class="relative z-10">Last week</span>
@@ -275,26 +276,26 @@
         </div>
       </div>
 
-      <!-- Filter Button -->
+      <!-- Table filters (update the existing filter buttons) -->
       <div class="flex gap-2 mb-4">
         <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
-          <button id="filterSelect" 
-            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+          <button id="tableFilterSelect" 
+            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
             data-value="all">
-            All time
+            <span class="relative z-10">All time</span>
           </button>
-          <button id="filterSelect" 
-            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+          <button id="tableFilterSelect" 
+            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
             data-value="year">
             Last year
           </button>
-          <button id="filterSelect" 
-            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+          <button id="tableFilterSelect" 
+            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
             data-value="month">
             Last month
           </button>
-          <button id="filterSelect" 
-            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-white active:shadow-sm" 
+          <button id="tableFilterSelect" 
+            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
             data-value="week">
             Last week
           </button>

@@ -384,19 +384,99 @@ document.getElementById("transactionType").addEventListener("change", (e) => {
   updateCategoryOptions(e.target.value);
 });
 
-// Add the setupFilterButtons function
+// Add a new function for handling plot filter changes
+const handlePlotHistoryChange = async (event) => {
+  const selectedValue = event.target.value;
+  const now = new Date();
+  const startDate = new Date();
+  const endDate = now;
+
+  // Get all transactions first
+  const allTransactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+  let filteredTransactions = allTransactions;
+
+  switch (selectedValue) {
+    case "week":
+      startDate.setUTCDate(now.getUTCDate() - 7);
+      break;
+    case "month":
+      startDate.setMonth(now.getMonth() - 1);
+      break;
+    case "year":
+      startDate.setFullYear(now.getFullYear() - 1);
+      break;
+    default:
+      break;
+  }
+
+  if (selectedValue !== "all") {
+    filteredTransactions = process.filterTransactions(allTransactions, startDate, endDate);
+  }
+
+  // Generate balance data for the filtered transactions
+  const balanceOverTimeData = process.genBalanceOverTime(filteredTransactions);
+    
+  // Process monthly balances
+  const monthlyBalances = {};
+  balanceOverTimeData.forEach(item => {
+    const date = new Date(item.date.seconds * 1000);
+    const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    
+    if (!monthlyBalances[monthYear] || 
+        new Date(monthlyBalances[monthYear].date.seconds * 1000).getDate() < date.getDate()) {
+        monthlyBalances[monthYear] = {
+            ...item,
+            monthLabel: date.toLocaleString('default', { month: 'short', year: '2-digit' })
+        };
+    }
+  });
+
+  // Convert to array and sort by date
+  const monthlyBalanceData = Object.values(monthlyBalances)
+    .sort((a, b) => a.date.seconds - b.date.seconds);
+
+  // Update the chart
+  plot.plotBalance(balanceCharts, monthlyBalanceData);
+};
+
+// Update the setupFilterButtons function to handle both sets of filters
 const setupFilterButtons = () => {
-  document.querySelectorAll("#filterSelect").forEach(button => {
+  // Setup plot filters (above the plot)
+  document.querySelectorAll("#plotFilterSelect").forEach(button => {
     button.addEventListener("click", function() {
-      // Remove active class and background from all buttons
-      document.querySelectorAll("#filterSelect").forEach(btn => {
+      // Remove active class from all plot filter buttons
+      document.querySelectorAll("#plotFilterSelect").forEach(btn => {
         btn.classList.remove("active", "bg-white", "shadow-sm");
-        btn.style.color = ''; // Reset text color
+        btn.style.color = '';
       });
       
       // Add active styling to clicked button
       this.classList.add("active", "bg-white", "shadow-sm");
-      this.style.color = '#1a1a1a'; // Darker text for active state
+      this.style.color = '#1a1a1a';
+      
+      const value = this.getAttribute("data-value");
+      handlePlotHistoryChange({ target: { value } });
+    });
+
+    // Set initial active state for "All time" button
+    if (button.getAttribute("data-value") === "all") {
+      button.classList.add("active", "bg-white", "shadow-sm");
+      button.style.color = '#1a1a1a';
+    }
+  });
+
+  // Setup table filters (above the table)
+  document.querySelectorAll("#tableFilterSelect").forEach(button => {
+    button.addEventListener("click", function() {
+      // Remove active class from all table filter buttons
+      document.querySelectorAll("#tableFilterSelect").forEach(btn => {
+        btn.classList.remove("active", "bg-white", "shadow-sm");
+        btn.style.color = '';
+      });
+      
+      // Add active styling to clicked button
+      this.classList.add("active", "bg-white", "shadow-sm");
+      this.style.color = '#1a1a1a';
       
       const value = this.getAttribute("data-value");
       handleHistoryChange({ target: { value } });
@@ -435,7 +515,7 @@ const initialize = async () => {
     while (!uid) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
-    test()
+    //test()
 
     // Add event listener for transaction type change
     document.getElementById("transactionType").addEventListener("change", (e) => {
