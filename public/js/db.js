@@ -1,5 +1,9 @@
 /**
- * Database access and manipulation functions
+ * Database access and manipulation module
+ * Handles all Firebase Firestore database operations including:
+ * - Reading/writing transactions, income, expenses
+ * - Managing categories
+ * - User data access and authentication
  */
 
 const db = firebase.firestore()

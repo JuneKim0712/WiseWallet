@@ -6,6 +6,7 @@
 import * as process from "./preprocess.js";
 import * as ref from "./db.js";
 import * as plot from "./plot.js"
+import { validateTransactionDate } from "./preprocess.js";
 
 // Initialize Firebase services
 const db = firebase.firestore();
@@ -636,29 +637,52 @@ const initialize = async () => {
       const date = new Date(dateInput);
       const type = document.getElementById("transactionType").value;
 
+      // Validate required fields
       if (!amount || !category || !dateInput || !type) {
         alert("Please fill out all fields.");
         return;
       }
 
-      hideModal(transactionModal);
-
-      if (transactionIdToEdit) {
-        await ref.updateTransaction(amount, category, date, type, transactionIdToEdit, uid);
-      } else {
-        await ref.addTransaction(amount, category, date, type, uid);
+      // Validate amount
+      if (amount <= 0) {
+        alert("Amount must be greater than 0");
+        return;
       }
 
-      // Refresh data and update tables
-      allTransactionsData = process.sortTransactions(await ref.access(uid, 'transaction'));
-      const { income, expense } = filterTransactionsByType(allTransactionsData);
-      incomeData = income;
-      expenseData = expense;
+      // Validate date
+      const dateValidation = validateTransactionDate(date, {
+        allowFuture: false,
+        minDate: new Date('2020-01-01') // Arbitrary minimum date
+      });
 
-      listIncome(incomeData, incomeCurrentPage);
-      listExpense(expenseData, expenseCurrentPage);
+      if (!dateValidation.isValid) {
+        alert(dateValidation.message);
+        return;
+      }
 
-      transactionIdToEdit = null;
+      hideModal(transactionModal);
+
+      try {
+        if (transactionIdToEdit) {
+          await ref.updateTransaction(amount, category, date, type, transactionIdToEdit, uid);
+        } else {
+          await ref.addTransaction(amount, category, date, type, uid);
+        }
+
+        // Refresh data and update tables
+        allTransactionsData = process.sortTransactions(await ref.access(uid, 'transaction'));
+        const { income, expense } = filterTransactionsByType(allTransactionsData);
+        incomeData = income;
+        expenseData = expense;
+
+        listIncome(incomeData, incomeCurrentPage);
+        listExpense(expenseData, expenseCurrentPage);
+
+        transactionIdToEdit = null;
+      } catch (error) {
+        console.error("Error saving transaction:", error);
+        alert("Failed to save transaction. Please try again.");
+      }
     });
 
     document.getElementById("cancelTransaction").addEventListener("click", () => {

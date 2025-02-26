@@ -1,3 +1,13 @@
+/**
+ * Report generation module
+ * Creates detailed PDF financial reports including:
+ * - Balance summaries
+ * - Transaction analysis
+ * - Category breakdowns
+ * - Trend visualizations
+ * Uses jsPDF for PDF generation
+ */
+
 // main.js
 // import jsPDF from 'jspdf'; // If using npm, uncomment this line
 // import 'jspdf-autotable'; // If using npm and autotable, uncomment this line (and ensure it's installed: npm install jspdf jspdf-autotable)

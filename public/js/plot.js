@@ -1,3 +1,13 @@
+/**
+ * Data visualization module
+ * Provides functions for:
+ * - Balance trend charts
+ * - Income/expense comparisons
+ * - Category distribution charts
+ * - Transaction projections
+ * Uses Chart.js for rendering
+ */
+
 // plot.js
 export const plotProjection = (chart, data, period) => {
     chart.data = {

@@ -1,4 +1,24 @@
+/**
+ * Data processing module
+ * Handles:
+ * - Transaction filtering and sorting
+ * - Balance calculations
+ * - Date range processing
+ * - Search functionality
+ * - Data aggregation for reports
+ */
+
 const auth = firebase.auth()
+
+/**
+ * Generates summary of income and expenses for a given transaction range
+ * @param {string} range - Time range to summarize ('week', 'month', 'year', 'all')
+ * @param {Array<Object>} transaction - Array of transaction objects
+ * @returns {Object} Summary containing:
+ *   - totalIncome: Total income amount
+ *   - totalExpense: Total expense amount
+ *   - netIncome: Net income (income - expenses)
+ */
 export const genSummary = (range, transaction) => {
     let income = 0
     let expense = 0
@@ -17,6 +37,13 @@ export const genSummary = (range, transaction) => {
     };
 }
 
+/**
+ * Calculates running balance over time from transaction history
+ * @param {Array<Object>} transactions - Array of transaction objects with date, amount, type
+ * @returns {Array<Object>} Array of balance points containing:
+ *   - date: Transaction date
+ *   - amount: Running balance at that date
+ */
 export const genBalanceOverTime = (transactions) => {
     let balance = 0;
     let result = [];
@@ -45,7 +72,14 @@ export const genBalanceOverTime = (transactions) => {
     return result;
 }
 
-
+/**
+ * Generates projected balance based on recurring income and expenses
+ * @param {Array<Object>} income - Array of income objects with amount and period
+ * @param {Array<Object>} expense - Array of expense objects with amount and period
+ * @param {number} balance - Starting balance
+ * @param {number} period - Number of periods to project
+ * @returns {Array<number>} Array of projected balance values
+ */
 export const genProjectedBalance = (income, expense, balance, period) => {
     let projection = [0];
     let incomeCounters = Array(income.length).fill(0);
@@ -71,6 +105,13 @@ export const genProjectedBalance = (income, expense, balance, period) => {
     return projection;
 }
 
+/**
+ * Filters transactions within a date range
+ * @param {Array<Object>} transactions - Array of transaction objects
+ * @param {Date} startDate - Start date for filtering
+ * @param {Date} endDate - End date for filtering
+ * @returns {Array<Object>} Filtered array of transactions
+ */
 export const filterTransactions = (transactions, startDate, endDate) => {
     return transactions.filter(transaction => {
         const transactionDate = new Date(transaction.date.seconds * 1000);
@@ -127,4 +168,63 @@ export const applyFilterTransactions = (transactions, selectedRange) => {
     }
 
     return filterTransactions(transactions, startDate, endDate);
+};
+
+/**
+ * Validates transaction dates based on various rules
+ * @param {Date} inputDate - Date to validate
+ * @param {Object} options - Validation options
+ * @param {boolean} options.allowFuture - Whether to allow future dates (default: false)
+ * @param {Date} options.minDate - Minimum allowed date (optional)
+ * @param {Date} options.maxDate - Maximum allowed date (optional)
+ * @returns {Object} Validation result containing:
+ *   - isValid: boolean indicating if date is valid
+ *   - message: error message if invalid, empty string if valid
+ */
+export const validateTransactionDate = (inputDate, options = {}) => {
+    const {
+        allowFuture = false,
+        minDate = null,
+        maxDate = null
+    } = options;
+
+    const now = new Date();
+    now.setHours(23, 59, 59, 999); // End of current day
+
+    // Check if date is valid
+    if (!(inputDate instanceof Date) || isNaN(inputDate)) {
+        return {
+            isValid: false,
+            message: "Invalid date format"
+        };
+    }
+
+    // Check future date
+    if (!allowFuture && inputDate > now) {
+        return {
+            isValid: false,
+            message: "Future dates are not allowed"
+        };
+    }
+
+    // Check minimum date if specified
+    if (minDate && inputDate < minDate) {
+        return {
+            isValid: false,
+            message: `Date must be after ${minDate.toLocaleDateString()}`
+        };
+    }
+
+    // Check maximum date if specified
+    if (maxDate && inputDate > maxDate) {
+        return {
+            isValid: false,
+            message: `Date must be before ${maxDate.toLocaleDateString()}`
+        };
+    }
+
+    return {
+        isValid: true,
+        message: ""
+    };
 };

@@ -1,3 +1,12 @@
+/**
+ * Authentication module
+ * Manages:
+ * - Google sign-in integration
+ * - Authentication state
+ * - User session handling
+ * - Login redirects
+ */
+
 const auth = firebase.auth()
 
 const signInBtn = document.getElementById('googleSignIn')

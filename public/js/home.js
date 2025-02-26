@@ -1,7 +1,19 @@
+/**
+ * Home page functionality module
+ * Handles:
+ * - Dashboard display and updates
+ * - Transaction management
+ * - Chart visualization
+ * - Filter controls
+ * - Modal interactions
+ * - PDF report generation
+ */
+
 import * as process from "./preprocess.js";
 import * as ref from "./db.js";
 import * as plot from "./plot.js"
 import { generatePDFReport } from "./report.js";
+import { validateTransactionDate } from "./preprocess.js";
 
 const db = firebase.firestore();
 const auth = firebase.auth();
@@ -592,30 +604,51 @@ const initialize = async () => {
       const date = new Date(dateInput);
       const type = document.getElementById("transactionType").value;
 
+      // Validate required fields
       if (!amount || !category || !dateInput || !type) {
         alert("Please fill out all fields.");
         return;
       }
+
+      // Validate amount
+      if (amount <= 0) {
+        alert("Amount must be greater than 0");
+        return;
+      }
+
+      // Validate date
+      const dateValidation = validateTransactionDate(date, {
+        allowFuture: false,
+        minDate: new Date('2020-01-01') // Arbitrary minimum date
+      });
+
+      if (!dateValidation.isValid) {
+        alert(dateValidation.message);
+        return;
+      }
+
       const modal = document.getElementById("addTransactionModal");
       hideModal(modal);
 
+      try {
+        if (transactionIdToEdit) {
+          await ref.updateTransaction(amount, category, date, type, transactionIdToEdit, uid);
+        } else {
+          await ref.addTransaction(amount, category, date, type, uid);
+        }
 
-      if (transactionIdToEdit) {
-        // Update existing transaction
-        await ref.updateTransaction(amount, category, date, type, transactionIdToEdit, uid);
-      } else {
-        // Add new transaction
-        await ref.addTransaction(amount, category, date, type, uid);
+        transactions = await ref.access(uid, 'transaction');
+        transactions = sortTransactions(transactions, sortType, sortDirection === 'asc')
+        listTransactions(transactions, transactionCurrentPage);
+
+        updateDashboardCards();
+        await plotBalanceChart();
+
+        transactionIdToEdit = null;
+      } catch (error) {
+        console.error("Error saving transaction:", error);
+        alert("Failed to save transaction. Please try again.");
       }
-
-      transactions = await ref.access(uid, 'transaction');
-      transactions = sortTransactions(transactions, sortType, sortDirection === 'asc')
-      listTransactions(transactions, transactionCurrentPage);
-
-      updateDashboardCards();
-      await plotBalanceChart();
-
-      transactionIdToEdit = null;
     });
 
     document.getElementById("cancelTransaction").addEventListener("click", () => {
