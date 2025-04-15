@@ -96,7 +96,6 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
             <div class="relative">
-              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
               <input type="number" id="transactionAmount" 
                 class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
                 placeholder="Enter amount" />
@@ -160,7 +159,7 @@
   <img src="assets/favicon.svg" class="h-15 w-15 transition-transform duration-300 hover:scale-105">
   <div class="flex justify-center flex-1 space-x-14">
       <a class="nav-link active" href="home.html">Home</a>
-      <a class="nav-link" href="charts.html">Charts</a>
+      <a class="nav-link" href="goal.html">Goal</a>
       <a class="nav-link" href="transactions.html">Transactions</a>
       <a class="nav-link" href="help.html">Support</a>
       <button class="sign-out-btn" id="signOutBtn">
@@ -172,9 +171,9 @@
 
   <!-- Finance Cards -->
   <div class="flex flex-wrap w-full mt-6">
-
+    <!-- Left Column -->
     <div class="w-1/2 flex flex-col space-y-4">
-
+      <!-- Balance, Income, Expense Cards -->
       <div id="here" class="shadow-sm rounded-xl grid grid-cols-1 sm:grid-cols-3 gap-4 ml-4 p-6">
         <div class="rounded-xl overflow-hidden">
           <div class="bg-[#d5c7f7] p-4">
@@ -228,7 +227,7 @@
         </div>
       </div>
 
-      <!-- Plot filters -->
+      <!-- Chart Section -->
       <div class="ml-4 p-6">
         <div class="flex gap-2 mb-4">
           <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
@@ -256,84 +255,158 @@
         </div>
         <canvas id="balanceSummary"></canvas>
       </div>
-
     </div>
 
-    <div class="w-1/2 p-4 pr-5">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h5 class="text-xl font-semibold text-blue-gray-900">Transactions</h5>
-          <p class="text-gray-700">Manage and track your transactions</p>
-        </div>
-        <div class="flex gap-2">
-          <button id="generateReportBtn" class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg cursor-pointer
-           transition duration-300 ease-in-out hover:bg-gray-700 hover:scale-105">
-            Create Report
-          </button>
-          <button id="addTransactionBtn" class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg cursor-pointer
-           transition duration-300 ease-in-out hover:bg-gray-700 hover:scale-105">
-            Add Transaction
-          </button>
-        </div>
-      </div>
+    <!-- Right Column -->
+    <div class="w-1/2 flex flex-col">
+      <!-- Progress Bar Carousel -->
+      <div class="mb-12 relative ml-4 p-6">
+        <!-- Navigation Arrows -->
+        <button id="prevProgress" class="carousel-arrow">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button id="nextProgress" class="carousel-arrow">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
 
-      <!-- Table filters (update the existing filter buttons) -->
-      <div class="flex gap-2 mb-4">
-        <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
-          <button id="tableFilterSelect" 
-            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
-            data-value="all">
-            <span class="relative z-10">All time</span>
-          </button>
-          <button id="tableFilterSelect" 
-            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
-            data-value="year">
-            Last year
-          </button>
-          <button id="tableFilterSelect" 
-            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
-            data-value="month">
-            Last month
-          </button>
-          <button id="tableFilterSelect" 
-            class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
-            data-value="week">
-            Last week
-          </button>
-        </div>
-        <div class="relative flex-grow">
-          <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
+        <!-- Progress Bar Container -->
+        <div class="progress-carousel overflow-hidden">
+          <div class="progress-slides flex transition-transform duration-300 mt-1">
+            <!-- Progress Bar 1 -->
+            <div class="progress-slide min-w-full bg-white rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">New Car Fund</h3>
+                <span class="text-xl font-semibold text-blue-600 progress-percent">73%</span>
+              </div>
+              <div class="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full rounded-full progress-gradient" style="width: 73%;"></div>
+              </div>
+              <div class="flex justify-between items-center mt-4 text-sm">
+                <span class="text-gray-600 progress-current">$25,420</span>
+                <span class="text-gray-600 progress-goal">Goal: $37,000</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar 2 -->
+            <div class="progress-slide min-w-full bg-white rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">Vacation Fund</h3>
+                <span class="text-xl font-semibold text-blue-600 progress-percent">45%</span>
+              </div>
+              <div class="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full rounded-full progress-gradient" style="width: 45%;"></div>
+              </div>
+              <div class="flex justify-between items-center mt-4 text-sm">
+                <span class="text-gray-600 progress-current">$2,250</span>
+                <span class="text-gray-600 progress-goal">Goal: $5,000</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar 3 -->
+            <div class="progress-slide min-w-full bg-white rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">Emergency Fund</h3>
+                <span class="text-xl font-semibold text-blue-600 progress-percent">90%</span>
+              </div>
+              <div class="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full rounded-full progress-gradient" style="width: 90%;"></div>
+              </div>
+              <div class="flex justify-between items-center mt-4 text-sm">
+                <span class="text-gray-600 progress-current">$9,000</span>
+                <span class="text-gray-600 progress-goal">Goal: $10,000</span>
+              </div>
+            </div>
           </div>
-          
-          <input id="searchInput" 
-            type="text" 
-            placeholder=" Search transactions..." 
-            class="w-full pl-10 pr-4 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+
+        <!-- Dots Navigation -->
+        <div class="flex justify-center gap-2 mt-4">
+          <button class="progress-dot w-2 h-2 rounded-full bg-gray-300 transition-colors"></button>
+          <button class="progress-dot w-2 h-2 rounded-full bg-gray-300 transition-colors"></button>
+          <button class="progress-dot w-2 h-2 rounded-full bg-gray-300 transition-colors"></button>
         </div>
       </div>
 
-      <!-- Transaction Table-->
-      <div class="relative rounded-xl shadow-sm border border-gray-200">
-        <table id="transactionTable" class="w-full text-left table-fixed divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Date</th>
-              <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Amount</th>
-              <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Category</th>
-              <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">Action</th>
-            </tr>
-          </thead>
-          <tbody id="transactionTableBody" class="bg-white divide-y divide-gray-200 text-sm">
-          </tbody>
-        </table>
-      </div>
-      <div id="transactionPagination" class="flex justify-center items-center mt-6 gap-4">
-        <!-- Pagination controls will be inserted here by JavaScript -->
-      </div>
+      <!-- Transaction Table Section -->
+      <div class="ml-4 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h5 class="text-xl font-semibold text-blue-gray-900">Transactions</h5>
+            <p class="text-gray-700">Manage and track your transactions</p>
+          </div>
+          <div class="flex gap-2">
+            <button id="generateReportBtn" class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg cursor-pointer
+             transition duration-300 ease-in-out hover:bg-gray-700 hover:scale-105">
+              Create Report
+            </button>
+            <button id="addTransactionBtn" class="bg-gray-900 py-2 px-4 text-xs font-bold uppercase text-white rounded-lg cursor-pointer
+             transition duration-300 ease-in-out hover:bg-gray-700 hover:scale-105">
+              Add Transaction
+            </button>
+          </div>
+        </div>
 
+        <!-- Table filters -->
+        <div class="flex gap-2 mb-4">
+          <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
+            <button id="tableFilterSelect" 
+              class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
+              data-value="all">
+              <span class="relative z-10">All time</span>
+            </button>
+            <button id="tableFilterSelect" 
+              class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
+              data-value="year">
+              Last year
+            </button>
+            <button id="tableFilterSelect" 
+              class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
+              data-value="month">
+              Last month
+            </button>
+            <button id="tableFilterSelect" 
+              class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
+              data-value="week">
+              Last week
+            </button>
+          </div>
+          <div class="relative flex-grow">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </div>
+            
+            <input id="searchInput" 
+              type="text" 
+              placeholder=" Search transactions..." 
+              class="w-full pl-10 pr-4 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          </div>
+        </div>
+
+        <!-- Transaction Table-->
+        <div class="relative rounded-xl shadow-sm border border-gray-200">
+          <table id="transactionTable" class="w-full text-left table-fixed divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Date</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Amount</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Category</th>
+                <th class="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">Action</th>
+              </tr>
+            </thead>
+            <tbody id="transactionTableBody" class="bg-white divide-y divide-gray-200 text-sm">
+            </tbody>
+          </table>
+        </div>
+        <div id="transactionPagination" class="flex justify-center items-center mt-6 gap-4">
+          <!-- Pagination controls will be inserted here by JavaScript -->
+        </div>
+      </div>
     </div>
   </div>
 </body>

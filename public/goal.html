@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Goal</title>
+
+  <!-- Firebase Imports -->
+  <script defer src="/__/firebase/11.0.1/firebase-app-compat.js"></script>
+  <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
+  <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
+  <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+  <!-- Javascript Imports-->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" defer src="js/db.js"></script>
+  <script type="module" defer src="js/preprocess.js"></script>
+  <script type="module" defer src="js/goal.js"></script>
+
+  <!-- Tailwind Imports -->
+  <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="css/nav.css">
+
+  <!-- Font Imports -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="assets\favicon.svg">
+</head>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("body").classList.remove("hidden")
+  })
+</script>
+
+<body id="body" class="hidden bg-[#fffffa] font-[Montserrat]">
+  
+  <!-- Navigation Bar -->
+  <nav class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 p-10 h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 font-semibold">
+    <img src="assets/favicon.svg" class="h-15 w-15 transition-transform duration-300 hover:scale-105">
+    <div class="flex justify-center flex-1 space-x-14">
+      <a class="nav-link" href="home.html">Home</a>
+      <a class="nav-link active" href="goal.html">Goal</a>
+      <a class="nav-link" href="transactions.html">Transactions</a>
+      <a class="nav-link" href="help.html">Support</a>
+      <button class="sign-out-btn" id="signOutBtn">
+        <a href="">Sign Out</a>
+      </button>
+    </div>
+  </nav>
+
+  <div class="max-w-sm mx-auto mt-10 p-6 rounded-2xl shadow bg-gray-100">
+    <h1 class="text-xl font-bold mb-4">Financial Goal</h1>
+
+    <div class="flex justify-center mb-6">
+      <!-- Circular progress placeholder -->
+      <div class="relative w-24 h-24">
+        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+          <path
+            class="text-gray-200"
+            stroke="currentColor"
+            stroke-width="3"
+            fill="none"
+            d="M18 2.0845
+              a 15.9155 15.9155 0 0 1 0 31.831
+              a 15.9155 15.9155 0 0 1 0 -31.831"
+          ></path>
+          <path
+            class="text-blue-500"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-dasharray="60,100"  
+            fill="none"
+            d="M18 2.0845
+              a 15.9155 15.9155 0 0 1 0 31.831
+              a 15.9155 15.9155 0 0 1 0 -31.831"
+          ></path>
+        </svg>
+        <div class="absolute inset-0 flex flex-col justify-center items-center">
+          <span class="text-lg font-semibold">60%</span>
+          <span class="text-xs text-gray-500">to goal</span>
+        </div>
+      </div>    
+    </div>
+
+    <div class="flex flex-col items-center text-center">
+      <p class="text-base font-medium">Current Savings</p>
+      <p class="text-2xl font-bold mt-1">$60,000</p>
+      <p class="text-sm text-gray-600 mt-1">of $100,000 goal</p>
+      <p class="text-sm text-green-600 mt-2">$40,000 remaining</p>
+    </div>
+  </div>
+</body>
+
+</html>

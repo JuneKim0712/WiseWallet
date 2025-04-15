@@ -33,7 +33,7 @@ let transactions;
 
 // Pagination variables for Transaction Table
 let transactionCurrentPage = 1;
-const transactionItemsPerPage = 6; // You can adjust this value
+const transactionItemsPerPage = 5; // You can adjust this value
 
 const handleHistoryChange = async (event) => {
   transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
@@ -76,7 +76,7 @@ const listTransactions = (currentTransactionData, page) => {
   let filteredTransactions = process.applyFilterTransactions(currentTransactionData, filterValue);
   filteredTransactions = process.searchTransactions(filteredTransactions, searchValue);
 
-  // Pagination logic
+  // Pagination logic 
   const startIndex = (page - 1) * transactionItemsPerPage;
   const endIndex = startIndex + transactionItemsPerPage;
   const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
@@ -88,7 +88,7 @@ const listTransactions = (currentTransactionData, page) => {
     
     row.innerHTML = `
       <td class="p-4">${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
-      <td class="p-4 font-medium">${transaction.type === 'income' ? '+' : '-'}${transaction.amount}</td>
+      <td class="p-4 font-medium">${transaction.type === 'income' ? '+' : '-'}$${transaction.amount}</td>
       <td class="p-4">${transaction.category}</td>
       <td class="p-4 flex gap-2 text-gray-600">
         <button class="edit-btn" data-id="${transaction.id}" data-tooltip="Edit transaction">
@@ -987,3 +987,143 @@ const handleEdit = async (transactionToEdit) => {
     showModal(modal);
   }
 };
+
+// Progress Bar Carousel
+const progressCarousel = () => {
+  const slides = document.querySelector('.progress-slides');
+  const slideElements = document.querySelectorAll('.progress-slide');
+  const dots = document.querySelectorAll('.progress-dot');
+  const prevBtn = document.getElementById('prevProgress');
+  const nextBtn = document.getElementById('nextProgress');
+  const carousel = document.querySelector('.progress-carousel');
+  
+  let currentSlide = 0;
+  const slideCount = slideElements.length;
+  let isDragging = false;
+  let startPos = 0;
+  let currentTranslate = 0;
+  let prevTranslate = 0;
+  let animationID = 0;
+
+  // Update slide position and active state
+  const updateSlide = () => {
+    slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+    
+    // Update active state for slides
+    slideElements.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+    
+    // Update dots
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentSlide);
+    });
+  };
+
+  // Next slide
+  const nextSlide = () => {
+    currentSlide = (currentSlide + 1) % slideCount;
+    updateSlide();
+  };
+
+  // Previous slide
+  const prevSlide = () => {
+    currentSlide = (currentSlide - 1 + slideCount) % slideCount;
+    updateSlide();
+  };
+
+  // Mouse drag functions
+  const getPositionX = (event) => {
+    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+  };
+
+  const setSliderPosition = () => {
+    slides.style.transform = `translateX(${currentTranslate}px)`;
+  };
+
+  const animation = () => {
+    setSliderPosition();
+    if (isDragging) requestAnimationFrame(animation);
+  };
+
+  const touchStart = (event) => {
+    startPos = getPositionX(event);
+    isDragging = true;
+    animationID = requestAnimationFrame(animation);
+    slides.style.transition = 'none';
+  };
+
+  const touchMove = (event) => {
+    if (isDragging) {
+      const currentPosition = getPositionX(event);
+      currentTranslate = prevTranslate + currentPosition - startPos;
+    }
+  };
+
+  const touchEnd = () => {
+    isDragging = false;
+    cancelAnimationFrame(animationID);
+    const movedBy = currentTranslate - prevTranslate;
+
+    if (movedBy < -100 && currentSlide < slideCount - 1) {
+      currentSlide += 1;
+    } else if (movedBy > 100 && currentSlide > 0) {
+      currentSlide -= 1;
+    }
+
+    setPositionByIndex();
+  };
+
+  const setPositionByIndex = () => {
+    currentTranslate = currentSlide * -window.innerWidth;
+    prevTranslate = currentTranslate;
+    slides.style.transition = 'transform 0.5s ease-out';
+    setSliderPosition();
+  };
+
+  // Add event listeners
+  carousel.addEventListener('mousedown', touchStart);
+  carousel.addEventListener('mousemove', touchMove);
+  carousel.addEventListener('mouseup', touchEnd);
+  carousel.addEventListener('mouseleave', touchEnd);
+
+  carousel.addEventListener('touchstart', touchStart);
+  carousel.addEventListener('touchmove', touchMove);
+  carousel.addEventListener('touchend', touchEnd);
+
+  // Add click handlers for arrows
+  prevBtn.addEventListener('click', prevSlide);
+  nextBtn.addEventListener('click', nextSlide);
+
+  // Add dot navigation
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      currentSlide = index;
+      updateSlide();
+    });
+  });
+
+  // Auto-advance every 8 seconds (slower interval)
+  let autoAdvance = setInterval(nextSlide, 8000);
+
+  // Pause auto-advance on hover
+  carousel.addEventListener('mouseenter', () => {
+    clearInterval(autoAdvance);
+  });
+
+  carousel.addEventListener('mouseleave', () => {
+    autoAdvance = setInterval(nextSlide, 8000);
+  });
+
+  // Initialize first slide
+  updateSlide();
+};
+
+// Initialize carousel when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  progressCarousel();
+});

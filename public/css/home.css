@@ -85,3 +85,157 @@
     transform: scale(1.1);
     transition: all 0.2s ease;
 }
+
+/* Progress Bar Styles */
+.progress-gradient {
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%);
+  background-size: 200% 100%;
+  animation: gradient-shift 2s ease infinite;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  transition: width 0.5s ease-in-out;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Progress Bar Container */
+.progress-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress Bar Background */
+.progress-bg {
+  background-color: #f3f4f6;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Progress Bar Text */
+.progress-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  transition: color 0.3s ease;
+}
+
+.progress-text:hover {
+  color: #374151;
+}
+
+/* Progress Bar Carousel Styles */
+.progress-carousel {
+  position: relative;
+  width: calc(100% - 100px);
+  margin: 0 auto;
+  overflow: hidden;
+  cursor: grab;
+  padding: 0 50px;
+}
+
+.progress-carousel:active {
+  cursor: grabbing;
+}
+
+.progress-slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  user-select: none;
+  width: 100%;
+}
+
+.progress-slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+  transition: opacity 0.5s ease-in-out;
+  padding: 0 10px;
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+
+.progress-slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Progress Bar Height */
+.progress-slide .w-full.h-4 {
+  height: 1.5rem; /* Increased from h-4 (1rem) to 1.5rem */
+}
+
+.progress-slide .flex.justify-between.items-center.mb-2 {
+  margin-bottom: 1rem; /* Increased from mb-2 (0.5rem) to 1rem */
+}
+
+.progress-slide .flex.justify-between.items-center.mt-2 {
+  margin-top: 1rem; /* Increased from mt-2 (0.5rem) to 1rem */
+}
+
+.progress-slide .text-lg {
+  font-size: 1.25rem; /* Increased from text-lg (1.125rem) to 1.25rem */
+}
+
+.progress-dot.active {
+  background-color: #3b82f6;
+  transform: scale(1.2);
+}
+
+/* Navigation Arrows */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.carousel-arrow:hover {
+  background: #f3f4f6;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow svg {
+  width: 24px;
+  height: 24px;
+  color: #4b5563;
+}
+
+#prevProgress {
+  left: 0;
+}
+
+#nextProgress {
+  right: 0;
+}
+
+/* Touch Scroll Support */
+.progress-carousel {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.progress-slide {
+  scroll-snap-align: start;
+}

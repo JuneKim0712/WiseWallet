@@ -74,7 +74,7 @@ const listIncome = (currentIncomeData, page) => {
 
     row.innerHTML = `
       <td class="p-4">${new Date(item.date.seconds * 1000).toISOString().split('T')[0]}</td>
-      <td class="p-4 font-medium">${item.type === 'income' ? '+' : '-'}${item.amount}</td>
+      <td class="p-4 font-medium">${item.type === 'income' ? '+' : '-'}$${item.amount}</td>
       <td class="p-4">${item.category}</td>
       <td class="p-4 flex gap-2 text-gray-600">
         <button class="edit-btn" data-id="${item.id}" data-tooltip="Edit ${item.type}">
@@ -122,7 +122,7 @@ const listExpense = (currentExpenseData, page) => {
 
     row.innerHTML = `
       <td class="p-4">${new Date(item.date.seconds * 1000).toISOString().split('T')[0]}</td>
-      <td class="p-4 font-medium">${item.type === 'income' ? '+' : '-'}${item.amount}</td>
+      <td class="p-4 font-medium">${item.type === 'income' ? '+' : '-'}$${item.amount}</td>
       <td class="p-4">${item.category}</td>
       <td class="p-4 flex gap-2 text-gray-600">
         <button class="edit-btn" data-id="${item.id}" data-tooltip="Edit ${item.type}">
