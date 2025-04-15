@@ -21,6 +21,7 @@
   <!-- Tailwind Imports -->
   <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/goal.css">
 
   <!-- Font Imports -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,7 +37,7 @@
   })
 </script>
 
-<body id="body" class="hidden bg-[#fffffa] font-[Montserrat]">
+<body id="body" class="hidden bg-[#f8fafc] font-[Montserrat]">
   
   <!-- Navigation Bar -->
   <nav class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 p-10 h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 font-semibold">
@@ -52,47 +53,189 @@
     </div>
   </nav>
 
-  <div class="max-w-sm mx-auto mt-10 p-6 rounded-2xl shadow bg-gray-100">
-    <h1 class="text-xl font-bold mb-4">Financial Goal</h1>
-
-    <div class="flex justify-center mb-6">
-      <!-- Circular progress placeholder -->
-      <div class="relative w-24 h-24">
-        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-          <path
-            class="text-gray-200"
-            stroke="currentColor"
-            stroke-width="3"
-            fill="none"
-            d="M18 2.0845
-              a 15.9155 15.9155 0 0 1 0 31.831
-              a 15.9155 15.9155 0 0 1 0 -31.831"
-          ></path>
-          <path
-            class="text-blue-500"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-dasharray="60,100"  
-            fill="none"
-            d="M18 2.0845
-              a 15.9155 15.9155 0 0 1 0 31.831
-              a 15.9155 15.9155 0 0 1 0 -31.831"
-          ></path>
+  <!-- Goals Container -->
+  <div class="max-w-6xl mx-auto mt-12 px-6">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">Financial Goals</h1>
+      <div class="flex items-center gap-2 text-gray-600">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <div class="absolute inset-0 flex flex-col justify-center items-center">
-          <span class="text-lg font-semibold">60%</span>
-          <span class="text-xs text-gray-500">to goal</span>
-        </div>
-      </div>    
+        <span class="text-sm">Track your progress towards financial milestones</span>
+      </div>
     </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- New Car Fund -->
+      <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-gray-800">New Car Fund</h2>
+          <div class="p-2 bg-blue-50 rounded-full">
+            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex justify-center mb-8">
+          <div class="relative w-32 h-32">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path
+                class="text-gray-100"
+                stroke="currentColor"
+                stroke-width="3"
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              ></path>
+              <path
+                class="text-blue-500 progress-path"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-dasharray="73,100"  
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              ></path>
+            </svg>
+            <div class="absolute inset-0 flex flex-col justify-center items-center">
+              <span class="text-2xl font-bold progress-percent">73%</span>
+              <span class="text-sm text-gray-500">to goal</span>
+            </div>
+          </div>    
+        </div>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Current Savings</span>
+            <span class="text-xl font-bold current-savings">$25,420</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Goal Amount</span>
+            <span class="text-lg font-medium goal-amount">$37,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Remaining</span>
+            <span class="text-lg font-medium text-green-600 remaining-amount">$11,580</span>
+          </div>
+        </div>
+      </div>
 
-    <div class="flex flex-col items-center text-center">
-      <p class="text-base font-medium">Current Savings</p>
-      <p class="text-2xl font-bold mt-1">$60,000</p>
-      <p class="text-sm text-gray-600 mt-1">of $100,000 goal</p>
-      <p class="text-sm text-green-600 mt-2">$40,000 remaining</p>
+      <!-- Vacation Fund -->
+      <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-gray-800">Vacation Fund</h2>
+          <div class="p-2 bg-blue-50 rounded-full">
+            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex justify-center mb-8">
+          <div class="relative w-32 h-32">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path
+                class="text-gray-100"
+                stroke="currentColor"
+                stroke-width="3"
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              ></path>
+              <path
+                class="text-blue-500 progress-path"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-dasharray="45,100"  
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              ></path>
+            </svg>
+            <div class="absolute inset-0 flex flex-col justify-center items-center">
+              <span class="text-2xl font-bold progress-percent">45%</span>
+              <span class="text-sm text-gray-500">to goal</span>
+            </div>
+          </div>    
+        </div>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Current Savings</span>
+            <span class="text-xl font-bold current-savings">$2,250</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Goal Amount</span>
+            <span class="text-lg font-medium goal-amount">$5,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Remaining</span>
+            <span class="text-lg font-medium text-green-600 remaining-amount">$2,750</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Fund -->
+      <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-gray-800">Emergency Fund</h2>
+          <div class="p-2 bg-blue-50 rounded-full">
+            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex justify-center mb-8">
+          <div class="relative w-32 h-32">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path
+                class="text-gray-100"
+                stroke="currentColor"
+                stroke-width="3"
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              ></path>
+              <path
+                class="text-blue-500 progress-path"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-dasharray="90,100"  
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              ></path>
+            </svg>
+            <div class="absolute inset-0 flex flex-col justify-center items-center">
+              <span class="text-2xl font-bold progress-percent">90%</span>
+              <span class="text-sm text-gray-500">to goal</span>
+            </div>
+          </div>    
+        </div>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Current Savings</span>
+            <span class="text-xl font-bold current-savings">$9,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Goal Amount</span>
+            <span class="text-lg font-medium goal-amount">$10,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Remaining</span>
+            <span class="text-lg font-medium text-green-600 remaining-amount">$1,000</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</body>
+
+</html>
+
 </body>
 
 </html>

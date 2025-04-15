@@ -33,7 +33,7 @@ let transactions;
 
 // Pagination variables for Transaction Table
 let transactionCurrentPage = 1;
-const transactionItemsPerPage = 5; // You can adjust this value
+const transactionItemsPerPage = 4; // You can adjust this value
 
 const handleHistoryChange = async (event) => {
   transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
@@ -999,14 +999,14 @@ const progressCarousel = () => {
   
   let currentSlide = 0;
   const slideCount = slideElements.length;
-  let isDragging = false;
-  let startPos = 0;
-  let currentTranslate = 0;
-  let prevTranslate = 0;
-  let animationID = 0;
+  let autoAdvanceInterval = null;
+  let isTransitioning = false;
 
   // Update slide position and active state
   const updateSlide = () => {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    
     slides.style.transform = `translateX(-${currentSlide * 100}%)`;
     
     // Update active state for slides
@@ -1022,105 +1022,129 @@ const progressCarousel = () => {
     dots.forEach((dot, index) => {
       dot.classList.toggle('active', index === currentSlide);
     });
+
+    // Reset transition flag after animation
+    setTimeout(() => {
+      isTransitioning = false;
+    }, 500);
+  };
+
+  // Update progress bars with actual balance data
+  const updateProgressBars = async () => {
+    const balance = parseInt(document.getElementById("balance").innerHTML.replace(/[^0-9-]/g, '')) || 0;
+    
+    // Define goals
+    const goals = [
+      { name: "New Car Fund", target: 37000 },
+      { name: "Vacation Fund", target: 5000 },
+      { name: "Emergency Fund", target: 10000 }
+    ];
+
+    // Update each slide with current balance and progress
+    slideElements.forEach((slide, index) => {
+      const goal = goals[index];
+      const progress = Math.min((balance / goal.target) * 100, 100);
+      const isCompleted = balance >= goal.target;
+
+      // Update title
+      const titleElement = slide.querySelector('h3');
+      titleElement.textContent = goal.name;
+
+      // Update progress bar
+      const progressBar = slide.querySelector('.progress-gradient');
+      progressBar.style.width = `${progress}%`;
+
+      // Update percentage or show checkmark
+      const percentElement = slide.querySelector('.progress-percent');
+      if (isCompleted) {
+        percentElement.innerHTML = `
+          <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        `;
+      } else {
+        percentElement.textContent = `${Math.round(progress)}%`;
+      }
+
+      // Update current amount
+      const currentAmount = slide.querySelector('.progress-current');
+      currentAmount.textContent = `$${formatNumberWithCommas(balance)}`;
+
+      // Update goal amount
+      const goalAmount = slide.querySelector('.progress-goal');
+      goalAmount.textContent = `Goal: $${formatNumberWithCommas(goal.target)}`;
+    });
   };
 
   // Next slide
   const nextSlide = () => {
+    if (isTransitioning) return;
     currentSlide = (currentSlide + 1) % slideCount;
     updateSlide();
   };
 
   // Previous slide
   const prevSlide = () => {
+    if (isTransitioning) return;
     currentSlide = (currentSlide - 1 + slideCount) % slideCount;
     updateSlide();
   };
 
-  // Mouse drag functions
-  const getPositionX = (event) => {
-    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+  const startAutoAdvance = () => {
+    clearInterval(autoAdvanceInterval);
+    autoAdvanceInterval = setInterval(() => {
+      if (!isTransitioning) {
+        nextSlide();
+      }
+    }, 8000);
   };
-
-  const setSliderPosition = () => {
-    slides.style.transform = `translateX(${currentTranslate}px)`;
-  };
-
-  const animation = () => {
-    setSliderPosition();
-    if (isDragging) requestAnimationFrame(animation);
-  };
-
-  const touchStart = (event) => {
-    startPos = getPositionX(event);
-    isDragging = true;
-    animationID = requestAnimationFrame(animation);
-    slides.style.transition = 'none';
-  };
-
-  const touchMove = (event) => {
-    if (isDragging) {
-      const currentPosition = getPositionX(event);
-      currentTranslate = prevTranslate + currentPosition - startPos;
-    }
-  };
-
-  const touchEnd = () => {
-    isDragging = false;
-    cancelAnimationFrame(animationID);
-    const movedBy = currentTranslate - prevTranslate;
-
-    if (movedBy < -100 && currentSlide < slideCount - 1) {
-      currentSlide += 1;
-    } else if (movedBy > 100 && currentSlide > 0) {
-      currentSlide -= 1;
-    }
-
-    setPositionByIndex();
-  };
-
-  const setPositionByIndex = () => {
-    currentTranslate = currentSlide * -window.innerWidth;
-    prevTranslate = currentTranslate;
-    slides.style.transition = 'transform 0.5s ease-out';
-    setSliderPosition();
-  };
-
-  // Add event listeners
-  carousel.addEventListener('mousedown', touchStart);
-  carousel.addEventListener('mousemove', touchMove);
-  carousel.addEventListener('mouseup', touchEnd);
-  carousel.addEventListener('mouseleave', touchEnd);
-
-  carousel.addEventListener('touchstart', touchStart);
-  carousel.addEventListener('touchmove', touchMove);
-  carousel.addEventListener('touchend', touchEnd);
 
   // Add click handlers for arrows
-  prevBtn.addEventListener('click', prevSlide);
-  nextBtn.addEventListener('click', nextSlide);
+  prevBtn.addEventListener('click', () => {
+    clearInterval(autoAdvanceInterval);
+    prevSlide();
+    startAutoAdvance();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    clearInterval(autoAdvanceInterval);
+    nextSlide();
+    startAutoAdvance();
+  });
 
   // Add dot navigation
   dots.forEach((dot, index) => {
     dot.addEventListener('click', () => {
+      if (isTransitioning) return;
+      clearInterval(autoAdvanceInterval);
       currentSlide = index;
       updateSlide();
+      startAutoAdvance();
     });
   });
 
-  // Auto-advance every 8 seconds (slower interval)
-  let autoAdvance = setInterval(nextSlide, 8000);
-
   // Pause auto-advance on hover
   carousel.addEventListener('mouseenter', () => {
-    clearInterval(autoAdvance);
+    clearInterval(autoAdvanceInterval);
   });
 
   carousel.addEventListener('mouseleave', () => {
-    autoAdvance = setInterval(nextSlide, 8000);
+    startAutoAdvance();
   });
 
-  // Initialize first slide
+  // Initialize first slide and start auto-advance
   updateSlide();
+  startAutoAdvance();
+
+  // Update progress bars whenever balance changes
+  const balanceElement = document.getElementById("balance");
+  if (balanceElement) {
+    const observer = new MutationObserver(updateProgressBars);
+    observer.observe(balanceElement, { characterData: true, childList: true, subtree: true });
+  }
+
+  // Initial update of progress bars
+  updateProgressBars();
 };
 
 // Initialize carousel when DOM is loaded
