@@ -1153,3 +1153,23 @@ const progressCarousel = () => {
 document.addEventListener('DOMContentLoaded', () => {
   progressCarousel();
 });
+
+// ChatBot Toggle
+document.addEventListener("DOMContentLoaded", function () {
+  const toggle = document.getElementById("chatbotToggle");
+  const chatbox = document.getElementById("chatbox");
+  const closeBtn = document.getElementById("chatboxClose");
+
+  if (toggle && chatbox && closeBtn) {
+    toggle.addEventListener("click", () => {
+      chatbox.classList.toggle("hidden");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      chatbox.classList.add("hidden");
+    });
+  } else {
+    console.error("Chatbot elements not found");
+  }
+});
+
