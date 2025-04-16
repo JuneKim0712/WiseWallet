@@ -913,6 +913,8 @@ const test = async () => {
       );
     }
 
+    
+
     // Monthly subscriptions
     await ref.addTransaction(baseSubscriptions, "Subscription", new Date(d), "expense", uid);
 

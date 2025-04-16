@@ -1,0 +1,100 @@
+/* Fade in animation for the page */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide up animation for cards */
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Rotate animation for progress circles */
+@keyframes rotateProgress {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Scale animation for icons */
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Apply animations to elements */
+.goal-card {
+  animation: slideUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.goal-card:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.goal-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.goal-card:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.progress-circle {
+  animation: rotateProgress 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.progress-circle svg {
+  transform: rotate(-90deg);
+}
+
+.goal-icon {
+  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  animation-delay: 0.3s;
+}
+
+.goal-info {
+  animation: slideUp 0.5s ease-out forwards;
+  opacity: 0;
+  animation-delay: 0.4s;
+}
+
+/* Hover effects */
+.goal-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
+
+.goal-card:hover .progress-circle {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Progress bar animation */
+.progress-path {
+  transition: stroke-dasharray 1s ease-in-out;
+} 

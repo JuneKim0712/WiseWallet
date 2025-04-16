@@ -239,3 +239,123 @@
 .progress-slide {
   scroll-snap-align: start;
 }
+
+/* Animation Styles */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Apply animations to elements */
+.finance-card {
+  animation: slideUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.finance-card:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.finance-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.finance-card:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.progress-slide {
+  animation: scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.progress-slide:nth-child(1) {
+  animation-delay: 0.3s;
+}
+
+.progress-slide:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.progress-slide:nth-child(3) {
+  animation-delay: 0.7s;
+}
+
+.transaction-table {
+  animation: slideUp 0.8s ease-out forwards;
+  opacity: 0;
+  animation-delay: 0.4s;
+}
+
+.chart-container {
+  animation: scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  animation-delay: 0.6s;
+}
+
+/* Transaction Page Animations */
+.transaction-section {
+  animation: slideUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.transaction-table {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.transaction-filter {
+  animation: slideUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.transaction-search {
+  animation: slideUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.transaction-header {
+  animation: slideUp 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.transaction-modal {
+  animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+/* Add delay classes for sequential animations */
+.transaction-section:nth-child(1) { animation-delay: 0.1s; }
+.transaction-section:nth-child(2) { animation-delay: 0.2s; }
+.transaction-section:nth-child(3) { animation-delay: 0.3s; }
+
+.transaction-filter { animation-delay: 0.2s; }
+.transaction-search { animation-delay: 0.3s; }
+.transaction-table { animation-delay: 0.4s; }
+.transaction-header { animation-delay: 0.1s; }

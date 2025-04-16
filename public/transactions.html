@@ -30,7 +30,7 @@
         })
       </script>
       
-      <body id="body" class="bg-[#fffffa] font-[Montserrat] hidden">
+      <body id="body" class="bg-[#f8fafc] font-[Montserrat] hidden">
 
     <!-- Navigation Bar -->
     <nav class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 p-10 h-16 flex items-center justify-between relative text-sm sm:text-base mt-3 font-semibold">
@@ -150,8 +150,8 @@
     </div>
 
     <div class="flex flex-wrap w-full mt-6">
-        <div class="w-full p-4 ">
-            <div class="flex items-center justify-between mb-4">
+        <div class="w-full p-4 transaction-section">
+            <div class="flex items-center justify-between mb-4 transaction-header">
                 <div>
                     <h5 class="text-xl font-semibold text-blue-gray-900">Income and Expenses</h5>
                     <p class="text-gray-700">Manage and track your income and expenses</p>
@@ -159,7 +159,7 @@
             </div>
 
             <div class="flex gap-2 mb-4">
-                <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
+                <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm transaction-filter">
                     <button id="filterSelect" 
                         class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/60 focus:outline-none" 
                         data-value="all">
@@ -181,7 +181,7 @@
                         <span class="relative z-10">Last week</span>
                     </button>
                 </div>
-                <div class="relative flex-grow">
+                <div class="relative flex-grow transaction-search">
                     <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -195,8 +195,8 @@
             </div>
         </div>
 
-        <div class="w-1/2 p-4 pr-5">
-          <div class="flex items-center justify-between mb-4">
+        <div class="w-1/2 p-4 pr-5 transaction-section">
+          <div class="flex items-center justify-between mb-4 transaction-header">
               <div>
                   <h5 class="text-xl font-semibold text-green-900">Incomes</h5>
                   <p class="text-gray-700">List of your incomes</p>
@@ -206,7 +206,7 @@
                   Add Income
               </button>
           </div>
-          <div class="relative rounded-xl shadow-sm border border-gray-200 mb-4">
+          <div class="relative rounded-xl shadow-sm border border-gray-200 mb-4 transaction-table">
               <table id="incomeTable" class="w-full text-left table-fixed divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                       <tr>
@@ -225,8 +225,8 @@
           </div>
       </div>
 
-      <div class="w-1/2 p-4 pl-5">
-          <div class="flex items-center justify-between mb-4">
+      <div class="w-1/2 p-4 pl-5 transaction-section">
+          <div class="flex items-center justify-between mb-4 transaction-header">
               <div>
                   <h5 class="text-xl font-semibold text-red-900">Expenses</h5>
                   <p class="text-gray-700">List of your expenses</p>
@@ -236,7 +236,7 @@
                   Add Expense
               </button>
           </div>
-          <div class="relative rounded-xl shadow-sm border border-gray-200">
+          <div class="relative rounded-xl shadow-sm border border-gray-200 transaction-table">
               <table id="expenseTable" class="w-full text-left table-fixed divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                       <tr>

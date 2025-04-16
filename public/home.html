@@ -42,7 +42,7 @@
   })
 </script>
 
-<body id="body" class="bg-[#fffffa] font-[Montserrat] hidden">
+<body id="body" class="bg-[#f8fafc] font-[Montserrat] hidden">
 
   <!-- Delete Modal -->
   <div id="deleteModal" tabindex="-1" class="z-50 hidden fixed inset-0 flex items-center justify-center bg-black/50">
@@ -175,7 +175,7 @@
     <div class="w-1/2 flex flex-col space-y-4">
       <!-- Balance, Income, Expense Cards -->
       <div id="here" class="shadow-sm rounded-xl grid grid-cols-1 sm:grid-cols-3 gap-4 ml-4 p-6">
-        <div class="rounded-xl overflow-hidden">
+        <div class="rounded-xl overflow-hidden finance-card">
           <div class="bg-[#d5c7f7] p-4">
             <div class="text-black font-semibold text-lg flex items-center">
               <svg class="w-6 h-6 text-gray-800 dark:text-black" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -192,7 +192,7 @@
           </div>
         </div>
 
-        <div class="rounded-xl shadow-md overflow-hidden">
+        <div class="rounded-xl shadow-md overflow-hidden finance-card">
           <div class="bg-[#cfd8f7] p-4">
             <div class="text-black font-semibold text-lg flex items-center">
               <svg class="w-6 h-6 text-gray-800 dark:text-black" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -209,7 +209,7 @@
           </div>
         </div>
 
-        <div class="rounded-xl shadow-md overflow-hidden">
+        <div class="rounded-xl shadow-md overflow-hidden finance-card">
           <div class="bg-[#bce5c5] p-4">
             <div class="text-black font-semibold text-lg flex items-center">
               <svg class="w-6 h-6 text-gray-800 dark:text-black" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -228,7 +228,7 @@
       </div>
 
       <!-- Chart Section -->
-      <div class="ml-4 p-6">
+      <div class="ml-4 p-6 chart-container">
         <div class="flex gap-2 mb-4">
           <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 shadow-sm">
             <button id="plotFilterSelect" 
@@ -274,10 +274,10 @@
         </button>
 
         <!-- Progress Bar Container -->
-        <div class="progress-carousel overflow-hidden">
-          <div class="progress-slides flex transition-transform duration-300 mt-1">
+        <div class="progress-carousel overflow-hidden shadow-2xl">
+          <div class="progress-slides flex transition-transform duration-500 mt-1">
             <!-- Progress Bar 1 -->
-            <div class="progress-slide min-w-full bg-white rounded-xl shadow-sm p-6">
+            <div class="progress-slide min-w-full bg-[#f8fafc] rounded-xl shadow-xl p-6">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-semibold text-gray-800">New Car Fund</h3>
                 <span class="text-xl font-semibold text-blue-600 progress-percent">73%</span>
@@ -292,7 +292,7 @@
             </div>
 
             <!-- Progress Bar 2 -->
-            <div class="progress-slide min-w-full bg-white rounded-xl shadow-sm p-6">
+            <div class="progress-slide min-w-full bg-[#f8fafc] rounded-xl shadow-xl p-6">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-semibold text-gray-800">Vacation Fund</h3>
                 <span class="text-xl font-semibold text-blue-600 progress-percent">45%</span>
@@ -307,7 +307,7 @@
             </div>
 
             <!-- Progress Bar 3 -->
-            <div class="progress-slide min-w-full bg-white rounded-xl shadow-sm p-6">
+            <div class="progress-slide min-w-full bg-[#f8fafc] rounded-xl shadow-xl p-6">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-semibold text-gray-800">Emergency Fund</h3>
                 <span class="text-xl font-semibold text-blue-600 progress-percent">90%</span>
@@ -332,7 +332,7 @@
       </div>
 
       <!-- Transaction Table Section -->
-      <div class="ml-4 p-6">
+      <div class="ml-4 p-6 transaction-table">
         <div class="flex items-center justify-between mb-4">
           <div>
             <h5 class="text-xl font-semibold text-blue-gray-900">Transactions</h5>
@@ -410,5 +410,41 @@
     </div>
   </div>
 </body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Trigger animations
+    document.querySelectorAll('.finance-card').forEach((card, index) => {
+      card.style.opacity = '0';
+      setTimeout(() => {
+        card.style.opacity = '1';
+      }, 200 * (index + 1));
+    });
+
+    document.querySelectorAll('.progress-slide').forEach((slide, index) => {
+      slide.style.opacity = '0';
+      setTimeout(() => {
+        slide.style.opacity = '1';
+      }, 300 * (index + 1));
+    });
+
+    const chartContainer = document.querySelector('.chart-container');
+    const transactionTable = document.querySelector('.transaction-table');
+    
+    if (chartContainer) {
+      chartContainer.style.opacity = '0';
+      setTimeout(() => {
+        chartContainer.style.opacity = '1';
+      }, 600);
+    }
+
+    if (transactionTable) {
+      transactionTable.style.opacity = '0';
+      setTimeout(() => {
+        transactionTable.style.opacity = '1';
+      }, 400);
+    }
+  });
+</script>
 
 </html>
