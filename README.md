@@ -3,9 +3,9 @@
 <!-- HEADER STYLE: CLASSIC -->
 <div align="center">
 
-<img src="readmeai/assets/logos/purple.svg" width="30%" style="position: relative; top: 0; right: 0;" alt="Project Logo"/>
+<img src="public/assets/wwLogo.svg" width="30%" style="position: relative; top: 0; right: 0;" alt="Project Logo"/>
 
-# WISEWALLET
+# WISE WALLET
 
 <em>Transforming Financial Clarity into Actionable Insights Daily</em>
 
