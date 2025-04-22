@@ -18,6 +18,17 @@
 <img src="https://img.shields.io/badge/npm-CB3837.svg?style=default&logo=npm&logoColor=white" alt="npm">
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=default&logo=JavaScript&logoColor=black" alt="JavaScript">
 <img src="https://img.shields.io/badge/CSS-663399.svg?style=default&logo=CSS&logoColor=white" alt="CSS">
+<img src="https://img.shields.io/badge/Google%20Gemini-886FBF?logo=googlegemini&logoColor=fff" alt="CSS">
+<img src="https://img.shields.io/badge/Mocha-8D6748.svg?style=flat&logo=Mocha&logoColor=white" alt="Mocha">
+	<img src="https://img.shields.io/badge/ESLint-4B32C3.svg?style=flat&logo=ESLint&logoColor=white" alt="ESLint">
+    <img src="https://img.shields.io/badge/Firebase-FFCA28.svg?style=flat&logo=Firebase&logoColor=black" alt="Firebase">
+    <img src="https://img.shields.io/badge/Tailwind%20CSS-%2338B2AC.svg?logo=tailwind-css&logoColor=white" alt="Firebase">
+    <img src="https://img.shields.io/badge/Chart.js-FF6384?logo=chartdotjs&logoColor=fff" alt="Firebase">
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff" alt="Firebase">
+    <img src="https://img.shields.io/badge/Node.js-6DA55F?logo=node.js&logoColor=white" alt="Firebase">
+    <img src="https://img.shields.io/badge/-Webpack-1C78C0?style=flat-square&logo=Webpack" alt="Firebase">
+
+
 
 </div>
 <br>
@@ -103,7 +114,6 @@ This project helps developers create robust financial management applications by
     ├── package-lock.json
     ├── package.json
     ├── public
-    │   ├── .DS_Store
     │   ├── assets
     │   ├── charts.html
     │   ├── css
@@ -112,8 +122,25 @@ This project helps developers create robust financial management applications by
     │   ├── home-page.html
     │   ├── home.html
     │   ├── index.html
+    │   ├──transactions.html
     │   ├── js
-    │   └── transactions.html
+    │   │   ├── charts.js
+    │   │   ├── db.js
+    │   │   ├── help.s
+    │   │   ├── report.js
+    │   │   ├── preprocess.js
+    │   │   ├── tansactions.js
+    │   │   ├── plot.js
+    │   │   ├── home.js
+    │   │   ├── login.js
+    │   │   └── goal.js
+    │   └── css
+    │       ├── goal.css
+    │       ├── help.css
+    │       ├── home-page.css
+    │       ├── home.css
+    │       ├── index.css
+    │       └── nav.css
     ├── README.md
     └── ui-debug.log
 ```
@@ -121,7 +148,7 @@ This project helps developers create robust financial management applications by
 ### Project Index
 
 <details open>
-    <summary><b><code>C:\JUNEKIM0712\CODE\WISEWALLET/</code></b></summary>
+    <summary><b><code>https://github.com/JuneKim0712/WiseWallet</code></b></summary>
     <!-- __root__ Submodule -->
     <details>
         <summary><b>__root__</b></summary>
@@ -185,7 +212,7 @@ This project helps developers create robust financial management applications by
                 </tr>
                 <tr style='border-bottom: 1px solid #eee;'>
                     <td style='padding: 8px;'><b><a href='C:\JuneKim0712\Code\WiseWallet/blob/master/public\help.html'>help.html</a></b></td>
-                    <td style='padding: 8px;'>A clear heading hierarchy using H1-H6 tags for better structure and accessibility.<em> Semantic HTML elements such as <code><header></code>, <code><nav></code>, <code><main></code>, etc., to define different sections of the page.</em> A consistent font family and size throughout the page to maintain visual consistency.* Proper use of alt text for images (if any) to improve accessibility.Overall, the code is well-organized, and with a few tweaks, it can become even more user-friendly and accessible.</td>
+                    <td style='padding: 8px;'>- Defined different sections of the page.</em> A consistent font family and size throughout the page to maintain visual consistency.* Proper use of alt text for images (if any) to improve accessibility.Overall, the code is well-organized, and with a few tweaks, it can become even more user-friendly and accessible.</td>
                 </tr>
                 <tr style='border-bottom: 1px solid #eee;'>
                     <td style='padding: 8px;'><b><a href='C:\JuneKim0712\Code\WiseWallet/blob/master/public\home-page.html'>home-page.html</a></b></td>
@@ -322,7 +349,7 @@ Build WiseWallet from the source and intsall dependencies:
 1. **Clone the repository:**
 
     ```sh
-    ❯ git clone ../WiseWallet
+    ❯ git clone https://github.com/JuneKim0712/WiseWallet
     ```
 
 2. **Navigate to the project directory:**
@@ -363,16 +390,6 @@ Wisewallet uses the {__test_framework__} test framework. Run the test suite with
 npm test
 ```
 
----
-
-## Roadmap
-
-- [X] **`Task 1`**: <strike>Implement feature one.</strike>
-- [ ] **`Task 2`**: Implement feature two.
-- [ ] **`Task 3`**: Implement feature three.
-
----
-
 ## Contributing
 
 - **💬 [Join the Discussions](https://LOCAL/Code/WiseWallet/discussions)**: Share your insights, provide feedback, or ask questions.
@@ -404,33 +421,15 @@ npm test
 8. **Review**: Once your PR is reviewed and approved, it will be merged into the main branch. Congratulations on your contribution!
 </details>
 
-<details closed>
-<summary>Contributor Graph</summary>
-<br>
-<p align="left">
-   <a href="https://LOCAL{/Code/WiseWallet/}graphs/contributors">
-      <img src="https://contrib.rocks/image?repo=Code/WiseWallet">
-   </a>
-</p>
-</details>
-
 ---
 
 ## License
 
-Wisewallet is protected under the [LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
+Wisewallet is protected under the [MIT](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
 
 ---
 
-## Acknowledgments
-
-- Credit `contributors`, `inspiration`, `references`, etc.
-
-<div align="right">
-
-[![][back-to-top]](#top)
-
-</div>
+## Copyright
 
 
 [back-to-top]: https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square
