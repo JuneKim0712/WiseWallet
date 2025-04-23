@@ -150,7 +150,7 @@ This project helps developers create robust financial management applications by
 <details open>
     <summary><b><code>https://github.com/JuneKim0712/WiseWallet</code></b></summary>
     <!-- __root__ Submodule -->
-    <details>
+    <details open>
         <summary><b>__root__</b></summary>
         <blockquote>
             <div class='directory-path' style='padding: 8px 0; color: #666;'>
@@ -190,7 +190,7 @@ This project helps developers create robust financial management applications by
         </blockquote>
     </details>
     <!-- public Submodule -->
-    <details>
+    <details open>
         <summary><b>public</b></summary>
         <blockquote>
             <div class='directory-path' style='padding: 8px 0; color: #666;'>
@@ -232,7 +232,7 @@ This project helps developers create robust financial management applications by
                 </tr>
             </table>
             <!-- css Submodule -->
-            <details>
+            <details open>
                 <summary><b>css</b></summary>
                 <blockquote>
                     <div class='directory-path' style='padding: 8px 0; color: #666;'>
@@ -272,7 +272,7 @@ This project helps developers create robust financial management applications by
                 </blockquote>
             </details>
             <!-- js Submodule -->
-            <details>
+            <details open>
                 <summary><b>js</b></summary>
                 <blockquote>
                     <div class='directory-path' style='padding: 8px 0; color: #666;'>
@@ -396,7 +396,7 @@ npm test
 - **🐛 [Report Issues](https://LOCAL/Code/WiseWallet/issues)**: Submit bugs found or log feature requests for the `Wise Wallet` project.
 - **💡 [Submit Pull Requests](https://LOCAL/Code/WiseWallet/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
 
-<details closed>
+<details open>
 <summary>Contributing Guidelines</summary>
 
 1. **Fork the Repository**: Start by forking the project repository to your LOCAL account.
