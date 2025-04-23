@@ -122,14 +122,14 @@ This project helps developers create robust financial management applications by
     │   ├── home-page.html
     │   ├── home.html
     │   ├── index.html
-    │   ├──transactions.html
+    │   ├── transactions.html
     │   ├── js
     │   │   ├── charts.js
     │   │   ├── db.js
     │   │   ├── help.s
     │   │   ├── report.js
     │   │   ├── preprocess.js
-    │   │   ├── tansactions.js
+    │   │   ├── transactions.js
     │   │   ├── plot.js
     │   │   ├── home.js
     │   │   ├── login.js
@@ -383,7 +383,7 @@ npm start
 
 ### Testing
 
-Wisewallet uses the {__test_framework__} test framework. Run the test suite with:
+Wise Wallet uses the {__test_framework__} test framework. Run the test suite with:
 
 **Using [npm](https://www.npmjs.com/):**
 ```sh
@@ -393,7 +393,7 @@ npm test
 ## Contributing
 
 - **💬 [Join the Discussions](https://LOCAL/Code/WiseWallet/discussions)**: Share your insights, provide feedback, or ask questions.
-- **🐛 [Report Issues](https://LOCAL/Code/WiseWallet/issues)**: Submit bugs found or log feature requests for the `WiseWallet` project.
+- **🐛 [Report Issues](https://LOCAL/Code/WiseWallet/issues)**: Submit bugs found or log feature requests for the `Wise Wallet` project.
 - **💡 [Submit Pull Requests](https://LOCAL/Code/WiseWallet/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
 
 <details closed>
@@ -425,14 +425,26 @@ npm test
 
 ## License
 
-Wisewallet is protected under the [MIT](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
+Wise Wallet is protected under the [MIT](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
 
 ---
 
-## Copyright
+## Copyright and Credits
+
+- **Website Developed by**: Junwoo Kim and Gabriel Atienza  
+- **Development Tools**: Visual Studio Code by Microsoft Corporation  
+- **Logo Design**: Gabriel Atienza using Canva Pty Ltd  
+- **Data Storage**: Firebase by Alphabet Inc.  
+- **Analytics**: Google Analytics for Firebase  
+
+### Legal Information
+
+- Firebase and Google Analytics are trademarks of Google, LLC.
+- The app does not collect personal information or store it locally or in an online backend. Any data collected is anonymized and cannot be used to identify users.
 
 
 [back-to-top]: https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square
+
 
 
 ---
