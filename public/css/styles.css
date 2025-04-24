@@ -1,0 +1,21 @@
+/* Table header sorting styles */
+th[data-sort] {
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+th[data-sort]:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sort-indicator {
+  position: absolute;
+  right: 8px;
+  color: #666;
+  font-size: 0.8em;
+}
+
+/* Ensure table headers maintain proper alignment with sort indicators */
+th[data-sort] {
+  padding-right: 24px;
+} 

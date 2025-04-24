@@ -124,6 +124,15 @@ export const deleteDoc = (collec, docId, uid) => {
 }
 
 /**
+ * Deletes a transaction
+ * @param {string} docId - Document ID to delete
+ * @param {string} uid - User ID
+ */
+export const deleteTransaction = (docId, uid) => {
+    return deleteDoc('transaction', docId, uid);
+}
+
+/**
  * Adds a custom category
  * @param {string} uid - User ID
  * @param {string} type - Category type ('income' or 'expense')

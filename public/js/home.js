@@ -87,9 +87,9 @@ const listTransactions = (currentTransactionData, page) => {
     row.className = transaction.type === 'income' ? 'text-green-600' : 'text-red-600';
     
     row.innerHTML = `
-      <td class="p-4">${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
-      <td class="p-4 font-medium">${transaction.type === 'income' ? '+' : '-'}$${transaction.amount}</td>
-      <td class="p-4">${transaction.category}</td>
+      <td class="p-4" data-date="${transaction.date.seconds}">${new Date(transaction.date.seconds * 1000).toISOString().split('T')[0]}</td>
+      <td class="p-4 font-medium" data-amount="${transaction.type === 'income' ? transaction.amount : -transaction.amount}">${transaction.type === 'income' ? '+' : '-'}$${transaction.amount}</td>
+      <td class="p-4" data-category="${transaction.category}">${transaction.category}</td>
       <td class="p-4 flex gap-2 text-gray-600">
         <button class="edit-btn" data-id="${transaction.id}" data-tooltip="Edit transaction">
           <svg class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,6 +108,9 @@ const listTransactions = (currentTransactionData, page) => {
 
   // Update pagination controls
   updateTransactionPaginationControls(totalTransactions, page);
+  
+  // Add event listeners for edit and delete buttons
+  setupTransactionActionButtons();
 };
 
 // New pagination control function for Transaction Table
@@ -163,16 +166,25 @@ const sortTransactions = (transactions, key, order) => {
     let aValue, bValue;
 
     if (key === "date") {
+      // Handle date sorting
       aValue = a.date.seconds;
       bValue = b.date.seconds;
     } else if (key === "amount") {
+      // Handle amount sorting, considering transaction type
       aValue = a.type === "income" ? a.amount : -a.amount;
       bValue = b.type === "income" ? b.amount : -b.amount;
     } else if (key === "category") {
+      // Handle category sorting (case-insensitive)
       aValue = a.category.toLowerCase();
       bValue = b.category.toLowerCase();
       return order ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+    } else {
+      // Default case for any other fields
+      aValue = a[key];
+      bValue = b[key];
     }
+    
+    // Numeric comparison for date and amount
     return order ? aValue - bValue : bValue - aValue;
   });
 };
@@ -184,40 +196,75 @@ let sortDirection;
  * Handles click events and updates sort indicators
  */
 const addSortingHandlers = () => {
-  let headers = Array.from(document.querySelectorAll("#transactionTable th"))
-    .filter(th => th.textContent.trim() !== "Action");
-  headers.forEach((header, index) => {
-    const key = header.textContent.toLowerCase();
-    // Set default sort direction to descending for Date column (index 0)
-    header.dataset.sortDirection = (index === 0) ? 'desc' : 'asc';
+  console.log("Setting up sorting handlers");
+  const headers = document.querySelectorAll('th[data-sort]');
+  console.log("Found headers:", headers.length);
+  
+  let currentSort = {
+    column: 'date',
+    direction: 'desc'
+  };
 
-    if (index === 0) {
-      // Set initial indicator to descending for Date column
-      header.innerHTML = `${key.charAt(0).toUpperCase() + key.slice(1)} &darr;`;
-    } else {
-      header.innerHTML = key.charAt(0).toUpperCase() + key.slice(1);
-    }
+  headers.forEach(header => {
+    header.style.cursor = 'pointer';
+    
+    // Add sort indicator
+    const indicator = document.createElement('span');
+    indicator.className = 'sort-indicator';
+    header.appendChild(indicator);
 
-    header.addEventListener("click", () => {
+    header.addEventListener('click', () => {
+      console.log("Header clicked:", header.getAttribute('data-sort'));
+      const column = header.getAttribute('data-sort');
+      
+      // Toggle sort direction if clicking the same column
+      if (currentSort.column === column) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.column = column;
+        currentSort.direction = 'asc';
+      }
+
+      console.log("Sorting by:", column, "direction:", currentSort.direction);
+
+      // Update sort indicators
       headers.forEach(h => {
-        if (h !== header) {
-          h.innerHTML = h.textContent.split(' ')[0];
-          h.dataset.sortDirection = 'asc';
+        const indicator = h.querySelector('.sort-indicator');
+        if (h.getAttribute('data-sort') === currentSort.column) {
+          indicator.textContent = currentSort.direction === 'asc' ? ' ↑' : ' ↓';
+        } else {
+          indicator.textContent = '';
         }
       });
 
-      const currentSortDirection = header.dataset.sortDirection;
-      const newSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-      header.dataset.sortDirection = newSortDirection;
+      // Sort the transactions array
+      transactions.sort((a, b) => {
+        let aValue, bValue;
 
-      const indicator = newSortDirection === 'asc' ? '&uarr;' : '&darr;';
-      header.innerHTML = `${key.charAt(0).toUpperCase() + key.slice(1)} ${indicator}`;
+        if (column === 'date') {
+          aValue = a.date.seconds;
+          bValue = b.date.seconds;
+        } else if (column === 'amount') {
+          aValue = a.type === 'income' ? a.amount : -a.amount;
+          bValue = b.type === 'income' ? b.amount : -b.amount;
+        } else if (column === 'category') {
+          aValue = a.category.toLowerCase();
+          bValue = b.category.toLowerCase();
+        } else {
+          aValue = a[column]?.toLowerCase() || '';
+          bValue = b[column]?.toLowerCase() || '';
+        }
 
-      const sortedTransactions = sortTransactions(transactions, key, newSortDirection === 'asc');
-      sortType = key;
-      sortDirection = newSortDirection;
+        if (currentSort.direction === 'asc') {
+          return aValue > bValue ? 1 : -1;
+        } else {
+          return aValue < bValue ? 1 : -1;
+        }
+      });
 
-      listTransactions(sortedTransactions, transactionCurrentPage); // Keep current page after sort
+      console.log("Transactions sorted, updating table");
+      // Update the transaction list with sorted data
+      listTransactions(transactions, transactionCurrentPage);
     });
   });
 };
@@ -549,6 +596,8 @@ const initialize = async () => {
       document.getElementById("transactionDate").value = new Date().toISOString().split('T')[0];
       document.querySelector("#addTransactionModal h2").textContent = "Add New Transaction";
       document.getElementById("saveTransaction").textContent = "Save";
+      // Clear any stored transaction ID for editing
+      document.getElementById("saveTransaction").dataset.transactionId = "";
       showModal(modal);
     });
 
@@ -564,6 +613,7 @@ const initialize = async () => {
       const type = document.getElementById("transactionType").value;
       const category = document.getElementById("transactionCategory").value;
       const date = document.getElementById("transactionDate").value;
+      const transactionId = document.getElementById("saveTransaction").dataset.transactionId;
 
       // Validate inputs
       if (!amount || amount <= 0) {
@@ -580,14 +630,26 @@ const initialize = async () => {
       }
 
       try {
-        // Add transaction to database
-        await ref.addTransaction(
-          amount,
-          category,
-          new Date(date),
-          type,
-          uid
-        );
+        if (transactionId) {
+          // Update existing transaction
+          await ref.updateTransaction(
+            amount,
+            category,
+            new Date(date),
+            type,
+            transactionId,
+            uid
+          );
+        } else {
+          // Add new transaction
+          await ref.addTransaction(
+            amount,
+            category,
+            new Date(date),
+            type,
+            uid
+          );
+        }
 
         // Hide modal and refresh transaction list
         const modal = document.getElementById("addTransactionModal");
@@ -603,8 +665,8 @@ const initialize = async () => {
         // Update balance chart
         await plotBalanceChart();
       } catch (error) {
-        console.error("Error adding transaction:", error);
-        alert("Failed to add transaction. Please try again.");
+        console.error("Error saving transaction:", error);
+        alert("Failed to save transaction. Please try again.");
       }
     });
 
@@ -627,6 +689,8 @@ const initialize = async () => {
     // Update UI elements with a staggered delay
     setTimeout(() => {
       listTransactions(transactions, transactionCurrentPage);
+      // Add sorting handlers after the table is populated
+      addSortingHandlers();
     }, 200);
 
     document.getElementById("searchInput").addEventListener("input", () => {
@@ -991,6 +1055,9 @@ const handleEdit = async (transactionToEdit) => {
     
     document.querySelector("#addTransactionModal h2").textContent = "Edit Transaction";
     document.getElementById("saveTransaction").textContent = "Update";
+    
+    // Store the transaction ID for updating
+    document.getElementById("saveTransaction").dataset.transactionId = transactionToEdit.id;
     
     showModal(modal);
   }
@@ -1559,5 +1626,80 @@ const addMessage = (message, isUser = false) => {
   }, 10);
   
   chatMessages.scrollTop = chatMessages.scrollHeight;
+};
+
+// Add this new function to handle edit and delete button clicks
+const setupTransactionActionButtons = () => {
+  const tableBody = document.querySelector("#transactionTable tbody");
+  
+  // Add click event listener to the table body for event delegation
+  tableBody.addEventListener("click", async (event) => {
+    if (event.target.closest('.delete-btn')) {
+      const deleteButton = event.target.closest('.delete-btn');
+      const transactionId = deleteButton.dataset.id;
+      
+      // Show delete confirmation modal
+      const deleteModal = document.getElementById("deleteModal");
+      deleteModal.classList.remove("hidden");
+      
+      // Set up event listeners for the delete modal buttons
+      const confirmDeleteBtn = document.getElementById("confirmDelete");
+      const cancelDeleteBtn = document.getElementById("cancelDelete");
+      const closeBtn = document.getElementById("closeBtn");
+      
+      // Remove any existing event listeners to prevent duplicates
+      const newConfirmBtn = confirmDeleteBtn.cloneNode(true);
+      const newCancelBtn = cancelDeleteBtn.cloneNode(true);
+      const newCloseBtn = closeBtn.cloneNode(true);
+      
+      confirmDeleteBtn.parentNode.replaceChild(newConfirmBtn, confirmDeleteBtn);
+      cancelDeleteBtn.parentNode.replaceChild(newCancelBtn, cancelDeleteBtn);
+      closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+      
+      // Add new event listeners
+      newConfirmBtn.addEventListener("click", async () => {
+        try {
+          // Delete the transaction
+          await ref.deleteTransaction(transactionId, uid);
+          
+          // Hide the modal
+          deleteModal.classList.add("hidden");
+          
+          // Refresh transactions
+          transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+          listTransactions(transactions, transactionCurrentPage);
+          
+          // Update dashboard cards
+          await updateDashboardCards();
+          
+          // Update balance chart
+          await plotBalanceChart();
+        } catch (error) {
+          console.error("Error deleting transaction:", error);
+          alert("Failed to delete transaction. Please try again.");
+        }
+      });
+      
+      newCancelBtn.addEventListener("click", () => {
+        deleteModal.classList.add("hidden");
+      });
+      
+      newCloseBtn.addEventListener("click", () => {
+        deleteModal.classList.add("hidden");
+      });
+      
+    } else if (event.target.closest('.edit-btn')) {
+      const editButton = event.target.closest('.edit-btn');
+      const transactionId = editButton.dataset.id;
+      
+      // Find the transaction to edit
+      const transactionToEdit = transactions.find(transaction => transaction.id === transactionId);
+      
+      if (transactionToEdit) {
+        // Call the handleEdit function to edit the transaction
+        await handleEdit(transactionToEdit);
+      }
+    }
+  });
 };
 
