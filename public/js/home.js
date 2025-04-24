@@ -921,7 +921,7 @@ window.test = async () => {
       const loanAmount = createVariation(studentLoan, month, 80);
       await ref.addTransaction(
         loanAmount,
-        "Student Loan",
+        "Student scholarship",
         new Date(d),
         "income",
         uid

@@ -228,14 +228,16 @@ export const generatePDFReport = async () => {
         const chartContainer = document.createElement('div');
         chartContainer.style.position = 'absolute';
         chartContainer.style.left = '-9999px';
-        chartContainer.style.width = '800px';
-        chartContainer.style.height = '400px';
+        chartContainer.style.width = '1200px';
+        chartContainer.style.height = '600px';
+        chartContainer.style.background = '#FFFFFF';
         document.body.appendChild(chartContainer);
 
-        // Create canvas for balance chart
+        // Create canvas for balance chart with increased dimensions
         const chartCtx = document.createElement('canvas');
-        chartCtx.width = 800;
-        chartCtx.height = 400;
+        chartCtx.width = 1200;
+        chartCtx.height = 600;
+        chartCtx.style.background = '#FFFFFF';
         chartContainer.appendChild(chartCtx);
 
         // Initialize PDF with business letter format (portrait, inches)
@@ -246,13 +248,13 @@ export const generatePDFReport = async () => {
         });
 
         // Add company branding
-        pdfDoc.setFillColor(52, 73, 94); // Professional dark blue
+        pdfDoc.setFillColor(52, 73, 94);
         pdfDoc.rect(0, 0, 210, 25, 'F');
 
         // Header
         pdfDoc.setTextColor(255, 255, 255);
         pdfDoc.setFontSize(20);
-    pdfDoc.setFont('helvetica', 'bold');
+        pdfDoc.setFont('helvetica', 'bold');
         pdfDoc.text("Financial Performance Report", 15, 15);
 
         // Reset text color for body
@@ -265,21 +267,21 @@ export const generatePDFReport = async () => {
             day: 'numeric'
         });
         pdfDoc.setFontSize(10);
-    pdfDoc.setFont('helvetica', 'normal');
+        pdfDoc.setFont('helvetica', 'normal');
         pdfDoc.text(`Generated on: ${currentDate}`, 15, 35);
 
         // Get user data
         const uid = firebase.auth().currentUser?.uid;
-    if (!uid) {
+        if (!uid) {
             throw new Error("User not authenticated");
-    }
+        }
 
         // Fetch and process data
-    let transactions = await ref.access(uid, 'transaction');
+        let transactions = await ref.access(uid, 'transaction');
         transactions = process.sortTransactions(transactions);
 
         // Process monthly data for the chart
-    const balanceOverTimeData = process.genBalanceOverTime(transactions);
+        const balanceOverTimeData = process.genBalanceOverTime(transactions);
         const monthlyBalances = {};
 
         balanceOverTimeData.forEach(item => {
@@ -298,6 +300,45 @@ export const generatePDFReport = async () => {
         const monthlyBalanceData = Object.values(monthlyBalances)
             .sort((a, b) => a.date.seconds - b.date.seconds);
 
+        // Plugin to set white background
+        Chart.register({
+            id: 'customCanvasBackgroundColor',
+            beforeDraw: (chart, args, options) => {
+                const {ctx} = chart;
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-over';
+                ctx.fillStyle = options.color || '#ffffff';
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+            }
+        });
+
+        // Update the common chart options to remove title
+        const commonChartOptions = {
+            responsive: false,
+            maintainAspectRatio: false,
+            animation: false,
+            layout: {
+                padding: {
+                    left: 15,
+                    right: 15,
+                    top: 15,
+                    bottom: 15
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: false
+                },
+                customCanvasBackgroundColor: {
+                    color: 'white'
+                }
+            }
+        };
+
         // Create and wait for balance chart
         const balanceChart = new Chart(chartCtx, {
             type: 'line',
@@ -314,12 +355,7 @@ export const generatePDFReport = async () => {
                 }]
             },
             options: {
-                responsive: false,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: { display: false },
-                    legend: { display: false }
-                },
+                ...commonChartOptions,
                 scales: {
                     x: {
                         grid: { display: false }
@@ -332,7 +368,7 @@ export const generatePDFReport = async () => {
                     }
                 }
             }
-    });
+        });
 
         // Wait for chart rendering - Increased timeout for better reliability
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -401,9 +437,9 @@ export const generatePDFReport = async () => {
         pdfDoc.text("Balance Trend Analysis", 15, yPos);
 
         try {
-            const balanceChartImage = chartCtx.toDataURL('image/png', 1.0);
+            const balanceChartImage = chartCtx.toDataURL('image/jpeg', 0.85);
             yPos += 5;
-            pdfDoc.addImage(balanceChartImage, 'PNG', 15, yPos, 180, 80);
+            pdfDoc.addImage(balanceChartImage, 'JPEG', 15, yPos, 180, 80, undefined, 'FAST');
         } catch (chartError) {
             console.error("Failed to add chart to PDF:", chartError);
             yPos += 10;
@@ -446,9 +482,9 @@ export const generatePDFReport = async () => {
         await new Promise(resolve => setTimeout(resolve, 500));
 
         try {
-            const comparisonChartImage = comparisonCanvas.toDataURL('image/png', 1.0);
+            const comparisonChartImage = comparisonCanvas.toDataURL('image/jpeg', 0.85);
             yPos += 5;
-            pdfDoc.addImage(comparisonChartImage, 'PNG', 15, yPos, 180, 80);
+            pdfDoc.addImage(comparisonChartImage, 'JPEG', 15, yPos, 180, 80, undefined, 'FAST');
         } catch (chartError) {
             console.error("Failed to add comparison chart to PDF:", chartError);
             yPos += 10;
@@ -474,13 +510,15 @@ export const generatePDFReport = async () => {
         yPos = 25;
         pdfDoc.text("Top 5 categories by transaction volume", 15, yPos);
 
-        // Create canvases with optimized dimensions
+        // Create canvases with increased dimensions
         const incomePieCanvas = document.createElement('canvas');
         const expensePieCanvas = document.createElement('canvas');
-        incomePieCanvas.width = 3600;  // Increased for ultra-high resolution
-        incomePieCanvas.height = 3600;
-        expensePieCanvas.width = 3600;
-        expensePieCanvas.height = 3600;
+        incomePieCanvas.width = 1000;
+        incomePieCanvas.height = 1000;
+        expensePieCanvas.width = 1000;
+        expensePieCanvas.height = 1000;
+        incomePieCanvas.style.background = '#FFFFFF';
+        expensePieCanvas.style.background = '#FFFFFF';
         chartContainer.appendChild(incomePieCanvas);
         chartContainer.appendChild(expensePieCanvas);
 
@@ -509,29 +547,6 @@ export const generatePDFReport = async () => {
         const pieColors = [
             '#2E4057', '#4B6584', '#5E7494', '#7C8DA4', '#99A8BC'
         ];
-
-        // Update the common chart options to remove title
-        const commonChartOptions = {
-            responsive: false,
-            maintainAspectRatio: false,
-            animation: false,
-            layout: {
-                padding: {
-                    left: 15,
-                    right: 15,
-                    top: 15,
-                    bottom: 15
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: false  // Disable chart.js title
-                }
-            }
-        };
 
         // Update the income pie chart options
         const incomePieChart = new Chart(incomePieCanvas, {
@@ -597,13 +612,13 @@ export const generatePDFReport = async () => {
         // When adding charts to PDF, add titles and charts
         try {
             yPos += 15;
-            const incomePieImage = incomePieCanvas.toDataURL('image/png', 1.0);
-            const expensePieImage = expensePieCanvas.toDataURL('image/png', 1.0);
+            const incomePieImage = incomePieCanvas.toDataURL('image/jpeg', 1.0);
+            const expensePieImage = expensePieCanvas.toDataURL('image/jpeg', 1.0);
             
             // Adjust chart dimensions for better layout
             const pageWidth = pdfDoc.internal.pageSize.width;
-            const chartWidth = 80;
-            const chartHeight = 80;
+            const chartWidth = 85;
+            const chartHeight = 85;
             const spacing = 35;
             
             const totalWidth = (chartWidth * 2) + spacing;
@@ -612,7 +627,7 @@ export const generatePDFReport = async () => {
             // Add titles above charts with professional styling
             pdfDoc.setFont('helvetica', 'bold');
             pdfDoc.setFontSize(14);
-            pdfDoc.setTextColor(52, 73, 94);  // Professional dark blue
+            pdfDoc.setTextColor(52, 73, 94);
             
             // Income chart title
             pdfDoc.text('Income Distribution', startX + (chartWidth/2), yPos - 5, { align: 'center' });
@@ -620,9 +635,9 @@ export const generatePDFReport = async () => {
             // Expense chart title
             pdfDoc.text('Expense Distribution', startX + chartWidth + spacing + (chartWidth/2), yPos - 5, { align: 'center' });
             
-            // Position charts
-            pdfDoc.addImage(incomePieImage, 'PNG', startX, yPos, chartWidth, chartHeight);
-            pdfDoc.addImage(expensePieImage, 'PNG', startX + chartWidth + spacing, yPos, chartWidth, chartHeight);
+            // Position charts with FAST option and higher quality
+            pdfDoc.addImage(incomePieImage, 'JPEG', startX, yPos, chartWidth, chartHeight, undefined, 'FAST');
+            pdfDoc.addImage(expensePieImage, 'JPEG', startX + chartWidth + spacing, yPos, chartWidth, chartHeight, undefined, 'FAST');
             
             // Function to add custom labels with improved styling
             const addCustomLabels = (categories, startX, yPos) => {
