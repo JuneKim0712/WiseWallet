@@ -527,27 +527,117 @@ const initialize = async () => {
     while (!uid) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
-    //test()
+
+    // Add event listener for report generation
+    document.getElementById("generateReportBtn").addEventListener("click", async () => {
+      try {
+        await generatePDFReport();
+      } catch (error) {
+        console.error("Error generating report:", error);
+        alert("Failed to generate report. Please try again.");
+      }
+    });
+
+    // Add event listener for Add Transaction button
+    document.getElementById("addTransactionBtn").addEventListener("click", () => {
+      const modal = document.getElementById("addTransactionModal");
+      document.getElementById("transactionAmount").value = "";
+      document.getElementById("transactionType").value = "income";
+      document.getElementById("transactionType").disabled = false;
+      document.getElementById("transactionCategory").value = "";
+      document.getElementById('selectedCategory').textContent = "Select category";
+      document.getElementById("transactionDate").value = new Date().toISOString().split('T')[0];
+      document.querySelector("#addTransactionModal h2").textContent = "Add New Transaction";
+      document.getElementById("saveTransaction").textContent = "Save";
+      showModal(modal);
+    });
+
+    // Add event listener for Cancel button
+    document.getElementById("cancelTransaction").addEventListener("click", () => {
+      const modal = document.getElementById("addTransactionModal");
+      hideModal(modal);
+    });
+
+    // Add event listener for Save button
+    document.getElementById("saveTransaction").addEventListener("click", async () => {
+      const amount = parseFloat(document.getElementById("transactionAmount").value);
+      const type = document.getElementById("transactionType").value;
+      const category = document.getElementById("transactionCategory").value;
+      const date = document.getElementById("transactionDate").value;
+
+      // Validate inputs
+      if (!amount || amount <= 0) {
+        alert("Please enter a valid amount");
+        return;
+      }
+      if (!category) {
+        alert("Please select a category");
+        return;
+      }
+      if (!date) {
+        alert("Please select a date");
+        return;
+      }
+
+      try {
+        // Add transaction to database
+        await ref.addTransaction(
+          amount,
+          category,
+          new Date(date),
+          type,
+          uid
+        );
+
+        // Hide modal and refresh transaction list
+        const modal = document.getElementById("addTransactionModal");
+        hideModal(modal);
+        
+        // Refresh transactions
+        transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+        listTransactions(transactions, transactionCurrentPage);
+        
+        // Update dashboard cards
+        await updateDashboardCards();
+        
+        // Update balance chart
+        await plotBalanceChart();
+      } catch (error) {
+        console.error("Error adding transaction:", error);
+        alert("Failed to add transaction. Please try again.");
+      }
+    });
+
+    // test();
+    // testGoals();
 
     // Add event listener for transaction type change
     document.getElementById("transactionType").addEventListener("change", (e) => {
       updateCategoryOptions(e.target.value);
     });
 
+    // Initialize with a slight delay to allow for smooth animations
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     await updateCategoryOptions('income');
     transactions = await ref.access(uid, 'transaction')
     transactions = process.sortTransactions(transactions);
     transactions = sortTransactions(transactions, "date", false)
 
-    listTransactions(transactions, transactionCurrentPage);
+    // Update UI elements with a staggered delay
+    setTimeout(() => {
+      listTransactions(transactions, transactionCurrentPage);
+    }, 200);
 
     document.getElementById("searchInput").addEventListener("input", () => {
-      transactionCurrentPage = 1; // Reset pagination on search
+      transactionCurrentPage = 1;
       listTransactions(transactions, transactionCurrentPage);
     });
 
-    // Setup filter buttons
-    setupFilterButtons();
+    // Setup filter buttons with a slight delay
+    setTimeout(() => {
+      setupFilterButtons();
+    }, 300);
 
     document.getElementById("signOutBtn").onclick = () => auth.signOut().then(() => window.location.href = '/index.html');
 
@@ -566,181 +656,36 @@ const initialize = async () => {
       }
     });
 
-    // Animate the initial values from 0
-    const finalBalance = balanceOverTimeData.length > 0 ? balanceOverTimeData[balanceOverTimeData.length - 1].amount : 0;
-    animateNumber(document.getElementById("balance"), 0, finalBalance);
-    animateNumber(document.getElementById("income"), 0, totalIncome);
-    animateNumber(document.getElementById("expenses"), 0, totalExpense);
+    // Animate the initial values with a staggered delay
+    setTimeout(() => {
+      const finalBalance = balanceOverTimeData.length > 0 ? balanceOverTimeData[balanceOverTimeData.length - 1].amount : 0;
+      animateNumber(document.getElementById("balance"), 0, finalBalance);
+    }, 400);
 
-    // Add this line to plot the initial chart
-    await plotBalanceChart();
+    setTimeout(() => {
+      animateNumber(document.getElementById("income"), 0, totalIncome);
+    }, 500);
 
-    // Modal setup (moved here to initialize)
-    const modal = document.getElementById("deleteModal");
-    const cancelBtn = document.getElementById("cancelDelete");
-    const confirmBtn = document.getElementById("confirmDelete");
-    const closeBtn = document.getElementById("closeBtn");
-    const addModal = document.getElementById("addTransactionModal")
-    let transactionIdToDelete;
-    let transactionIdToEdit = null; // Variable to store transaction ID for editing
+    setTimeout(() => {
+      animateNumber(document.getElementById("expenses"), 0, totalExpense);
+    }, 600);
 
-    document.getElementById("addTransactionBtn").addEventListener("click", async () => {
-      const modal = document.getElementById("addTransactionModal");
-      // Reset form
-      document.getElementById("transactionAmount").value = '';
-      document.getElementById("transactionCategory").value = '';
-      document.getElementById('selectedCategory').textContent = 'Select category';
-      document.getElementById("transactionDate").value = '';
-      document.getElementById("transactionType").value = 'income';
-      
-      // Show modal with animation
-      showModal(modal);
-    })
+    // Plot the initial chart with a slight delay
+    setTimeout(async () => {
+      await plotBalanceChart();
+    }, 700);
 
-    document.getElementById("saveTransaction").addEventListener("click", async () => {
-      const amount = parseFloat(document.getElementById("transactionAmount").value);
-      const category = document.getElementById("transactionCategory").value;
-      const dateInput = document.getElementById("transactionDate").value;
-      const date = new Date(dateInput);
-      const type = document.getElementById("transactionType").value;
+    // Initialize modals and other UI elements
+    setTimeout(() => {
+      initializeCustomDropdown();
+      progressCarousel();
+    }, 800);
 
-      // Validate required fields
-      if (!amount || !category || !dateInput || !type) {
-        alert("Please fill out all fields.");
-        return;
-      }
-
-      // Validate amount
-      if (amount <= 0) {
-        alert("Amount must be greater than 0");
-        return;
-      }
-
-      // Validate date
-      const dateValidation = validateTransactionDate(date, {
-        allowFuture: false,
-        minDate: new Date('2020-01-01') // Arbitrary minimum date
-      });
-
-      if (!dateValidation.isValid) {
-        alert(dateValidation.message);
-        return;
-      }
-
-      const modal = document.getElementById("addTransactionModal");
-      hideModal(modal);
-
-      try {
-        if (transactionIdToEdit) {
-          await ref.updateTransaction(amount, category, date, type, transactionIdToEdit, uid);
-        } else {
-          await ref.addTransaction(amount, category, date, type, uid);
-        }
-
-        transactions = await ref.access(uid, 'transaction');
-        transactions = sortTransactions(transactions, sortType, sortDirection === 'asc')
-        listTransactions(transactions, transactionCurrentPage);
-
-        updateDashboardCards();
-        await plotBalanceChart();
-
-        transactionIdToEdit = null;
-      } catch (error) {
-        console.error("Error saving transaction:", error);
-        alert("Failed to save transaction. Please try again.");
-      }
-    });
-
-    document.getElementById("cancelTransaction").addEventListener("click", () => {
-      const modal = document.getElementById("addTransactionModal");
-      hideModal(modal);
-      transactionIdToEdit = null; // Clear edit ID when cancelling
-    });
-
-    document.getElementById("transactionTableBody").addEventListener("click", async (event) => {
-      if (event.target.closest('.delete-btn')) {
-        const deleteButton = event.target.closest('.delete-btn');
-        transactionIdToDelete = deleteButton.dataset.id;
-        modal.classList.remove("hidden");
-      } else if (event.target.closest('.edit-btn')) {
-        const editButton = event.target.closest('.edit-btn');
-        const transactionId = editButton.dataset.id;
-        transactionIdToEdit = transactionId;
-
-        const transactionToEdit = transactions.find(transaction => transaction.id === transactionId);
-        if (transactionToEdit) {
-          const modal = document.getElementById("addTransactionModal");
-          document.getElementById("transactionAmount").value = transactionToEdit.amount;
-          document.getElementById("transactionType").value = transactionToEdit.type;
-          document.getElementById("transactionType").disabled = true;
-          
-          // Update categories before setting the value
-          await updateCategoryOptions(transactionToEdit.type);
-          document.getElementById("transactionCategory").value = transactionToEdit.category;
-          document.getElementById('selectedCategory').textContent = transactionToEdit.category;
-          
-          document.getElementById("transactionDate").value = new Date(transactionToEdit.date.seconds * 1000)
-            .toISOString().split('T')[0];
-          
-          document.querySelector("#addTransactionModal h2").textContent = "Edit Transaction";
-          document.getElementById("saveTransaction").textContent = "Update";
-          
-          showModal(modal);
-        }
-      }
-    });
-
-    cancelBtn.addEventListener("click", () => {
-      modal.classList.add("hidden");
-      transactionIdToDelete = null;
-    });
-    closeBtn.addEventListener("click", () => {
-      modal.classList.add("hidden");
-      transactionIdToDelete = null;
-    });
-
-    confirmBtn.addEventListener("click", async () => {
-      if (transactionIdToDelete) {
-        try {
-          await ref.deleteDoc("transaction", transactionIdToDelete, uid);
-          transactions = transactions.filter((t) => t.id !== transactionIdToDelete);
-          listTransactions(transactions, transactionCurrentPage);
-          updateDashboardCards();
-          await plotBalanceChart();
-        } catch (error) {
-          console.error("Error deleting transaction:", error);
-        }
-        modal.classList.add("hidden");
-        transactionIdToDelete = null;
-      }
-    });
-
-    // Add report generation handler
-    document.getElementById("generateReportBtn").addEventListener("click", generatePDFReport);
-
-    initializeCustomDropdown();
-
-    // Set initial active state
-    document.querySelector('[data-value="all"]').classList.add("active");
-
-    // Make sure "All time" is selected by default
-    const setDefaultFilter = () => {
-      // Remove active class from all buttons
-      document.querySelectorAll("#filterSelect").forEach(btn => {
-        btn.classList.remove("active");
-      });
-      // Add active class to "All time" button
-      const allTimeButton = document.querySelector('[data-value="all"]');
-      if (allTimeButton) {
-        allTimeButton.classList.add("active");
-      }
-    };
-
-    // Add this to your initialize function after the filter button setup
-    setDefaultFilter();
-
-    // Also call setDefaultFilter when the page loads
-    document.addEventListener('DOMContentLoaded', setDefaultFilter);
+    // Set initial active state with a delay
+    setTimeout(() => {
+      document.querySelector('[data-value="all"]').classList.add("active");
+      setDefaultFilter();
+    }, 900);
 
   } catch (error) {
     console.error("Error initializing data:", error);
@@ -858,14 +803,15 @@ const plotBalanceChart = async () => {
 };
 
 /**
- * Test function to generate sample transaction data
- * Creates 2 years of realistic financial data including:
- * - Monthly salary with variations
- * - Regular rent payments
- * - Seasonal utility costs
- * - Weekly grocery expenses
- * - Monthly subscriptions
- * - Random personal expenses
+ * Test function to generate sample student transaction data
+ * Creates 2 years of realistic student financial data including:
+ * - Part-time job income
+ * - Student loan disbursements
+ * - Rent and utilities
+ * - Groceries and food
+ * - School supplies and textbooks
+ * - Transportation costs
+ * - Entertainment and personal expenses
  */
 const test = async () => {
   const today = new Date();
@@ -873,39 +819,67 @@ const test = async () => {
   twoYearsAgo.setFullYear(today.getFullYear() - 2);
 
   // Base monthly income and expenses
-  const baseSalary = 5000;
-  const baseRent = 1500;
-  const baseUtilities = 200;
-  const baseGroceries = 400;
-  const baseSubscriptions = 50;
+  const partTimeJob = 500; // Monthly part-time job income
+  const studentLoan = 2000; // Student loan disbursement (every semester)
+  const rent = 450; // Monthly rent
+  const utilities = 50; // Monthly utilities
+  const groceries = 100; // Monthly groceries
+  const transportation = 50; // Monthly transportation
+  const entertainment = 60; // Monthly entertainment
+  const schoolSupplies = 120; // School supplies per semester
+
+  // Helper function to create pseudo-random variations
+  const createVariation = (base, month, maxVariation) => {
+    // Use month number to create a predictable but seemingly random pattern
+    const monthFactor = (month % 12) + 1;
+    const dayFactor = new Date().getDate();
+    const variation = Math.sin(monthFactor * dayFactor) * maxVariation;
+    return Math.round(base + variation);
+  };
 
   // Loop through each month from 2 years ago until today
   for (let d = new Date(twoYearsAgo); d <= today; d.setMonth(d.getMonth() + 1)) {
-    // Monthly salary (with small random variations)
-    const salaryVariation = Math.round(Math.random() * 1000 - 500); // +/- $500
+    const month = d.getMonth();
+    const year = d.getFullYear();
+
+    // Part-time job income with controlled variations
+    const jobAmount = createVariation(partTimeJob, month, 30);
     await ref.addTransaction(
-      Math.round(baseSalary + salaryVariation),
-      "Salary",
+      jobAmount,
+      "Part-time Job",
       new Date(d),
       "income",
       uid
     );
 
-    // Regular monthly expenses
-    await ref.addTransaction(baseRent, "Rent", new Date(d), "expense", uid);
+    // Student loan disbursement (every 4 months)
+    if (month % 4 === 0) {
+      const loanAmount = createVariation(studentLoan, month, 80);
+      await ref.addTransaction(
+        loanAmount,
+        "Student Loan",
+        new Date(d),
+        "income",
+        uid
+      );
+    }
+
+    // Regular monthly expenses with controlled variations
+    const rentAmount = createVariation(rent, month, 20);
+    await ref.addTransaction(rentAmount, "Rent", new Date(d), "expense", uid);
     
     // Utilities with seasonal variation
-    const month = d.getMonth();
-    const seasonalUtilities = Math.round(baseUtilities + (month >= 5 && month <= 8 ? 100 : month >= 11 || month <= 2 ? 150 : 0));
-    await ref.addTransaction(seasonalUtilities, "Utilities", new Date(d), "expense", uid);
+    const seasonalFactor = month >= 5 && month <= 8 ? 1.15 : month >= 11 || month <= 2 ? 1.2 : 1;
+    const utilitiesAmount = Math.round(utilities * seasonalFactor);
+    await ref.addTransaction(utilitiesAmount, "Utilities", new Date(d), "expense", uid);
     
-    // Weekly grocery trips
+    // Weekly grocery trips with controlled variations
     for (let week = 0; week < 4; week++) {
       const groceryDate = new Date(d);
       groceryDate.setDate(d.getDate() + (week * 7));
-      const groceryVariation = Math.round(Math.random() * 100 - 50); // +/- $50
+      const groceryAmount = createVariation(groceries/4, month + week, 5);
       await ref.addTransaction(
-        Math.round(baseGroceries/4 + groceryVariation),
+        groceryAmount,
         "Groceries",
         groceryDate,
         "expense",
@@ -913,18 +887,50 @@ const test = async () => {
       );
     }
 
-    
+    // Transportation costs with controlled variations
+    for (let week = 0; week < 4; week++) {
+      const transportDate = new Date(d);
+      transportDate.setDate(d.getDate() + (week * 7));
+      const transportAmount = createVariation(transportation/4, month + week, 3);
+      await ref.addTransaction(
+        transportAmount,
+        "Transportation",
+        transportDate,
+        "expense",
+        uid
+      );
+    }
 
-    // Monthly subscriptions
-    await ref.addTransaction(baseSubscriptions, "Subscription", new Date(d), "expense", uid);
+    // Monthly entertainment expenses with controlled variations
+    const entertainmentAmount = createVariation(entertainment, month, 10);
+    await ref.addTransaction(
+      entertainmentAmount,
+      "Entertainment",
+      new Date(d),
+      "expense",
+      uid
+    );
 
-    // Random personal expenses (2-4 times per month)
-    const numPersonalExpenses = 2 + Math.floor(Math.random() * 3);
+    // School supplies (every 4 months)
+    if (month % 4 === 0) {
+      const suppliesAmount = createVariation(schoolSupplies, month, 20);
+      await ref.addTransaction(
+        suppliesAmount,
+        "School Supplies",
+        new Date(d),
+        "expense",
+        uid
+      );
+    }
+
+    // Random personal expenses (1-2 times per month)
+    const numPersonalExpenses = 1 + (month % 2); // Alternates between 1 and 2
     for (let i = 0; i < numPersonalExpenses; i++) {
       const expenseDate = new Date(d);
-      expenseDate.setDate(d.getDate() + Math.floor(Math.random() * 28));
+      expenseDate.setDate(d.getDate() + (i * 14 + 7)); // Spreads expenses evenly
+      const personalAmount = createVariation(30, month + i, 15);
       await ref.addTransaction(
-        Math.round(50 + Math.random() * 200),
+        personalAmount,
         "Personal expenses",
         expenseDate,
         "expense",
@@ -932,7 +938,7 @@ const test = async () => {
       );
     }
   }
-}
+};
 
 /**
  * Shows a modal with animation
@@ -990,163 +996,208 @@ const handleEdit = async (transactionToEdit) => {
   }
 };
 
-// Progress Bar Carousel
-const progressCarousel = () => {
-  const slides = document.querySelector('.progress-slides');
-  const slideElements = document.querySelectorAll('.progress-slide');
-  const dots = document.querySelectorAll('.progress-dot');
-  const prevBtn = document.getElementById('prevProgress');
-  const nextBtn = document.getElementById('nextProgress');
-  const carousel = document.querySelector('.progress-carousel');
-  
-  let currentSlide = 0;
-  const slideCount = slideElements.length;
-  let autoAdvanceInterval = null;
-  let isTransitioning = false;
-
-  // Update slide position and active state
-  const updateSlide = () => {
-    if (isTransitioning) return;
-    isTransitioning = true;
-    
-    slides.style.transform = `translateX(-${currentSlide * 100}%)`;
-    
-    // Update active state for slides
-    slideElements.forEach((slide, index) => {
-      if (index === currentSlide) {
-        slide.classList.add('active');
-      } else {
-        slide.classList.remove('active');
+// Update the progressCarousel function
+const progressCarousel = async () => {
+  try {
+    // Wait for DOM elements to be available
+    const checkElements = () => {
+      const slides = document.querySelector('.progress-slides');
+      const dots = document.querySelector('.progress-dots');
+      const prevBtn = document.getElementById('prevProgress');
+      const nextBtn = document.getElementById('nextProgress');
+      const carousel = document.querySelector('.progress-carousel');
+      
+      if (!slides || !dots || !prevBtn || !nextBtn || !carousel) {
+        return null;
       }
-    });
+      
+      return { slides, dots, prevBtn, nextBtn, carousel };
+    };
+
+    const elements = checkElements();
+    if (!elements) {
+      console.log('Carousel elements not found, retrying in 100ms...');
+      setTimeout(progressCarousel, 100);
+      return;
+    }
+
+    const { slides, dots, prevBtn, nextBtn, carousel } = elements;
     
-    // Update dots
-    dots.forEach((dot, index) => {
-      dot.classList.toggle('active', index === currentSlide);
-    });
+    let currentSlide = 0;
+    let autoAdvanceInterval = null;
+    let isTransitioning = false;
+    let slideCount = 0;
 
-    // Reset transition flag after animation
-    setTimeout(() => {
-      isTransitioning = false;
-    }, 500);
-  };
-
-  // Update progress bars with actual balance data
-  const updateProgressBars = async () => {
-    const balance = parseInt(document.getElementById("balance").innerHTML.replace(/[^0-9-]/g, '')) || 0;
-    
-    // Define goals
-    const goals = [
-      { name: "New Car Fund", target: 37000 },
-      { name: "Vacation Fund", target: 5000 },
-      { name: "Emergency Fund", target: 10000 }
-    ];
-
-    // Update each slide with current balance and progress
-    slideElements.forEach((slide, index) => {
-      const goal = goals[index];
-      const progress = Math.min((balance / goal.target) * 100, 100);
-      const isCompleted = balance >= goal.target;
-
-      // Update title
-      const titleElement = slide.querySelector('h3');
-      titleElement.textContent = goal.name;
-
-      // Update progress bar
-      const progressBar = slide.querySelector('.progress-gradient');
-      progressBar.style.width = `${progress}%`;
-
-      // Update percentage or show checkmark
-      const percentElement = slide.querySelector('.progress-percent');
-      if (isCompleted) {
-        percentElement.innerHTML = `
-          <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-        `;
-      } else {
-        percentElement.textContent = `${Math.round(progress)}%`;
-      }
-
-      // Update current amount
-      const currentAmount = slide.querySelector('.progress-current');
-      currentAmount.textContent = `$${formatNumberWithCommas(balance)}`;
-
-      // Update goal amount
-      const goalAmount = slide.querySelector('.progress-goal');
-      goalAmount.textContent = `Goal: $${formatNumberWithCommas(goal.target)}`;
-    });
-  };
-
-  // Next slide
-  const nextSlide = () => {
-    if (isTransitioning) return;
-    currentSlide = (currentSlide + 1) % slideCount;
-    updateSlide();
-  };
-
-  // Previous slide
-  const prevSlide = () => {
-    if (isTransitioning) return;
-    currentSlide = (currentSlide - 1 + slideCount) % slideCount;
-    updateSlide();
-  };
-
-  const startAutoAdvance = () => {
-    clearInterval(autoAdvanceInterval);
-    autoAdvanceInterval = setInterval(() => {
-      if (!isTransitioning) {
-        nextSlide();
-      }
-    }, 8000);
-  };
-
-  // Add click handlers for arrows
-  prevBtn.addEventListener('click', () => {
-    clearInterval(autoAdvanceInterval);
-    prevSlide();
-    startAutoAdvance();
-  });
-
-  nextBtn.addEventListener('click', () => {
-    clearInterval(autoAdvanceInterval);
-    nextSlide();
-    startAutoAdvance();
-  });
-
-  // Add dot navigation
-  dots.forEach((dot, index) => {
-    dot.addEventListener('click', () => {
+    // Update slide position and active state
+    const updateSlide = () => {
       if (isTransitioning) return;
-      clearInterval(autoAdvanceInterval);
-      currentSlide = index;
+      isTransitioning = true;
+      
+      slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      // Update active state for slides
+      const slideElements = document.querySelectorAll('.progress-slide');
+      slideElements.forEach((slide, index) => {
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+      
+      // Update dots
+      const dotElements = document.querySelectorAll('.progress-dot');
+      dotElements.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
+
+      // Reset transition flag after animation
+      setTimeout(() => {
+        isTransitioning = false;
+      }, 500);
+    };
+
+    // Update progress bars with actual balance data
+    const updateProgressBars = async () => {
+      try {
+        // Check if elements still exist
+        const elements = checkElements();
+        if (!elements) {
+          console.log('Carousel elements not found during update');
+          return;
+        }
+
+        const { slides, dots } = elements;
+        const balance = parseInt(document.getElementById("balance").innerHTML.replace(/[^0-9-]/g, '')) || 0;
+        
+        // Fetch goals from Firestore
+        const goalsSnapshot = await db.collection('users').doc(uid).collection('goals').get();
+        const goals = goalsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        if (goals.length === 0) {
+          console.log('No goals found');
+          return;
+        }
+
+        // Sort goals by creation date
+        goals.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds);
+
+        // Clear existing slides and dots
+        slides.innerHTML = '';
+        dots.innerHTML = '';
+
+        // Create slides for each goal
+        goals.forEach((goal, index) => {
+          const progress = Math.min((balance / goal.target) * 100, 100);
+          const isCompleted = balance >= goal.target;
+
+          const slide = document.createElement('div');
+          slide.className = 'progress-slide min-w-full bg-[#f8fafc] rounded-xl p-6';
+          slide.innerHTML = `
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl font-semibold text-gray-800">${goal.name}</h3>
+              <span class="text-xl font-semibold text-blue-600 progress-percent">
+                ${isCompleted ? '✓' : `${Math.round(progress)}%`}
+              </span>
+            </div>
+            <div class="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full progress-gradient" style="width: ${progress}%;"></div>
+            </div>
+            <div class="flex justify-between items-center mt-4 text-sm">
+              <span class="text-gray-600 progress-current">$${formatNumberWithCommas(balance)}</span>
+              <span class="text-gray-600 progress-goal">Goal: $${formatNumberWithCommas(goal.target)}</span>
+            </div>
+          `;
+          slides.appendChild(slide);
+
+          // Create dot for this slide
+          const dot = document.createElement('button');
+          dot.className = `progress-dot w-2 h-2 rounded-full bg-gray-300 transition-colors ${index === currentSlide ? 'bg-blue-500' : ''}`;
+          dot.addEventListener('click', () => {
+            if (isTransitioning) return;
+            clearInterval(autoAdvanceInterval);
+            currentSlide = index;
+            updateSlide();
+            startAutoAdvance();
+          });
+          dots.appendChild(dot);
+        });
+
+        // Update slide count
+        slideCount = goals.length;
+        if (currentSlide >= slideCount) {
+          currentSlide = 0;
+        }
+
+        updateSlide();
+
+      } catch (error) {
+        console.error('Error updating progress bars:', error);
+      }
+    };
+
+    // Next slide
+    const nextSlide = () => {
+      if (isTransitioning) return;
+      currentSlide = (currentSlide + 1) % slideCount;
       updateSlide();
+    };
+
+    // Previous slide
+    const prevSlide = () => {
+      if (isTransitioning) return;
+      currentSlide = (currentSlide - 1 + slideCount) % slideCount;
+      updateSlide();
+    };
+
+    const startAutoAdvance = () => {
+      clearInterval(autoAdvanceInterval);
+      autoAdvanceInterval = setInterval(() => {
+        if (!isTransitioning) {
+          nextSlide();
+        }
+      }, 8000);
+    };
+
+    // Add click handlers for arrows
+    prevBtn.addEventListener('click', () => {
+      clearInterval(autoAdvanceInterval);
+      prevSlide();
       startAutoAdvance();
     });
-  });
 
-  // Pause auto-advance on hover
-  carousel.addEventListener('mouseenter', () => {
-    clearInterval(autoAdvanceInterval);
-  });
+    nextBtn.addEventListener('click', () => {
+      clearInterval(autoAdvanceInterval);
+      nextSlide();
+      startAutoAdvance();
+    });
 
-  carousel.addEventListener('mouseleave', () => {
+    // Pause auto-advance on hover
+    carousel.addEventListener('mouseenter', () => {
+      clearInterval(autoAdvanceInterval);
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+      startAutoAdvance();
+    });
+
+    // Initialize first slide and start auto-advance
+    await updateProgressBars();
     startAutoAdvance();
-  });
 
-  // Initialize first slide and start auto-advance
-  updateSlide();
-  startAutoAdvance();
+    // Update progress bars whenever balance changes
+    const balanceElement = document.getElementById("balance");
+    if (balanceElement) {
+      const observer = new MutationObserver(updateProgressBars);
+      observer.observe(balanceElement, { characterData: true, childList: true, subtree: true });
+    }
 
-  // Update progress bars whenever balance changes
-  const balanceElement = document.getElementById("balance");
-  if (balanceElement) {
-    const observer = new MutationObserver(updateProgressBars);
-    observer.observe(balanceElement, { characterData: true, childList: true, subtree: true });
+  } catch (error) {
+    console.error('Error initializing carousel:', error);
   }
-
-  // Initial update of progress bars
-  updateProgressBars();
 };
 
 // Initialize carousel when DOM is loaded
@@ -1154,22 +1205,359 @@ document.addEventListener('DOMContentLoaded', () => {
   progressCarousel();
 });
 
-// ChatBot Toggle
-document.addEventListener("DOMContentLoaded", function () {
-  const toggle = document.getElementById("chatbotToggle");
-  const chatbox = document.getElementById("chatbox");
-  const closeBtn = document.getElementById("chatboxClose");
+// Initialize chatbot functionality
+const initializeChatbot = () => {
+  const chatbotToggle = document.getElementById('chatbotToggle');
+  const chatbox = document.getElementById('chatbox');
+  const chatboxClose = document.getElementById('chatboxClose');
 
-  if (toggle && chatbox && closeBtn) {
-    toggle.addEventListener("click", () => {
-      chatbox.classList.toggle("hidden");
-    });
+  if (!chatbotToggle || !chatbox || !chatboxClose) {
+    console.error('Chatbot elements not found');
+    return;
+  }
 
-    closeBtn.addEventListener("click", () => {
-      chatbox.classList.add("hidden");
+  // Toggle chatbox visibility
+  const toggleChatbox = () => {
+    if (chatbox.classList.contains('hidden')) {
+      // Opening animation
+      chatbox.classList.remove('hidden');
+      // Small delay to allow display to be set before animation
+      setTimeout(() => {
+        chatbox.classList.add('opacity-0', 'scale-95');
+        // Trigger reflow
+        chatbox.offsetHeight;
+        chatbox.classList.remove('opacity-0', 'scale-95');
+      }, 50);
+    } else {
+      // Closing animation
+      chatbox.classList.add('opacity-0', 'scale-95');
+      setTimeout(() => {
+        chatbox.classList.add('hidden');
+      }, 300); // Match the transition duration
+    }
+  };
+
+  // Add click event to toggle button
+  chatbotToggle.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    toggleChatbox();
+  });
+
+  // Add click event to close button
+  chatboxClose.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    toggleChatbox();
+  });
+
+  // Close chatbox when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!chatbox.contains(e.target) && !chatbotToggle.contains(e.target) && !chatbox.classList.contains('hidden')) {
+      toggleChatbox();
+    }
+  });
+};
+
+// Initialize chatbot when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  initializeChatbot();
+});
+
+// Function to set default filter state
+const setDefaultFilter = () => {
+    // Set default filter value
+    filterValue = "all";
+    
+    // Update UI to reflect default filter
+    document.querySelectorAll("#tableFilterSelect").forEach(button => {
+        if (button.getAttribute("data-value") === "all") {
+            button.classList.add("active", "bg-white", "shadow-sm");
+            button.style.color = '#1a1a1a';
+        } else {
+            button.classList.remove("active", "bg-white", "shadow-sm");
+            button.style.color = '';
+        }
     });
-  } else {
-    console.error("Chatbot elements not found");
+    
+    // Update plot filters to match
+    document.querySelectorAll("#plotFilterSelect").forEach(button => {
+        if (button.getAttribute("data-value") === "all") {
+            button.classList.add("active", "bg-white", "shadow-sm");
+            button.style.color = '#1a1a1a';
+        } else {
+            button.classList.remove("active", "bg-white", "shadow-sm");
+            button.style.color = '';
+        }
+    });
+    
+    // Trigger filter update
+    handleHistoryChange({ target: { value: "all" } });
+    handlePlotHistoryChange({ target: { value: "all" } });
+};
+
+const testGoals = async () => {
+  try {
+    // Get the current user's ID
+    while (!uid) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+
+    // Define test goals based on typical student financial needs
+    const testGoals = [
+      {
+        name: "Emergency Fund",
+        target: 5000, // 5 months of basic expenses
+        current: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      },
+      {
+        name: "College Fund",
+        target: 10000, // Semester abroad expenses
+        current: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      },
+      {
+        name: "Spring Break Trip",
+        target: 4000, // Enhanced spring break experience
+        current: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      },
+      {
+        name: "New Laptop",
+        target: 2500, // High-end laptop and accessories
+        current: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      },
+      {
+        name: "Car",
+        target: 25000, // Graduation expenses and job search costs
+        current: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }
+    ];
+
+    // Add goals to Firestore
+    const batch = db.batch();
+    const goalsRef = db.collection('users').doc(uid).collection('goals');
+
+    for (const goal of testGoals) {
+      const newGoalRef = goalsRef.doc();
+      batch.set(newGoalRef, goal);
+    }
+
+    await batch.commit();
+    console.log('Test goals added successfully');
+
+  } catch (error) {
+    console.error('Error adding test goals:', error);
+  }
+};
+
+// Chatbot functionality
+const chatResponses = {
+  transactions: {
+    message: "📝 Transaction Management Guide:\n\n" +
+             "1. Adding Transactions:\n" +
+             "   - Click 'Add Transaction' button\n" +
+             "   - Enter amount, select type (income/expense)\n" +
+             "   - Choose category and date\n" +
+             "   - Click 'Save' to record\n\n" +
+             "2. Managing Transactions:\n" +
+             "   - Use filter buttons to view by time period\n" +
+             "   - Search specific transactions in the search bar\n" +
+             "   - Sort by clicking column headers\n" +
+             "   - Edit/Delete using the action buttons\n\n" +
+             "3. Tips:\n" +
+             "   - Regular updates help track spending\n" +
+             "   - Categorize accurately for better insights\n" +
+             "   - Review transactions weekly\n\n" +
+             "Need help with a specific transaction task?",
+    action: () => {
+      document.querySelector('.transaction-table').scrollIntoView({ behavior: 'smooth' });
+    }
+  },
+  goals: {
+    message: "🎯 Financial Goals Guide:\n\n" +
+             "1. Setting Up Goals:\n" +
+             "   - Click 'Add New Goal' button\n" +
+             "   - Name your goal (e.g., 'New Laptop')\n" +
+             "   - Set target amount\n" +
+             "   - Optional: Set deadline\n" +
+             "   - Click 'Save' to create\n\n" +
+             "2. Tracking Progress:\n" +
+             "   - View goals in the carousel above\n" +
+             "   - See percentage completion\n" +
+             "   - Monitor remaining amount\n" +
+             "   - Track multiple goals\n\n" +
+             "3. Tips:\n" +
+             "   - Set realistic targets\n" +
+             "   - Break large goals into smaller ones\n" +
+             "   - Review progress monthly\n\n" +
+             "Want to learn more about goal strategies?",
+    action: () => {
+      document.querySelector('.progress-carousel').scrollIntoView({ behavior: 'smooth' });
+    }
+  },
+  reports: {
+    message: "📊 Financial Reports Guide:\n\n" +
+             "1. Generating Reports:\n" +
+             "   - Select time period using filter buttons\n" +
+             "   - Click 'Create Report' button\n" +
+             "   - Report includes:\n" +
+             "     • Transaction history\n" +
+             "     • Balance trends\n" +
+             "     • Income vs expenses\n" +
+             "     • Goal progress\n\n" +
+             "2. Customizing Reports:\n" +
+             "   - Filter by specific date ranges\n" +
+             "   - Include/exclude categories\n" +
+             "   - Add custom notes\n" +
+             "   - Export as PDF\n\n" +
+             "3. Tips:\n" +
+             "   - Generate monthly reports\n" +
+             "   - Compare periods for trends\n" +
+             "   - Use reports for budgeting\n\n" +
+             "Need help customizing your report?",
+    action: () => {
+      document.querySelector('.transaction-table').scrollIntoView({ behavior: 'smooth' });
+    }
+  },
+  other: {
+    message: "💡 Wise Wallet Features Guide:\n\n" +
+             "1. Dashboard Overview:\n" +
+             "   - View current balance\n" +
+             "   - Track income and expenses\n" +
+             "   - Monitor goal progress\n" +
+             "   - Access transaction history\n\n" +
+             "2. Key Features:\n" +
+             "   - Transaction management\n" +
+             "   - Goal tracking\n" +
+             "   - Financial reports\n" +
+             "   - Data visualization\n\n" +
+             "3. Tips:\n" +
+             "   - Regular updates improve accuracy\n" +
+             "   - Use filters for better insights\n" +
+             "   - Set reminders for updates\n\n" +
+             "What specific feature would you like to know more about?",
+    action: () => {
+      document.getElementById('userInput').focus();
+    }
+  }
+};
+
+// Show loading indicator
+const showLoading = () => {
+  const loadingIndicator = document.getElementById('loadingIndicator');
+  loadingIndicator.classList.remove('hidden');
+};
+
+// Hide loading indicator
+const hideLoading = () => {
+  const loadingIndicator = document.getElementById('loadingIndicator');
+  loadingIndicator.classList.add('hidden');
+};
+
+// Handle chat action buttons with visual feedback
+document.querySelectorAll('.chat-action-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    // Remove active state from all buttons
+    document.querySelectorAll('.chat-action-btn').forEach(btn => {
+      btn.classList.remove('bg-blue-50', 'scale-105');
+    });
+    
+    // Add active state to clicked button
+    button.classList.add('bg-blue-50', 'scale-105');
+    
+    const action = button.getAttribute('data-action');
+    const response = chatResponses[action];
+    
+    // Show user's choice as a question
+    let question = "";
+    switch(action) {
+      case 'transactions':
+        question = "How do I manage my transactions?";
+        break;
+      case 'goals':
+        question = "How do I set up financial goals?";
+        break;
+      case 'reports':
+        question = "How do I generate financial reports?";
+        break;
+      case 'other':
+        question = "What can you help me with?";
+        break;
+    }
+    addMessage(question, true);
+    
+    if (response) {
+      // Show loading indicator
+      showLoading();
+      
+      // Wait 1.5 seconds before showing response
+      setTimeout(() => {
+        hideLoading();
+        addMessage(response.message);
+        if (response.action) {
+          response.action();
+        }
+      }, 1500);
+    }
+  });
+});
+
+// Handle user input with loading animation
+document.getElementById('sendMessage').addEventListener('click', () => {
+  const userInput = document.getElementById('userInput');
+  const message = userInput.value.trim().toLowerCase();
+  if (message) {
+    addMessage(message, true);
+    userInput.value = '';
+    
+    showLoading();
+    
+    setTimeout(() => {
+      hideLoading();
+      addMessage("📊 Graph Filters:\n" +
+                "Use buttons above graph:\n" +
+                "- All time\n" +
+                "- Last year\n" +
+                "- Last month\n" +
+                "- Last week\n\n" +
+                "Hover over points for details.");
+      
+      // Highlight filter buttons
+      setTimeout(() => {
+        const filterButtons = document.querySelectorAll('#plotFilterSelect');
+        filterButtons.forEach(btn => {
+          btn.classList.add('animate-pulse', 'bg-blue-50');
+          setTimeout(() => {
+            btn.classList.remove('animate-pulse', 'bg-blue-50');
+          }, 2000);
+        });
+      }, 100);
+    }, 1500);
   }
 });
+
+// Handle Enter key in input
+document.getElementById('userInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    document.getElementById('sendMessage').click();
+  }
+});
+
+// Add message to chat with animation and formatting
+const addMessage = (message, isUser = false) => {
+  const chatMessages = document.getElementById('chatMessages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `p-4 rounded-lg ${isUser ? 'bg-blue-50 ml-8' : 'bg-gray-50 mr-8'} transform transition-all duration-300 opacity-0 translate-y-2 whitespace-pre-line`;
+  messageDiv.textContent = message;
+  chatMessages.appendChild(messageDiv);
+  
+  // Trigger animation
+  setTimeout(() => {
+    messageDiv.classList.remove('opacity-0', 'translate-y-2');
+  }, 10);
+  
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+};
 

@@ -97,4 +97,28 @@
 /* Progress bar animation */
 .progress-path {
   transition: stroke-dasharray 1s ease-in-out;
+}
+
+/* Add Goal button animations */
+#addGoalBtn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#addGoalBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+#addGoalBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Modal animations */
+#addGoalModal {
+  animation: fadeIn 0.3s ease-out;
+}
+
+#addGoalModal > div {
+  animation: slideUp 0.3s ease-out;
 } 

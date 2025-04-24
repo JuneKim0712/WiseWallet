@@ -3,10 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sign In</title>
+    <title>Wise Wallet</title>
 
     <!-- Firebase Imports --> 
-    <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script defer src="/__/firebase/11.0.1/firebase-app-compat.js"></script>
     <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
@@ -14,8 +13,11 @@
     <script defer src="js/login.js"></script>
 
     <!-- Tailwind Imports -->
+    <script defer src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <link href="/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/home-page.css">
 
     <!-- Font Imports  -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,56 +25,138 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <link rel="icon" type="image/x-icon" href="assets\favicon.svg">
+  </head>
 
-    </head>
-    <script >
-      document.addEventListener("DOMContentLoaded", async() => {
-        document.getElementById("body").classList.remove("hidden")
-      })
-      
-    </script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", async() => {
+      document.getElementById("body").classList.remove("hidden")
+    })
     
-  <body id="body" class="hidden bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+  </script>
 
-      <!-- Header / Logo -->
-      <header class="text-center font-[Montserrat] mt-6">
-        <h1 class="text-3xl font-semibold">Wise Wallet</h1>
-      </header>
   
-      <!-- Sign-In Form Container -->
-      <main class="flex justify-center min-h-screen mt-4 font-[Montserrat]">
-          <section class="bg-white p-8 rounded-lg shadow-lg w-96">
-              <h2 class="text-xl font-semibold mb-4 text-center">Sign In</h2>
-  
-              <!-- Stay Signed In Toggle -->
-              <div class="flex items-center mb-4">
-                  <label class="mr-2">Stay signed in</label>
-                  <input type="checkbox" class="toggle-checkbox">
-              </div>
-  
-              <!-- Social Sign-In Buttons -->
-              <button class="w-full border p-2 mb-2 rounded flex items-center justify-center bg-white text-gray-700 border-black transition-all duration-200 ease-in-out hover:scale-105 hover:border-blue-500 cursor-pointer"><img src="assets/Apple_logo_black.svg" class="h-7 w-6 mb-1  mr-3">Continue with Apple</button>
-              <button id="googleSignIn" class="w-full border p-2 mb-4 rounded flex items-center justify-center bg-white text-gray-700 border-black transition-all duration-200 ease-in-out hover:scale-105 hover:border-blue-500 cursor-pointer"><img src="assets/google-icon.svg" class="h-7 w-7 mr-3">Continue with Google</button>
-              
-              <!-- Divider -->
-              <p class="text-center text-gray-500 mb-4">OR</p>
-  
-              <!-- Email & Password Fields -->
-              <form>
-                  <label class="form-label">Email address</label>
-                  <input class="form-input w-full border p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300" required>
-  
-                  <label class="form-label">Password</label>
-                  <input class="form-input w-full border p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300" required>
-  
-                  <!-- Forgot Password Link -->
-                  <div class="text-right mb-4">
-                      <a href="#" class="nav-link text-blue-500 hover:underline">Forgot Password?</a>
-                  </div>
-  
-                  <!-- Sign-In Button -->
-                  <button type="submit" class="w-full bg-orange-500 text-white p-2 rounded hover:bg-orange-600 transition">Sign In</button>
-              </form>
+  <body id="body" class="bg-[#cfd8f7] hidden">
+    <!-- Home Page Content -->
+    <section class="h-screen flex items-center">
+      <div class="w-1/2 px-8">
+        <h1 aria-label="Take control of your finances. Built for a student"
+          class="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold text-left text-gray-900">
+          Take control of your finances. <br>
+          Built for a&nbsp;<span class="typewriter"></span>
+        </h1>
 
+        <!-- Sign Up / Log In Buttons -->
+        <button onclick="openModal('signup')"
+          class="mt-6 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all duration-300">
+          Sign Up
+        </button>
+
+        <button onclick="openModal('login')"
+          class="mt-6 ml-4 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all duration-300">
+          Log In
+        </button>
+      </div>
+
+      <div class="w-1/2 flex justify-center items-center px-8">
+        <img src="assets/credit-card-image.svg" alt="Financial Image" class="w-2000 h-auto">
+      </div>
+    </section>
+
+    <div class="fade-transition"></div>
+    <h1 class="bg-[#cfd8f7] italic text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-center text-gray-800 px-4">
+      Built by students for students
+    </h1>
+
+    <!-- Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black/0 flex items-center justify-center transition-all duration-300 ease-in-out pointer-events-none">
+      <div class="bg-white p-8 rounded-lg shadow-lg w-96 transform scale-0 transition-all duration-300 ease-in-out">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold" id="modalTitle">Sign In</h2>
+          <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+        </div>
+
+        <!-- Stay Signed In Toggle -->
+        <div class="flex items-center mb-4">
+          <label class="mr-2">Stay signed in</label>
+          <input type="checkbox" class="toggle-checkbox">
+        </div>
+
+        <!-- Social Sign-In Buttons -->
+        <button class="w-full border p-2 mb-2 rounded flex items-center justify-center bg-white text-gray-700 border-black transition-all duration-200 ease-in-out hover:scale-105 hover:border-blue-500 cursor-pointer">
+          <img src="assets/Apple_logo_black.svg" class="h-7 w-6 mb-1 mr-3">Continue with Apple
+        </button>
+        <button id="googleSignIn" class="w-full border p-2 mb-4 rounded flex items-center justify-center bg-white text-gray-700 border-black transition-all duration-200 ease-in-out hover:scale-105 hover:border-blue-500 cursor-pointer">
+          <img src="assets/google-icon.svg" class="h-7 w-7 mr-3">Continue with Google
+        </button>
+        
+        <!-- Divider -->
+        <p class="text-center text-gray-500 mb-4">OR</p>
+
+        <!-- Email & Password Fields -->
+        <form id="authForm">
+          <label class="form-label">Email address</label>
+          <input class="form-input w-full border p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300" required>
+
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input w-full border p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300" required>
+
+          <!-- Forgot Password Link -->
+          <div class="text-right mb-4">
+            <a href="#" class="nav-link text-blue-500 hover:underline">Forgot Password?</a>
+          </div>
+
+          <!-- Sign-In/Sign-Up Button -->
+          <button type="submit" class="w-full bg-orange-500 text-white p-2 rounded hover:bg-orange-600 transition" id="submitButton">Sign In</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function openModal(type) {
+        const modal = document.getElementById('authModal');
+        const modalContent = modal.querySelector('div');
+        const modalTitle = document.getElementById('modalTitle');
+        const submitButton = document.getElementById('submitButton');
+        
+        if (type === 'login') {
+          modalTitle.textContent = 'Sign In';
+          submitButton.textContent = 'Sign In';
+        } else {
+          modalTitle.textContent = 'Sign Up';
+          submitButton.textContent = 'Sign Up';
+        }
+        
+        // Enable pointer events and show modal
+        modal.classList.remove('pointer-events-none');
+        modal.classList.remove('bg-black/0');
+        modal.classList.add('bg-black/50');
+        modalContent.classList.remove('scale-0');
+        modalContent.classList.add('scale-100');
+      }
+
+      function closeModal() {
+        const modal = document.getElementById('authModal');
+        const modalContent = modal.querySelector('div');
+        
+        // Hide modal and disable pointer events
+        modal.classList.remove('bg-black/50');
+        modal.classList.add('bg-black/0');
+        modalContent.classList.remove('scale-100');
+        modalContent.classList.add('scale-0');
+        
+        // Wait for transition to complete before disabling pointer events
+        setTimeout(() => {
+          modal.classList.add('pointer-events-none');
+        }, 300);
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        const modal = document.getElementById('authModal');
+        if (event.target === modal) {
+          closeModal();
+        }
+      }
+    </script>
   </body>
 </html>

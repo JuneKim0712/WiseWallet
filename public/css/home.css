@@ -144,6 +144,7 @@
   overflow: hidden;
   cursor: grab;
   padding: 0 50px;
+  background: transparent;
 }
 
 .progress-carousel:active {
@@ -164,6 +165,7 @@
   padding: 0 10px;
   opacity: 0.7;
   transform: scale(0.95);
+  background: transparent;
 }
 
 .progress-slide.active {
@@ -244,9 +246,11 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -263,7 +267,7 @@
 
 @keyframes scaleIn {
   from {
-    transform: scale(0.8);
+    transform: scale(0.95);
     opacity: 0;
   }
   to {
@@ -272,22 +276,33 @@
   }
 }
 
+@keyframes fadeInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* Apply animations to elements */
 .finance-card {
-  animation: slideUp 0.6s ease-out forwards;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
 }
 
 .finance-card:nth-child(1) {
-  animation-delay: 0.2s;
+  animation-delay: 0.1s;
 }
 
 .finance-card:nth-child(2) {
-  animation-delay: 0.4s;
+  animation-delay: 0.2s;
 }
 
 .finance-card:nth-child(3) {
-  animation-delay: 0.6s;
+  animation-delay: 0.3s;
 }
 
 .progress-slide {
@@ -296,7 +311,7 @@
 }
 
 .progress-slide:nth-child(1) {
-  animation-delay: 0.3s;
+  animation-delay: 0.4s;
 }
 
 .progress-slide:nth-child(2) {
@@ -304,29 +319,24 @@
 }
 
 .progress-slide:nth-child(3) {
-  animation-delay: 0.7s;
+  animation-delay: 0.6s;
 }
 
 .transaction-table {
-  animation: slideUp 0.8s ease-out forwards;
+  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
-  animation-delay: 0.4s;
+  animation-delay: 0.7s;
 }
 
 .chart-container {
-  animation: scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fadeInFromLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
-  animation-delay: 0.6s;
+  animation-delay: 0.8s;
 }
 
 /* Transaction Page Animations */
 .transaction-section {
   animation: slideUp 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.transaction-table {
-  animation: fadeIn 0.8s ease-out forwards;
   opacity: 0;
 }
 
@@ -359,3 +369,81 @@
 .transaction-search { animation-delay: 0.3s; }
 .transaction-table { animation-delay: 0.4s; }
 .transaction-header { animation-delay: 0.1s; }
+
+/* Navigation animations */
+nav {
+  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+/* Filter buttons animation */
+.flex.gap-2.mb-4 {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  animation-delay: 0.9s;
+}
+
+/* Search bar animation */
+.relative.flex-grow {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  animation-delay: 1s;
+}
+
+/* Action buttons animation */
+.flex.justify-end.space-x-3.mt-8 {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  animation-delay: 1.1s;
+}
+
+/* Progress carousel navigation animation */
+.carousel-arrow {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+#prevProgress {
+  animation-delay: 1.2s;
+}
+
+#nextProgress {
+  animation-delay: 1.3s;
+}
+
+/* Progress dots animation */
+.flex.justify-center.gap-2.mt-4 {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  animation-delay: 1.4s;
+}
+
+/* Chatbot animation */
+#chatbotToggle {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  animation-delay: 1.5s;
+}
+
+/* Smooth transitions for interactive elements */
+.finance-card,
+.progress-slide,
+.transaction-table,
+.chart-container,
+nav,
+.flex.gap-2.mb-4,
+.relative.flex-grow,
+.flex.justify-end.space-x-3.mt-8,
+.carousel-arrow,
+.flex.justify-center.gap-2.mt-4,
+#chatbotToggle {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Add a subtle hover effect */
+.finance-card:hover,
+.progress-slide:hover,
+.transaction-table:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}

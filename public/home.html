@@ -277,60 +277,15 @@
         </button>
 
         <!-- Progress Bar Container -->
-        <div class="progress-carousel overflow-hidden shadow-2xl">
-          <div class="progress-slides flex transition-transform duration-500 mt-1">
-            <!-- Progress Bar 1 -->
-            <div class="progress-slide min-w-full bg-[#f8fafc] rounded-xl shadow-xl p-6">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold text-gray-800">New Car Fund</h3>
-                <span class="text-xl font-semibold text-blue-600 progress-percent">73%</span>
-              </div>
-              <div class="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full rounded-full progress-gradient" style="width: 73%;"></div>
-              </div>
-              <div class="flex justify-between items-center mt-4 text-sm">
-                <span class="text-gray-600 progress-current">$25,420</span>
-                <span class="text-gray-600 progress-goal">Goal: $37,000</span>
-              </div>
-            </div>
-
-            <!-- Progress Bar 2 -->
-            <div class="progress-slide min-w-full bg-[#f8fafc] rounded-xl shadow-xl p-6">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold text-gray-800">Vacation Fund</h3>
-                <span class="text-xl font-semibold text-blue-600 progress-percent">45%</span>
-              </div>
-              <div class="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full rounded-full progress-gradient" style="width: 45%;"></div>
-              </div>
-              <div class="flex justify-between items-center mt-4 text-sm">
-                <span class="text-gray-600 progress-current">$2,250</span>
-                <span class="text-gray-600 progress-goal">Goal: $5,000</span>
-              </div>
-            </div>
-
-            <!-- Progress Bar 3 -->
-            <div class="progress-slide min-w-full bg-[#f8fafc] rounded-xl shadow-xl p-6">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold text-gray-800">Emergency Fund</h3>
-                <span class="text-xl font-semibold text-blue-600 progress-percent">90%</span>
-              </div>
-              <div class="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full rounded-full progress-gradient" style="width: 90%;"></div>
-              </div>
-              <div class="flex justify-between items-center mt-4 text-sm">
-                <span class="text-gray-600 progress-current">$9,000</span>
-                <span class="text-gray-600 progress-goal">Goal: $10,000</span>
-              </div>
-            </div>
+        <div class="progress-carousel overflow-hidden">
+          <div class="progress-slides flex transition-transform duration-500">
+            <!-- Slides will be dynamically inserted here -->
           </div>
         </div>
 
         <!-- Dots Navigation -->
-        <div class="flex justify-center gap-2 mt-4">
-          <button class="progress-dot w-2 h-2 rounded-full bg-gray-300 transition-colors"></button>
-          <button class="progress-dot w-2 h-2 rounded-full bg-gray-300 transition-colors"></button>
-          <button class="progress-dot w-2 h-2 rounded-full bg-gray-300 transition-colors"></button>
+        <div class="progress-dots flex justify-center gap-2 mt-4">
+          <!-- Dots will be dynamically inserted here -->
         </div>
       </div>
 
@@ -429,27 +384,49 @@
     </button>
 
     <!-- Chatbot Popup -->
-    <div id="chatbox" class="hidden fixed bottom-24 right-6 w-80 bg-white shadow-xl border rounded-xl p-4 z-40">
+    <div id="chatbox" class="hidden fixed bottom-24 right-6 w-96 bg-white shadow-xl border rounded-xl p-4 z-40 transform transition-all duration-300 ease-in-out opacity-0 scale-95">
       <div class="flex justify-between items-start">
         <div>
-          <p class="font-semibold">Hi there! I'm Wally<sup>®</sup>, the Wise Wallet virtual assistant.</p>
+          <p class="font-semibold text-lg">Hi there! I'm Wally<sup>®</sup>, the Wise Wallet virtual assistant.</p>
           <p class="text-sm text-gray-600 mt-1">How can I help you today?</p>
         </div>
-        <button id="chatboxClose" class="text-gray-400 hover:text-gray-700 text-xl leading-none">&times;</button>
+        <button id="chatboxClose" class="text-gray-400 hover:text-gray-700 text-xl leading-none transition-colors duration-200">&times;</button>
       </div>
 
-      <div class="mt-4 flex flex-col space-y-2">
-        <button class="border border-blue-500 text-blue-700 rounded-full px-4 py-2 hover:bg-blue-50 text-sm">
-          Help me with my transactions
+      <!-- Chat Messages Container -->
+      <div id="chatMessages" class="mt-4 max-h-96 overflow-y-auto space-y-2 transition-all duration-300">
+        <!-- Messages will be added here dynamically -->
+      </div>
+
+      <!-- Loading Indicator -->
+      <div id="loadingIndicator" class="hidden mt-2 flex items-center justify-center">
+        <div class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="mt-4 flex flex-wrap gap-2 transition-all duration-300">
+        <button class="chat-action-btn border border-blue-500 text-blue-700 rounded-full px-3 py-1.5 text-xs hover:bg-blue-50 transition-all duration-200 transform hover:scale-105" data-action="transactions">
+          Transactions
         </button>
-        <button class="border border-blue-500 text-blue-700 rounded-full px-4 py-2 hover:bg-blue-50 text-sm">
-          I want to make a goal
+        <button class="chat-action-btn border border-blue-500 text-blue-700 rounded-full px-3 py-1.5 text-xs hover:bg-blue-50 transition-all duration-200 transform hover:scale-105" data-action="goals">
+          Goals
         </button>
-        <button class="border border-blue-500 text-blue-700 rounded-full px-4 py-2 hover:bg-blue-50 text-sm">
-          How do I customize my report
+        <button class="chat-action-btn border border-blue-500 text-blue-700 rounded-full px-3 py-1.5 text-xs hover:bg-blue-50 transition-all duration-200 transform hover:scale-105" data-action="reports">
+          Reports
         </button>
-        <button class="border border-blue-500 text-blue-700 rounded-full px-4 py-2 hover:bg-blue-50 text-sm">
-          I have a different question
+        <button class="chat-action-btn border border-blue-500 text-blue-700 rounded-full px-3 py-1.5 text-xs hover:bg-blue-50 transition-all duration-200 transform hover:scale-105" data-action="other">
+          Other
+        </button>
+      </div>
+
+      <!-- User Input Area -->
+      <div class="mt-4 flex items-center gap-2 transition-all duration-300">
+        <input type="text" id="userInput" placeholder="Type your message..." 
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+        <button id="sendMessage" class="p-2 text-blue-500 hover:text-blue-700 transition-colors duration-200 transform hover:scale-110">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
         </button>
       </div>
     </div>

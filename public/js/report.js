@@ -21,6 +21,207 @@ if (typeof Chart === 'undefined') {
     console.error('Chart.js is not loaded! Please ensure the Chart.js script is included before this file.');
 }
 
+// Helper function to calculate month-over-month and year-over-year changes
+const calculateGrowthMetrics = (transactions, currentDate) => {
+    const lastMonth = new Date(currentDate);
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    
+    const lastYear = new Date(currentDate);
+    lastYear.setFullYear(lastYear.getFullYear() - 1);
+    
+    const currentMonthTransactions = transactions.filter(t => {
+        const date = new Date(t.date.seconds * 1000);
+        return date.getMonth() === currentDate.getMonth() && 
+               date.getFullYear() === currentDate.getFullYear();
+    });
+    
+    const lastMonthTransactions = transactions.filter(t => {
+        const date = new Date(t.date.seconds * 1000);
+        return date.getMonth() === lastMonth.getMonth() && 
+               date.getFullYear() === lastMonth.getFullYear();
+    });
+    
+    const lastYearTransactions = transactions.filter(t => {
+        const date = new Date(t.date.seconds * 1000);
+        return date.getMonth() === currentDate.getMonth() && 
+               date.getFullYear() === lastYear.getFullYear();
+    });
+    
+    const calculateTotal = (transactions, type) => {
+        return transactions
+            .filter(t => t.type === type)
+            .reduce((sum, t) => sum + t.amount, 0);
+    };
+    
+    const currentMonthIncome = calculateTotal(currentMonthTransactions, 'income');
+    const lastMonthIncome = calculateTotal(lastMonthTransactions, 'income');
+    const lastYearIncome = calculateTotal(lastYearTransactions, 'income');
+    
+    const currentMonthExpense = calculateTotal(currentMonthTransactions, 'expense');
+    const lastMonthExpense = calculateTotal(lastMonthTransactions, 'expense');
+    const lastYearExpense = calculateTotal(lastYearTransactions, 'expense');
+    
+    const momIncomeGrowth = lastMonthIncome ? ((currentMonthIncome - lastMonthIncome) / lastMonthIncome) * 100 : 0;
+    const yoyIncomeGrowth = lastYearIncome ? ((currentMonthIncome - lastYearIncome) / lastYearIncome) * 100 : 0;
+    
+    const momExpenseGrowth = lastMonthExpense ? ((currentMonthExpense - lastMonthExpense) / lastMonthExpense) * 100 : 0;
+    const yoyExpenseGrowth = lastYearExpense ? ((currentMonthExpense - lastYearExpense) / lastYearExpense) * 100 : 0;
+    
+    return {
+        momIncomeGrowth,
+        yoyIncomeGrowth,
+        momExpenseGrowth,
+        yoyExpenseGrowth,
+        currentMonthIncome,
+        currentMonthExpense,
+        savingsRate: currentMonthIncome ? ((currentMonthIncome - currentMonthExpense) / currentMonthIncome) * 100 : 0
+    };
+};
+
+// Helper function to generate financial insights
+const generateFinancialInsights = (transactions, balanceOverTimeData, goals) => {
+    const currentDate = new Date();
+    const growthMetrics = calculateGrowthMetrics(transactions, currentDate);
+    const currentBalance = balanceOverTimeData.length > 0 ? 
+        balanceOverTimeData[balanceOverTimeData.length - 1].amount : 0;
+    
+    const insights = [];
+    
+    // Create a narrative financial summary
+    let summary = "Financial Summary & Insights\n\n";
+    
+    // Opening statement with AI-like analysis
+    summary += `Based on my analysis of your financial data, I can provide the following insights:\n\n`;
+    
+    // Current financial position with context
+    summary += `Your current financial position shows a balance of $${currentBalance.toLocaleString()}. `;
+    if (currentBalance > 0) {
+        summary += `This is a positive foundation for your financial journey. `;
+    } else {
+        summary += `While this presents a challenge, it's an opportunity to build a stronger financial foundation. `;
+    }
+    summary += `\n\n`;
+    
+    // Income analysis with detailed insights
+    summary += `Income Analysis:\n`;
+    summary += `This month, you've earned $${growthMetrics.currentMonthIncome.toLocaleString()} in income`;
+    if (growthMetrics.momIncomeGrowth !== 0) {
+        const momTrend = growthMetrics.momIncomeGrowth > 0 ? "increased" : "decreased";
+        const momStrength = Math.abs(growthMetrics.momIncomeGrowth) > 10 ? "significantly" : 
+                          Math.abs(growthMetrics.momIncomeGrowth) > 5 ? "moderately" : "slightly";
+        summary += `, which has ${momStrength} ${momTrend} by ${Math.abs(growthMetrics.momIncomeGrowth).toFixed(1)}% compared to last month`;
+    }
+    if (growthMetrics.yoyIncomeGrowth !== 0) {
+        const yoyTrend = growthMetrics.yoyIncomeGrowth > 0 ? "increased" : "decreased";
+        const yoyStrength = Math.abs(growthMetrics.yoyIncomeGrowth) > 15 ? "substantially" : 
+                          Math.abs(growthMetrics.yoyIncomeGrowth) > 8 ? "notably" : "marginally";
+        summary += ` and ${yoyStrength} ${yoyTrend} by ${Math.abs(growthMetrics.yoyIncomeGrowth).toFixed(1)}% compared to the same period last year`;
+    }
+    summary += ".\n\n";
+    
+    // Expense analysis with detailed insights
+    summary += `Expense Analysis:\n`;
+    summary += `Your expenses for this month total $${growthMetrics.currentMonthExpense.toLocaleString()}`;
+    if (growthMetrics.momExpenseGrowth !== 0) {
+        const momTrend = growthMetrics.momExpenseGrowth > 0 ? "increased" : "decreased";
+        const momStrength = Math.abs(growthMetrics.momExpenseGrowth) > 10 ? "significantly" : 
+                          Math.abs(growthMetrics.momExpenseGrowth) > 5 ? "moderately" : "slightly";
+        summary += `, showing a ${momStrength} ${momTrend} of ${Math.abs(growthMetrics.momExpenseGrowth).toFixed(1)}% from last month`;
+    }
+    if (growthMetrics.yoyExpenseGrowth !== 0) {
+        const yoyTrend = growthMetrics.yoyExpenseGrowth > 0 ? "increased" : "decreased";
+        const yoyStrength = Math.abs(growthMetrics.yoyExpenseGrowth) > 15 ? "substantially" : 
+                          Math.abs(growthMetrics.yoyExpenseGrowth) > 8 ? "notably" : "marginally";
+        summary += ` and a ${yoyStrength} ${yoyTrend} of ${Math.abs(growthMetrics.yoyExpenseGrowth).toFixed(1)}% year-over-year`;
+    }
+    summary += ".\n\n";
+    
+    // Savings analysis with detailed insights
+    summary += `Savings Analysis:\n`;
+    summary += `Your current savings rate stands at ${growthMetrics.savingsRate.toFixed(1)}% of your income`;
+    if (growthMetrics.savingsRate < 10) {
+        summary += `, which is significantly below the recommended 20% savings rate. This may impact your ability to build wealth and handle unexpected expenses.`;
+    } else if (growthMetrics.savingsRate < 20) {
+        summary += `, which is below the recommended 20% savings rate. While not ideal, you're making progress toward better financial health.`;
+    } else if (growthMetrics.savingsRate < 30) {
+        summary += `, which is a healthy rate for building your financial future. You're on track for achieving your long-term financial goals.`;
+    } else {
+        summary += `, which is excellent! You're building wealth at an impressive rate and setting yourself up for financial success.`;
+    }
+    summary += `\n\n`;
+    
+    // Goals progress with detailed analysis
+    if (goals && goals.length > 0) {
+        summary += `Financial Goals Progress:\n`;
+        goals.forEach(goal => {
+            const progress = (currentBalance / goal.target) * 100;
+            summary += `- ${goal.name} ($${goal.target.toLocaleString()}):\n`;
+            summary += `  Progress: ${progress.toFixed(1)}% complete\n`;
+            
+            if (progress >= 100) {
+                summary += `  Status: Congratulations! You've successfully achieved this financial goal. This is a significant milestone in your financial journey.\n`;
+            } else if (progress >= 75) {
+                summary += `  Status: Excellent progress! You're in the final stretch of achieving this goal. Keep up the momentum!\n`;
+            } else if (progress >= 50) {
+                summary += `  Status: You've reached the halfway point! This is a great achievement, and you're well on your way to success.\n`;
+            } else if (progress >= 25) {
+                summary += `  Status: Good progress! You've made a solid start toward this goal. Consistent effort will help you reach the finish line.\n`;
+            } else {
+                summary += `  Status: Early stages of progress. Every step counts, and you're building the foundation for future success.\n`;
+            }
+            
+            // Add time-based insights if available
+            const monthsToGoal = (goal.target - currentBalance) / (growthMetrics.currentMonthIncome * growthMetrics.savingsRate / 100);
+            if (monthsToGoal > 0) {
+                summary += `  Projection: At your current savings rate, you could reach this goal in approximately ${Math.ceil(monthsToGoal)} months.\n`;
+            }
+            summary += `\n`;
+        });
+    }
+    
+    // Detailed recommendations with actionable insights
+    summary += `Recommendations for Financial Growth:\n`;
+    
+    // Savings recommendations
+    if (growthMetrics.savingsRate < 20) {
+        summary += `1. Savings Enhancement:\n`;
+        summary += `   - Review your monthly expenses to identify potential savings opportunities\n`;
+        summary += `   - Consider setting up automatic transfers to a savings account\n`;
+        summary += `   - Aim to gradually increase your savings rate to at least 20%\n\n`;
+    }
+    
+    // Expense management recommendations
+    if (growthMetrics.momExpenseGrowth > 5) {
+        summary += `2. Expense Management:\n`;
+        summary += `   - Analyze your recent spending patterns to identify areas of significant growth\n`;
+        summary += `   - Consider implementing a more detailed budget tracking system\n`;
+        summary += `   - Look for opportunities to reduce recurring expenses\n\n`;
+    }
+    
+    // Income growth recommendations
+    if (growthMetrics.yoyIncomeGrowth < 0) {
+        summary += `3. Income Growth:\n`;
+        summary += `   - Explore opportunities for professional development or additional income streams\n`;
+        summary += `   - Consider negotiating for a raise or seeking higher-paying opportunities\n`;
+        summary += `   - Look into side hustles or passive income opportunities\n\n`;
+    }
+    
+    // General financial health recommendations
+    if (growthMetrics.savingsRate >= 20 && growthMetrics.momExpenseGrowth <= 5 && growthMetrics.yoyIncomeGrowth >= 0) {
+        summary += `4. Wealth Building:\n`;
+        summary += `   - Consider diversifying your savings into investment opportunities\n`;
+        summary += `   - Review your financial goals and consider setting more ambitious targets\n`;
+        summary += `   - Explore tax-advantaged savings and investment options\n\n`;
+    }
+    
+    // Closing statement
+    summary += `\nRemember, financial success is a journey, not a destination. Each positive step you take brings you closer to your financial goals. `;
+    summary += `Regular review of your financial position and consistent implementation of these recommendations will help you build a stronger financial future.\n`;
+    
+    insights.push(summary);
+    return insights;
+};
+
 export const generatePDFReport = async () => {
     try {
         // Create hidden container for charts
@@ -144,37 +345,59 @@ export const generatePDFReport = async () => {
             .filter(t => t.type === "expense")
             .reduce((sum, t) => sum + t.amount, 0);
         const netIncome = totalIncome - totalExpense;
-        const currentBalance = balanceOverTimeData.length > 0 ?
-            balanceOverTimeData[balanceOverTimeData.length - 1].amount : 0;
 
-        // Create metrics boxes
-        let yPos = 50;
+        // Create metrics boxes with improved layout and larger font
+        let yPos = 35;
         const metrics = [
-            { label: "Total Revenue", value: totalIncome, color: "rgb(46, 204, 113)" },
+            { label: "Total Income", value: totalIncome, color: "rgb(46, 204, 113)" },
             { label: "Total Expenses", value: totalExpense, color: "rgb(231, 76, 60)" },
-            { label: "Net Income", value: netIncome, color: netIncome >= 0 ? "rgb(46, 204, 113)" : "rgb(231, 76, 60)" },
-            { label: "Current Balance", value: currentBalance, color: "rgb(52, 152, 219)" }
+            { label: "Net Income", value: netIncome, color: netIncome >= 0 ? "rgb(46, 204, 113)" : "rgb(231, 76, 60)" }
         ];
 
-        // Add metrics boxes
+        // Add metrics boxes with improved styling
         yPos += 10;
+        const boxWidth = 53;
+        const boxHeight = 35;
+        const spacing = 10;
+        const totalWidth = (boxWidth * 3) + (spacing * 2);
+        const plotWidth = 180;
+        const startX = (pdfDoc.internal.pageSize.width - plotWidth) / 2;
+
         metrics.forEach((metric, index) => {
-            const xPos = 15 + (index * 45);
+            const xPos = startX + (index * (boxWidth + spacing));
+            
+            // Draw metric box with shadow effect
             pdfDoc.setFillColor(245, 245, 245);
-            pdfDoc.rect(xPos, yPos, 40, 25, 'F');
-
-            pdfDoc.setFontSize(8);
-            pdfDoc.setTextColor(100, 100, 100);
-            pdfDoc.text(metric.label, xPos + 2, yPos + 5);
-
+            pdfDoc.rect(xPos, yPos, boxWidth, boxHeight, 'F');
+            
+            // Add subtle border
+            pdfDoc.setDrawColor(200, 200, 200);
+            pdfDoc.rect(xPos, yPos, boxWidth, boxHeight);
+            
+            // Add metric label
             pdfDoc.setFontSize(10);
+            pdfDoc.setFont('helvetica', 'normal');
+            pdfDoc.setTextColor(100, 100, 100);
+            pdfDoc.text(metric.label, xPos + 5, yPos + 10, { align: 'left' });
+            
+            // Add metric value with improved formatting and larger font
+            pdfDoc.setFontSize(14);
+            pdfDoc.setFont('helvetica', 'bold');
             pdfDoc.setTextColor(0, 0, 0);
-            pdfDoc.text(`$${metric.value.toLocaleString()}`, xPos + 2, yPos + 15);
+            const formattedValue = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(metric.value);
+            pdfDoc.text(formattedValue, xPos + 5, yPos + 25, { align: 'left' });
         });
 
-        // Add balance chart to PDF
-        yPos += 35;
+        // Add balance chart to PDF with improved spacing
+        yPos += boxHeight + 15;
         pdfDoc.setFontSize(14);
+        pdfDoc.setFont('helvetica', 'bold');
+        pdfDoc.setTextColor(52, 73, 94);
         pdfDoc.text("Balance Trend Analysis", 15, yPos);
 
         try {
@@ -187,9 +410,11 @@ export const generatePDFReport = async () => {
             pdfDoc.text("Chart could not be generated", 15, yPos);
         }
 
-        // Add Income vs Expense Comparison
+        // Add Income vs Expense Comparison with improved styling
         yPos += 90;
         pdfDoc.setFontSize(14);
+        pdfDoc.setFont('helvetica', 'bold');
+        pdfDoc.setTextColor(52, 73, 94);
         pdfDoc.text("Income vs Expense Analysis", 15, yPos);
 
         // Create income/expense comparison chart
@@ -203,14 +428,23 @@ export const generatePDFReport = async () => {
             data: {},
             options: {
                 responsive: false,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
             }
         });
 
         plot.plotIncomeExpenseComparison(comparisonChart, transactions);
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // After the comparison chart and before creating pie charts, add a new page
         try {
             const comparisonChartImage = comparisonCanvas.toDataURL('image/png', 1.0);
             yPos += 5;
@@ -221,20 +455,22 @@ export const generatePDFReport = async () => {
             pdfDoc.text("Comparison chart could not be generated", 15, yPos);
         }
 
-        // Add a new page for pie charts
+        // Add a new page for category analysis with improved header
         pdfDoc.addPage();
-        yPos = 20; // Start higher on the page
-
-        // Add professional header
+        yPos = 20;
+        
+        // Add professional header with gradient
         pdfDoc.setFillColor(52, 73, 94);
         pdfDoc.rect(0, 0, 210, 15, 'F');
         pdfDoc.setTextColor(255, 255, 255);
         pdfDoc.setFontSize(14);
+        pdfDoc.setFont('helvetica', 'bold');
         pdfDoc.text("Category Distribution Analysis", 15, 10);
-
-        // Reset text color and add description
-        pdfDoc.setTextColor(0, 0, 0);
+        
+        // Reset text color and add description with improved styling
+        pdfDoc.setTextColor(100, 100, 100);
         pdfDoc.setFontSize(10);
+        pdfDoc.setFont('helvetica', 'normal');
         yPos = 25;
         pdfDoc.text("Top 5 categories by transaction volume", 15, yPos);
 
@@ -469,38 +705,71 @@ export const generatePDFReport = async () => {
         // Cleanup wait with reduced time
         await new Promise(resolve => setTimeout(resolve, 300));
 
-        // Add Transaction Analysis with reduced spacing
-        yPos += 20; // Reduced spacing before transaction analysis
+        // Add Financial Summary Section
+        pdfDoc.addPage();
+        yPos = 20;
+        
+        // Add professional header
+        pdfDoc.setFillColor(52, 73, 94);
+        pdfDoc.rect(0, 0, 210, 15, 'F');
+        pdfDoc.setTextColor(255, 255, 255);
         pdfDoc.setFontSize(14);
+        pdfDoc.text("Financial Summary & Insights", 15, 10);
+        
+        // Reset text color and add insights
         pdfDoc.setTextColor(0, 0, 0);
-        pdfDoc.text("Transaction Analysis", 15, yPos);
-
-        // Recent transactions table with adjusted starting position
-        const recentTransactions = [...transactions]
-            .sort((a, b) => b.date.seconds - a.date.seconds)
-            .slice(0, 5);
-
-        pdfDoc.autoTable({
-            startY: yPos + 5, // Reduced spacing before table
-            head: [["Date", "Category", "Type", "Amount"]],
-            body: recentTransactions.map(t => [
-                new Date(t.date.seconds * 1000).toLocaleDateString(),
-                t.category,
-                t.type.charAt(0).toUpperCase() + t.type.slice(1),
-                `$${t.amount.toLocaleString()}`
-            ]),
-            styles: {
-                fontSize: 9,
-                cellPadding: 3
-            },
-            headStyles: {
-                fillColor: [52, 73, 94],
-                textColor: 255
-            },
-            alternateRowStyles: {
-                fillColor: [245, 245, 245]
-            },
-            margin: { left: 15, right: 15 }
+        pdfDoc.setFontSize(10);
+        
+        // Define goals for analysis
+        const goals = [
+            { name: "New Car Fund", target: 37000 },
+            { name: "Vacation Fund", target: 5000 },
+            { name: "Emergency Fund", target: 10000 }
+        ];
+        
+        // Generate insights
+        const insights = generateFinancialInsights(transactions, balanceOverTimeData, goals);
+        
+        // Add insights to PDF with proper formatting
+        yPos = 25;
+        const lineHeight = 5;
+        const marginLeft = 15;
+        const maxWidth = 180;
+        
+        insights.forEach(insight => {
+            // Split the insight into lines that fit within the page width
+            const lines = pdfDoc.splitTextToSize(insight, maxWidth);
+            
+            lines.forEach(line => {
+                if (yPos > 270) { // Check if we need a new page
+                    pdfDoc.addPage();
+                    yPos = 20;
+                }
+                
+                if (line.startsWith("Financial Summary & Insights")) {
+                    pdfDoc.setFont('helvetica', 'bold');
+                    pdfDoc.setFontSize(12);
+                    pdfDoc.text(line, marginLeft, yPos);
+                    yPos += lineHeight + 2;
+                } else if (line.includes("Analysis:") || line.includes("Progress:") || line.includes("Recommendations")) {
+                    pdfDoc.setFont('helvetica', 'bold');
+                    pdfDoc.setFontSize(10);
+                    pdfDoc.text(line, marginLeft, yPos);
+                    yPos += lineHeight;
+                } else if (line.startsWith("   -")) {
+                    pdfDoc.setFont('helvetica', 'normal');
+                    pdfDoc.setFontSize(9);
+                    pdfDoc.text(line, marginLeft + 5, yPos);
+                    yPos += lineHeight;
+                } else {
+                    pdfDoc.setFont('helvetica', 'normal');
+                    pdfDoc.setFontSize(10);
+                    pdfDoc.text(line, marginLeft, yPos);
+                    yPos += lineHeight;
+                }
+            });
+            
+            yPos += lineHeight; // Add extra space between sections
         });
 
         // Footer
