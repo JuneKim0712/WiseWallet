@@ -813,7 +813,7 @@ const plotBalanceChart = async () => {
  * - Transportation costs
  * - Entertainment and personal expenses
  */
-const test = async () => {
+window.test = async () => {
   const today = new Date();
   const twoYearsAgo = new Date();
   twoYearsAgo.setFullYear(today.getFullYear() - 2);
@@ -1294,7 +1294,7 @@ const setDefaultFilter = () => {
     handlePlotHistoryChange({ target: { value: "all" } });
 };
 
-const testGoals = async () => {
+window.testGoals = async () => {
   try {
     // Get the current user's ID
     while (!uid) {

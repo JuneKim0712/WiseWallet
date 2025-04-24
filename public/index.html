@@ -68,7 +68,7 @@
     </h1>
 
     <!-- Modal -->
-    <div id="authModal" class="fixed inset-0 bg-black/0 flex items-center justify-center transition-all duration-300 ease-in-out pointer-events-none">
+    <div id="authModal" class="hidden fixed inset-0 bg-black/0 flex items-center justify-center transition-all duration-300 ease-in-out pointer-events-none">
       <div class="bg-white p-8 rounded-lg shadow-lg w-96 transform scale-0 transition-all duration-300 ease-in-out">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold" id="modalTitle">Sign In</h2>
@@ -130,6 +130,7 @@
         modal.classList.remove('pointer-events-none');
         modal.classList.remove('bg-black/0');
         modal.classList.add('bg-black/50');
+        modal.classList.remove('hidden');
         modalContent.classList.remove('scale-0');
         modalContent.classList.add('scale-100');
       }
@@ -141,6 +142,7 @@
         // Hide modal and disable pointer events
         modal.classList.remove('bg-black/50');
         modal.classList.add('bg-black/0');
+        modal.classList.add('hidden');
         modalContent.classList.remove('scale-100');
         modalContent.classList.add('scale-0');
         
