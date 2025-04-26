@@ -281,7 +281,9 @@ export const generatePDFReport = async () => {
         transactions = process.sortTransactions(transactions);
 
         // Process monthly data for the chart
-        const balanceOverTimeData = process.genBalanceOverTime(transactions);
+        // Sort transactions from oldest to newest for the balance chart
+        const sortedTransactionsForChart = process.sortTransactionsForChart(transactions);
+        const balanceOverTimeData = process.genBalanceOverTime(sortedTransactionsForChart);
         const monthlyBalances = {};
 
         balanceOverTimeData.forEach(item => {

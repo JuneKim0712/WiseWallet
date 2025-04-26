@@ -445,23 +445,8 @@
       }, 200 * (index + 1));
     });
 
-    document.querySelectorAll('.progress-slide').forEach((slide, index) => {
-      slide.style.opacity = '0';
-      setTimeout(() => {
-        slide.style.opacity = '1';
-      }, 300 * (index + 1));
-    });
-
-    const chartContainer = document.querySelector('.chart-container');
     const transactionTable = document.querySelector('.transaction-table');
     
-    if (chartContainer) {
-      chartContainer.style.opacity = '0';
-      setTimeout(() => {
-        chartContainer.style.opacity = '1';
-      }, 600);
-    }
-
     if (transactionTable) {
       transactionTable.style.opacity = '0';
       setTimeout(() => {

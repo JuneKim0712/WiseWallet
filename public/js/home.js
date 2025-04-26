@@ -778,29 +778,68 @@ initialize().then(() => {
 /**
  * Initializes the balance chart with configuration
  */
-const balanceCharts = new Chart(balanceSummary, {
-  type: 'line',
-  data: {},
-  options: {
-    plugins: {
-      title: {
-        display: true,
-        text: 'Balance Over Time',
-        font: { size: 18 }
-      }
-    },
-    scales: {
-      x: {
-        type: 'category',
-        title: { display: true, text: 'Date', font: { size: 14 } }
-      },
-      y: {
-        title: { display: true, text: 'Balance ($)', font: { size: 14 } }
-      }
-    },
-    devicePixelRatio: 2
-  }
-})
+let balanceCharts = null;
+
+const plotBalanceChart = async () => {
+    // Get all transactions regardless of filter
+    const allTransactions = process.sortTransactionsForChart(await ref.access(uid, 'transaction'));
+    const balanceOverTimeData = process.genBalanceOverTime(allTransactions);
+    
+    // Process monthly balances - get last balance of each month
+    const monthlyBalances = {};
+    balanceOverTimeData.forEach(item => {
+        const date = new Date(item.date.seconds * 1000);
+        const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        
+        // Only update if this is a later date in the same month or if month not yet recorded
+        if (!monthlyBalances[monthYear] || 
+            new Date(monthlyBalances[monthYear].date.seconds * 1000).getDate() < date.getDate()) {
+            monthlyBalances[monthYear] = {
+                ...item,
+                monthLabel: date.toLocaleString('default', { month: 'short', year: '2-digit' })
+            };
+        }
+    });
+
+    // Convert to array and sort by date
+    const monthlyBalanceData = Object.values(monthlyBalances)
+        .sort((a, b) => a.date.seconds - b.date.seconds);
+
+    // Initialize chart if it doesn't exist
+    if (!balanceCharts) {
+        const balanceSummary = document.getElementById('balanceSummary');
+        if (balanceSummary) {
+            balanceCharts = new Chart(balanceSummary, {
+                type: 'line',
+                data: {},
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Balance Over Time',
+                            font: { size: 18 }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            title: { display: true, text: 'Date', font: { size: 14 } }
+                        },
+                        y: {
+                            title: { display: true, text: 'Balance ($)', font: { size: 14 } }
+                        }
+                    },
+                    devicePixelRatio: 2
+                }
+            });
+        }
+    }
+
+    // Update the chart with the new data
+    if (balanceCharts) {
+        plot.plotBalance(balanceCharts, monthlyBalanceData);
+    }
+};
 
 /**
  * Animates a number from start to end value
@@ -852,35 +891,6 @@ const updateDashboardCards = async () => {
   animateNumber(document.getElementById("balance"), currentBalance, finalBalance);
   animateNumber(document.getElementById("income"), currentIncome, totalIncome);
   animateNumber(document.getElementById("expenses"), currentExpenses, totalExpense);
-};
-
-const plotBalanceChart = async () => {
-    // Get all transactions regardless of filter
-    const allTransactions = process.sortTransactionsForChart(await ref.access(uid, 'transaction'));
-    const balanceOverTimeData = process.genBalanceOverTime(allTransactions);
-    
-    // Process monthly balances - get last balance of each month
-    const monthlyBalances = {};
-    balanceOverTimeData.forEach(item => {
-        const date = new Date(item.date.seconds * 1000);
-        const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        
-        // Only update if this is a later date in the same month or if month not yet recorded
-        if (!monthlyBalances[monthYear] || 
-            new Date(monthlyBalances[monthYear].date.seconds * 1000).getDate() < date.getDate()) {
-            monthlyBalances[monthYear] = {
-                ...item,
-                monthLabel: date.toLocaleString('default', { month: 'short', year: '2-digit' })
-            };
-        }
-    });
-
-    // Convert to array and sort by date
-    const monthlyBalanceData = Object.values(monthlyBalances)
-        .sort((a, b) => a.date.seconds - b.date.seconds);
-
-    // Update the chart with the new data
-    plot.plotBalance(balanceCharts, monthlyBalanceData);
 };
 
 /**
@@ -1180,6 +1190,8 @@ const progressCarousel = async () => {
 
           const slide = document.createElement('div');
           slide.className = 'progress-slide min-w-full bg-[#f8fafc] rounded-xl p-6';
+          // Set initial opacity to 1 to prevent flickering
+          slide.style.opacity = '1';
           slide.innerHTML = `
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold text-gray-800">${goal.name}</h3>
@@ -1187,10 +1199,10 @@ const progressCarousel = async () => {
                 ${isCompleted ? '✓' : `${Math.round(progress)}%`}
               </span>
             </div>
-            <div class="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
+            <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden">
               <div class="h-full rounded-full progress-gradient" style="width: ${progress}%;"></div>
             </div>
-            <div class="flex justify-between items-center mt-4 text-sm">
+            <div class="flex justify-between items-center mt-2 text-sm">
               <span class="text-gray-600 progress-current">$${formatNumberWithCommas(balance)}</span>
               <span class="text-gray-600 progress-goal">Goal: $${formatNumberWithCommas(goal.target)}</span>
             </div>
@@ -1215,6 +1227,18 @@ const progressCarousel = async () => {
         if (currentSlide >= slideCount) {
           currentSlide = 0;
         }
+
+        // Set initial position without animation
+        slides.style.transition = 'none';
+        slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+        
+        // Force a reflow to apply the transition: none
+        slides.offsetHeight;
+        
+        // Re-enable transitions after a short delay
+        setTimeout(() => {
+          slides.style.transition = 'transform 0.5s ease-in-out';
+        }, 50);
 
         updateSlide();
 

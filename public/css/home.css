@@ -161,10 +161,10 @@
 .progress-slide {
   flex: 0 0 100%;
   min-width: 100%;
-  transition: opacity 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
   padding: 0 10px;
-  opacity: 0.7;
-  transform: scale(0.95);
+  opacity: 1;
+  transform: scale(1);
   background: transparent;
 }
 
@@ -306,20 +306,20 @@
 }
 
 .progress-slide {
-  animation: scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  opacity: 0;
+  opacity: 1;
+  transform: scale(1);
 }
 
 .progress-slide:nth-child(1) {
-  animation-delay: 0.4s;
+  /* animation-delay removed */
 }
 
 .progress-slide:nth-child(2) {
-  animation-delay: 0.5s;
+  /* animation-delay removed */
 }
 
 .progress-slide:nth-child(3) {
-  animation-delay: 0.6s;
+  /* animation-delay removed */
 }
 
 .transaction-table {
@@ -329,9 +329,8 @@
 }
 
 .chart-container {
-  animation: fadeInFromLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  opacity: 0;
-  animation-delay: 0.8s;
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* Transaction Page Animations */
@@ -427,9 +426,7 @@ nav {
 
 /* Smooth transitions for interactive elements */
 .finance-card,
-.progress-slide,
 .transaction-table,
-.chart-container,
 nav,
 .flex.gap-2.mb-4,
 .relative.flex-grow,
@@ -442,7 +439,6 @@ nav,
 
 /* Add a subtle hover effect */
 .finance-card:hover,
-.progress-slide:hover,
 .transaction-table:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
