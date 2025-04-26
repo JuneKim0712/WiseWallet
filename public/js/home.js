@@ -202,7 +202,7 @@ const addSortingHandlers = () => {
   
   let currentSort = {
     column: 'date',
-    direction: 'desc'
+    direction: 'asc'
   };
 
   headers.forEach(header => {
@@ -473,7 +473,9 @@ const handlePlotHistoryChange = async (event) => {
   }
 
   // Generate balance data for the filtered transactions
-  const balanceOverTimeData = process.genBalanceOverTime(filteredTransactions);
+  // Use sortTransactionsForChart for balance calculations to show oldest to newest
+  const chartTransactions = process.sortTransactionsForChart([...filteredTransactions]);
+  const balanceOverTimeData = process.genBalanceOverTime(chartTransactions);
     
   // Process monthly balances
   const monthlyBalances = {};
@@ -629,13 +631,25 @@ const initialize = async () => {
         return;
       }
 
+      // Validate date is not in the future
+      const selectedDate = new Date(date);
+      const dateValidation = validateTransactionDate(selectedDate, {
+        allowFuture: false,
+        minDate: new Date('2020-01-01') // Arbitrary minimum date
+      });
+
+      if (!dateValidation.isValid) {
+        alert(dateValidation.message);
+        return;
+      }
+
       try {
         if (transactionId) {
           // Update existing transaction
           await ref.updateTransaction(
             amount,
             category,
-            new Date(date),
+            selectedDate,
             type,
             transactionId,
             uid
@@ -645,7 +659,7 @@ const initialize = async () => {
           await ref.addTransaction(
             amount,
             category,
-            new Date(date),
+            selectedDate,
             type,
             uid
           );
@@ -684,7 +698,6 @@ const initialize = async () => {
     await updateCategoryOptions('income');
     transactions = await ref.access(uid, 'transaction')
     transactions = process.sortTransactions(transactions);
-    transactions = sortTransactions(transactions, "date", false)
 
     // Update UI elements with a staggered delay
     setTimeout(() => {
@@ -707,7 +720,9 @@ const initialize = async () => {
 
     addSortingHandlers();
 
-    const balanceOverTimeData = process.genBalanceOverTime(transactions)
+    // Use sortTransactionsForChart for balance calculations to show oldest to newest
+    const chartTransactions = process.sortTransactionsForChart([...transactions]);
+    const balanceOverTimeData = process.genBalanceOverTime(chartTransactions)
     let totalIncome = 0;
     let totalExpense = 0;
 
@@ -812,7 +827,9 @@ const animateNumber = (element, start, end, duration = 1000) => {
 // Update the dashboard cards with animation
 const updateDashboardCards = async () => {
   transactions = process.sortTransactions(await ref.access(uid, 'transaction'));
-  const balanceOverTimeData = process.genBalanceOverTime(transactions)
+  // Use sortTransactionsForChart for balance calculations to show oldest to newest
+  const chartTransactions = process.sortTransactionsForChart([...transactions]);
+  const balanceOverTimeData = process.genBalanceOverTime(chartTransactions)
   let totalIncome = 0;
   let totalExpense = 0;
 
@@ -839,7 +856,7 @@ const updateDashboardCards = async () => {
 
 const plotBalanceChart = async () => {
     // Get all transactions regardless of filter
-    const allTransactions = process.sortTransactions(await ref.access(uid, 'transaction'));
+    const allTransactions = process.sortTransactionsForChart(await ref.access(uid, 'transaction'));
     const balanceOverTimeData = process.genBalanceOverTime(allTransactions);
     
     // Process monthly balances - get last balance of each month

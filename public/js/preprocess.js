@@ -120,8 +120,19 @@ export const filterTransactions = (transactions, startDate, endDate) => {
 }
 
 export const sortTransactions = (transactions) => {
-    const sortedTransactions = transactions.sort((a, b) => a.date.seconds - b.date.seconds);
+    const sortedTransactions = transactions.sort((a, b) => b.date.seconds - a.date.seconds);
     return sortedTransactions
+};
+
+/**
+ * Sorts transactions from oldest to newest (ascending order)
+ * Used specifically for balance chart display
+ * @param {Array<Object>} transactions - Array of transaction objects
+ * @returns {Array<Object>} Sorted transactions from oldest to newest
+ */
+export const sortTransactionsForChart = (transactions) => {
+    const sortedTransactions = transactions.sort((a, b) => a.date.seconds - b.date.seconds);
+    return sortedTransactions;
 };
 
 export const sortIncome = (income) => {
