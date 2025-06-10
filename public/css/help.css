@@ -1,0 +1,35 @@
+/* FAQ Accordion Transitions */
+details {
+  transition: background-color 0.3s ease;
+}
+
+details summary {
+  transition: all 0.3s ease;
+}
+
+details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+details p {
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  height: 0;
+  overflow: hidden;
+}
+
+details[open] p {
+  opacity: 1;
+  transform: translateY(0);
+  height: auto;
+}
+
+/* Smooth rotation for the chevron icon */
+details summary svg {
+  transition: transform 0.3s ease;
+}
+
+details[open] summary svg {
+  transform: rotate(180deg);
+}
